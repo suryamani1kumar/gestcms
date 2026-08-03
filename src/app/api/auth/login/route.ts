@@ -45,34 +45,39 @@ export async function POST(request: NextRequest) {
     if (!email || !password) {
       return NextResponse.json(
         { success: false, message: "Email and password are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() });
 
+    console.log("User", user);
+
     if (!user) {
       return NextResponse.json(
         { success: false, message: "Invalid email or password" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     if (!user.isActive) {
       return NextResponse.json(
-        { success: false, message: "Your account is deactivated. Contact admin." },
-        { status: 403 }
+        {
+          success: false,
+          message: "Your account is deactivated. Contact admin.",
+        },
+        { status: 403 },
       );
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
+    console.log("User pass", user);
     if (!isPasswordValid) {
       return NextResponse.json(
         { success: false, message: "Invalid email or password" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -96,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     // Set cookie
     response.cookies.set("token", token, {
-      httpOnly: false,      // readable by client for JWT decode in AuthContext
+      httpOnly: false, // readable by client for JWT decode in AuthContext
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
@@ -108,7 +113,7 @@ export async function POST(request: NextRequest) {
     console.error("Login error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
