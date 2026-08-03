@@ -1,25 +1,29 @@
+import React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
+import AppShell from "@/components/AppShell";
+import { AuthProvider } from "@/components/AuthContext";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
-  title: "GestCMS — Content Management System",
-  description: "A modern, powerful CMS admin panel built with Next.js",
+  title: "Booking CRM",
+  description: "Management System",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
   return (
-    <html lang="en" className={inter.className}>
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        <AuthProvider token={token}>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
