@@ -31,6 +31,7 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: MdDashboard },
     { name: "Create Agent", href: "/agent", icon: MdPeople },
+    { name: "Gemstones", href: "/gemstones", icon: MdPeople },
   ];
 
   const widthClass = isOpen ? "w-50" : "w-15";
@@ -52,7 +53,9 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
                   <p className="text-xs text-slate-400">
                     {user.name}
                     <br />
-                    {user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""}
+                    {user.role
+                      ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                      : ""}
                   </p>
                 </div>
               )}
@@ -62,11 +65,7 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
           <nav className="space-y-2 px-2 py-6">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
-              if (
-                user?.role === "agent" &&
-                (item.name === "Create Agent" ||
-                  item.name === "Agent Performance")
-              ) {
+              if (user?.role === "agent" && item.name === "Create Agent") {
                 return null;
               }
               return (
