@@ -39,9 +39,6 @@ export interface IGemstone extends Document {
   astrology?: {
     planet?: string;
     zodiacSigns?: string[];
-    rashi?: string[];
-    birthMonth?: string[];
-    chakra?: string;
     dayToWear?: string;
     finger?: string;
     metal?: string;
@@ -51,7 +48,6 @@ export interface IGemstone extends Document {
     labName?: string;
     certificateNumber?: string;
     issueDate?: string;
-    expiryDate?: string;
     certificatePdf?: string;
     certificateImage?: string;
   };
@@ -60,7 +56,6 @@ export interface IGemstone extends Document {
     stock?: number;
     stockStatus?: string;
     lowStockAlert?: number;
-    quantity?: number;
   };
 
   pricing?: {
@@ -70,16 +65,6 @@ export interface IGemstone extends Document {
     salePrice?: number;
     discount?: number;
     gst?: number;
-  };
-
-  shipping?: {
-    weight?: number;
-    weightUnit?: string;
-    length?: number;
-    width?: number;
-    height?: number;
-    dimensionUnit?: string;
-    freeShipping?: boolean;
   };
 
   benefits?: string[];
@@ -93,15 +78,6 @@ export interface IGemstone extends Document {
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
-  };
-
-  display?: {
-    featured?: boolean;
-    bestSeller?: boolean;
-    trending?: boolean;
-    newArrival?: boolean;
-    recommended?: boolean;
-    homepageBanner?: boolean;
   };
 
   status?: "Published" | "Draft" | "Archived";
@@ -161,9 +137,6 @@ const GemstoneSchema = new Schema<IGemstone>(
     astrology: {
       planet: { type: String },
       zodiacSigns: [{ type: String }],
-      rashi: [{ type: String }],
-      birthMonth: [{ type: String }],
-      chakra: { type: String },
       dayToWear: { type: String },
       finger: { type: String },
       metal: { type: String },
@@ -173,7 +146,6 @@ const GemstoneSchema = new Schema<IGemstone>(
       labName: { type: String },
       certificateNumber: { type: String },
       issueDate: { type: String },
-      expiryDate: { type: String },
       certificatePdf: { type: String },
       certificateImage: { type: String },
     },
@@ -182,7 +154,6 @@ const GemstoneSchema = new Schema<IGemstone>(
       stock: { type: Number, default: 0 },
       stockStatus: { type: String, default: "In Stock" },
       lowStockAlert: { type: Number, default: 5 },
-      quantity: { type: Number, default: 1 },
     },
 
     pricing: {
@@ -192,16 +163,6 @@ const GemstoneSchema = new Schema<IGemstone>(
       salePrice: { type: Number, default: 0 },
       discount: { type: Number, default: 0 },
       gst: { type: Number, default: 3 },
-    },
-
-    shipping: {
-      weight: { type: Number },
-      weightUnit: { type: String, default: "gm" },
-      length: { type: Number },
-      width: { type: Number },
-      height: { type: Number },
-      dimensionUnit: { type: String, default: "cm" },
-      freeShipping: { type: Boolean, default: false },
     },
 
     benefits: [{ type: String }],
@@ -215,15 +176,6 @@ const GemstoneSchema = new Schema<IGemstone>(
     seo: {
       metaTitle: { type: String },
       metaDescription: { type: String },
-    },
-
-    display: {
-      featured: { type: Boolean, default: false },
-      bestSeller: { type: Boolean, default: false },
-      trending: { type: Boolean, default: false },
-      newArrival: { type: Boolean, default: false },
-      recommended: { type: Boolean, default: false },
-      homepageBanner: { type: Boolean, default: false },
     },
 
     status: {

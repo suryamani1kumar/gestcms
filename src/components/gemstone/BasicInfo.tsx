@@ -1,15 +1,18 @@
 "use client";
 
-import { Paper, Typography, Grid, TextField, MenuItem } from "@mui/material";
-
 interface BasicInfoProps {
   formData: any;
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export default function BasicInfo({ formData, setFormData }: BasicInfoProps) {
+export default function BasicInfo({
+  formData,
+  setFormData,
+}: BasicInfoProps) {
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData((prev: any) => ({
       ...prev,
@@ -17,117 +20,131 @@ export default function BasicInfo({ formData, setFormData }: BasicInfoProps) {
     }));
   };
 
+  const inputClass =
+    "w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100";
+
+  const labelClass =
+    "mb-2 block text-sm font-semibold text-gray-700";
+
   return (
-    <Grid container spacing={3}>
-      {/* SKU */}
-      <Grid size={{ xs: 12, md: 6 }}>
-        <TextField
-          fullWidth
-          required
-          label="SKU"
-          name="sku"
-          value={formData.sku}
-          onChange={handleChange}
-          placeholder="GST-RUBY-001"
-        />
-      </Grid>
+    <div className="w-full">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        {/* SKU */}
+        <div>
+          <label className={labelClass}>
+            SKU <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="sku"
+            value={formData.sku}
+            onChange={handleChange}
+            placeholder="GST-RUBY-001"
+            className={inputClass}
+          />
+        </div>
 
-      {/* Name */}
-      <Grid size={{ xs: 12, md: 6 }}>
-        <TextField
-          fullWidth
-          required
-          label="Gemstone Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Ruby"
-        />
-      </Grid>
+        {/* Gemstone Name */}
+        <div>
+          <label className={labelClass}>
+            Gemstone Name <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Ruby"
+            className={inputClass}
+          />
+        </div>
 
-      {/* Indian Name */}
-      <Grid size={{ xs: 12, md: 6 }}>
-        <TextField
-          fullWidth
-          label="Indian Name"
-          name="indianName"
-          value={formData.indianName}
-          onChange={handleChange}
-          placeholder="Manik"
-        />
-      </Grid>
+        {/* Indian Name */}
+        <div>
+          <label className={labelClass}>Indian Name</label>
+          <input
+            type="text"
+            name="indianName"
+            value={formData.indianName}
+            onChange={handleChange}
+            placeholder="Manik"
+            className={inputClass}
+          />
+        </div>
 
-      {/* Slug */}
-      <Grid size={{ xs: 12, md: 6 }}>
-        <TextField
-          fullWidth
-          required
-          label="Slug"
-          name="slug"
-          value={formData.slug}
-          onChange={handleChange}
-          placeholder="natural-ruby"
-        />
-      </Grid>
+        {/* Slug */}
+        <div>
+          <label className={labelClass}>
+            Slug <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="slug"
+            value={formData.slug}
+            onChange={handleChange}
+            placeholder="natural-ruby"
+            className={inputClass}
+          />
+        </div>
 
-      {/* Category */}
-      <Grid size={{ xs: 12, md: 6 }}>
-        <TextField
-          fullWidth
-          select
-          label="Category"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          <MenuItem value="">Select Category</MenuItem>
-          <MenuItem value="Precious">Precious</MenuItem>
-          <MenuItem value="Semi Precious">Semi Precious</MenuItem>
-          <MenuItem value="Organic">Organic</MenuItem>
-          <MenuItem value="Synthetic">Synthetic</MenuItem>
-        </TextField>
-      </Grid>
+        {/* Category */}
+        <div>
+          <label className={labelClass}>Category</label>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="">Select Category</option>
+            <option value="Precious">Precious</option>
+            <option value="Semi Precious">Semi Precious</option>
+            <option value="Organic">Organic</option>
+            <option value="Synthetic">Synthetic</option>
+          </select>
+        </div>
 
-      {/* Sub Category */}
-      <Grid size={{ xs: 12, md: 6 }}>
-        <TextField
-          fullWidth
-          label="Sub Category"
-          name="subCategory"
-          value={formData.subCategory}
-          onChange={handleChange}
-          placeholder="Corundum"
-        />
-      </Grid>
+        {/* Sub Category */}
+        <div>
+          <label className={labelClass}>Sub Category</label>
+          <input
+            type="text"
+            name="subCategory"
+            value={formData.subCategory}
+            onChange={handleChange}
+            placeholder="Corundum"
+            className={inputClass}
+          />
+        </div>
 
-      {/* Status */}
-      <Grid size={{ xs: 12, md: 6 }}>
-        <TextField
-          fullWidth
-          select
-          label="Status"
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-        >
-          <MenuItem value="Draft">Draft</MenuItem>
-          <MenuItem value="Published">Published</MenuItem>
-          <MenuItem value="Archived">Archived</MenuItem>
-        </TextField>
-      </Grid>
+        {/* Status */}
+        <div>
+          <label className={labelClass}>Status</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="Draft">Draft</option>
+            <option value="Published">Published</option>
+            <option value="Archived">Archived</option>
+          </select>
+        </div>
 
-      {/* Description */}
-      <Grid size={{ xs: 12 }}>
-        <TextField
-          fullWidth
-          multiline
-          rows={6}
-          label="Description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-      </Grid>
-    </Grid>
+        {/* Description */}
+        <div className="col-span-full">
+          <label className={labelClass}>Description</label>
+          <textarea
+            rows={6}
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Write a detailed description..."
+            className={`${inputClass} resize-y`}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

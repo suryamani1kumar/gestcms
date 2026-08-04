@@ -1,8 +1,11 @@
 "use client";
 import GemstoneForm from "@/components/gemstone/GemstoneForm";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CreateGemstonePage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     sku: "GEM-RUBY-001",
     name: "Ruby",
@@ -24,7 +27,6 @@ export default function CreateGemstonePage() {
     transparency: "Transparent",
     origin: "Burma (Myanmar)",
     treatment: "Unheated",
-    certificationType: "IGI",
     weight: {
       value: 5.25,
       unit: "Carat",
@@ -51,9 +53,6 @@ export default function CreateGemstonePage() {
     astrology: {
       planet: "Sun",
       zodiacSigns: ["Leo", "Aries", "Scorpio"],
-      rashi: ["Simha"],
-      birthMonth: ["July"],
-      chakra: "Heart Chakra",
       dayToWear: "Sunday",
       finger: "Ring Finger",
       metal: "Gold",
@@ -62,7 +61,6 @@ export default function CreateGemstonePage() {
       labName: "IGI",
       certificateNumber: "IGI-RB-202600123",
       issueDate: "2026-07-15",
-      expiryDate: "",
       certificatePdf: "/certificates/ruby.pdf",
       certificateImage: "/certificates/ruby.jpg",
     },
@@ -70,7 +68,6 @@ export default function CreateGemstonePage() {
       stock: 12,
       stockStatus: "In Stock",
       lowStockAlert: 3,
-      quantity: 1,
     },
     pricing: {
       currency: "INR",
@@ -79,15 +76,6 @@ export default function CreateGemstonePage() {
       salePrice: 47500,
       discount: 5,
       gst: 3,
-    },
-    shipping: {
-      weight: 25,
-      weightUnit: "gm",
-      length: 8,
-      width: 6,
-      height: 4,
-      dimensionUnit: "cm",
-      freeShipping: true,
     },
     benefits: [
       "Boosts confidence",
@@ -101,27 +89,71 @@ export default function CreateGemstonePage() {
       storage: "Store separately in a jewelry box to prevent scratches.",
       precautions: "Avoid harsh chemicals and ultrasonic cleaners.",
     },
-
     seo: {
       metaTitle: "Buy Natural Ruby (Manik) Online | Certified Gemstone",
       metaDescription:
         "Shop certified natural Ruby (Manik) gemstone with lab certification, free shipping, and best price in India.",
     },
-
-    display: {
-      featured: true,
-      bestSeller: true,
-      trending: true,
-      newArrival: false,
-      recommended: true,
-      homepageBanner: true,
-    },
     status: "Published",
   });
 
+  const handleSubmit = async () => {
+    // Basic Validation
+    if (!formData.sku.trim()) {
+      alert("SKU is required");
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      alert("Product name is required");
+      return;
+    }
+
+    if (!formData.category) {
+      alert("Category is required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch("/api/gemstones", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      alert("Product added successfully!");
+      router.push("/gemstones"); // Redirect to gemstones list page
+
+      console.log(data);
+
+      // Optional: Reset form
+      // setFormData(initialFormData);
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-8">
-      <GemstoneForm formData={formData} setFormData={setFormData} />
+      <GemstoneForm
+        formData={formData}
+        setFormData={setFormData}
+        handleSubmit={handleSubmit}
+        loading={loading}
+      />
     </div>
   );
 }
