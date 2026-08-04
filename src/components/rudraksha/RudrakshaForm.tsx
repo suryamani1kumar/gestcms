@@ -10,12 +10,13 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import BasicInfo from "./BasicInfo";
-import Media from "./Media";
-import Astrology from "./Astrology";
-import Inventory from "./Inventory";
+// import BasicInfo from "./BasicInfo";
+// import SEOInfo from "./SEO";
+// import Media from "./Media";
+// import Astrology from "./Astrology";
+// import Inventory from "./Inventory";
 
-export default function GemstoneForm({
+export default function RudrakshaForm({
   formData,
   setFormData,
   handleSubmit,
@@ -36,6 +37,7 @@ export default function GemstoneForm({
     "w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100";
 
   const labelClass = "mb-2 block text-sm font-semibold text-gray-700";
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -64,7 +66,7 @@ export default function GemstoneForm({
         </AccordionSummary>
 
         <AccordionDetails>
-          <BasicInfo formData={formData} setFormData={setFormData} />
+          {/* <BasicInfo formData={formData} setFormData={setFormData} /> */}
         </AccordionDetails>
       </Accordion>
 
@@ -78,7 +80,7 @@ export default function GemstoneForm({
         </AccordionSummary>
 
         <AccordionDetails>
-          <Media formData={formData} setFormData={setFormData} />
+          {/* <Media formData={formData} setFormData={setFormData} /> */}
         </AccordionDetails>
       </Accordion>
 
@@ -116,7 +118,7 @@ export default function GemstoneForm({
         </AccordionSummary>
 
         <AccordionDetails>
-          <Astrology formData={formData} setFormData={setFormData} />
+          {/* <Astrology formData={formData} setFormData={setFormData} /> */}
         </AccordionDetails>
       </Accordion>
 
@@ -142,7 +144,7 @@ export default function GemstoneForm({
         </AccordionSummary>
 
         <AccordionDetails>
-          <Inventory formData={formData} setFormData={setFormData} />
+          {/* <Inventory formData={formData} setFormData={setFormData} /> */}
         </AccordionDetails>
       </Accordion>
 
@@ -197,7 +199,7 @@ export default function GemstoneForm({
         size="large"
         disabled={loading}
       >
-        {loading ? "Saving..." : "Add Gemstone"}
+        {loading ? "Saving..." : "Add Rudraksha"}
       </Button>
     </form>
   );

@@ -1,9 +1,14 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { MdDashboard, MdPeople, MdLogout } from "react-icons/md";
+import {
+  MdDashboard,
+  MdPeople,
+  MdLogout,
+  MdOutlineBrightnessHigh,
+} from "react-icons/md";
+import { FaRegGem } from "react-icons/fa";
 import { useAuth } from "../AuthContext";
 
 interface SidebarProps {
@@ -31,7 +36,8 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: MdDashboard },
     { name: "Create Agent", href: "/agent", icon: MdPeople },
-    { name: "Gemstones", href: "/gemstones", icon: MdPeople },
+    { name: "Gemstones", href: "/gemstones", icon: FaRegGem },
+    { name: "Rudraksha", href: "/rudraksha", icon: MdOutlineBrightnessHigh },
   ];
 
   const widthClass = isOpen ? "w-50" : "w-15";
