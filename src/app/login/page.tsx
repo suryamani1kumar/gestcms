@@ -55,7 +55,7 @@ const LoginPage = () => {
 
         <section className="p-6 sm:p-10">
           <div className="max-w-sm mx-auto">
-            <h4 className="text-3xl font-bold mb-4">Booking CRM</h4>
+            <h4 className="text-3xl font-bold mb-4">Gemstone Crm</h4>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label

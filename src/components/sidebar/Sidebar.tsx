@@ -55,7 +55,7 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
               </div>
               {isOpen && user && (
                 <div>
-                  <h2 className="text-lg font-bold">Booking CRM</h2>
+                  <h2 className="text-lg font-bold">Gemstone Crm</h2>
                   <p className="text-xs text-slate-400">
                     {user.name}
                     <br />

@@ -6,7 +6,7 @@ import { AuthProvider } from "@/components/AuthContext";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
-  title: "Booking CRM",
+  title: "Gemstone Management System",
   description: "Management System",
 };
 
