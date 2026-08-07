@@ -16,11 +16,7 @@ const initialFormData = {
     "This natural Ruby (Manik) is sourced from Burma and is known for its deep red color, excellent transparency, and astrological significance. It is recommended for strengthening the Sun and is suitable for those seeking confidence, leadership, and success.",
   category: "Precious",
   subCategory: "Ruby",
-  gallery: [
-    "/images/gemstones/ruby-1.webp",
-    "/images/gemstones/ruby-2.webp",
-    "/images/gemstones/ruby-3.webp",
-  ],
+  gallery: [],
 
   videoUrl: "https://youtube.com/watch?v=example",
   specifications: {
@@ -158,24 +154,13 @@ export default function CreateProductPage() {
   const [formData, setFormData] = useState(initialFormData);
 
   const handleSubmit = async () => {
-
     if (!formData.sku.trim()) {
       alert("SKU is required");
       return;
     }
 
-    if (!formData.name.trim()) {
-      alert("Product name is required");
-      return;
-    }
-
     if (!formData.slug.trim()) {
       alert("Slug is required");
-      return;
-    }
-
-    if (!formData.category.trim()) {
-      alert("Category is required");
       return;
     }
 
@@ -197,8 +182,6 @@ export default function CreateProductPage() {
       if (!response.ok) {
         throw new Error(data.message || "Failed to create product");
       }
-
-      console.log("Product created:", data);
 
       alert("Product added successfully!");
 

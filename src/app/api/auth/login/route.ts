@@ -52,8 +52,6 @@ export async function POST(request: NextRequest) {
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() });
 
-    console.log("User", user);
-
     if (!user) {
       return NextResponse.json(
         { success: false, message: "Invalid email or password" },
@@ -73,7 +71,6 @@ export async function POST(request: NextRequest) {
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log("User pass", user);
     if (!isPasswordValid) {
       return NextResponse.json(
         { success: false, message: "Invalid email or password" },

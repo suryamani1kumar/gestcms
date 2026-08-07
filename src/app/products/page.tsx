@@ -30,18 +30,6 @@ function ActionMenu({
         </span>
       </button>
 
-      {/* View */}
-      <button
-        onClick={() => console.log(item)}
-        className={`${baseClass} bg-green-100 text-green-600 hover:bg-green-200`}
-      >
-        <FiEye className="text-sm" />
-
-        <span className="pointer-events-none absolute -top-10 whitespace-nowrap rounded-md bg-green-600 px-2 py-1 text-xs text-white opacity-0 transition group-hover:opacity-100">
-          View
-        </span>
-      </button>
-
       {/* Duplicate */}
       <button
         onClick={() => onDuplicate(item)}
@@ -190,9 +178,7 @@ export default function Products() {
       <div className="flex-1 p-2 md:p-3 font-sans">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
           <div>
-            <h1 className="text-xl font-bold text-neutral-900">
-              All Products
-            </h1>
+            <h1 className="text-xl font-bold text-neutral-900">All Products</h1>
             <p className="text-xs text-neutral-400 mt-0.5">
               {products.length} products
               {products.length !== 1 ? "s" : ""} found
@@ -250,8 +236,7 @@ export default function Products() {
                 >
                   <div className="col-span-1 md:col-span-1">
                     <img
-                      src={item.featuredImage || "/banner.png"}
-                      alt={item.name}
+                      src={item?.gallery[0]?.url ?? "/banner.png"}
                       className="h-8 w-18 rounded object-cover"
                     />
                   </div>

@@ -35,21 +35,24 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const products = await Product.create(body);
+    // Create product
+    const product = await Product.create(body);
 
     return NextResponse.json(
       {
         success: true,
         message: "Product created successfully",
-        data: products,
+        data: product,
       },
       { status: 201 },
     );
   } catch (error: any) {
+    console.error("Create product error:", error);
+
     return NextResponse.json(
       {
         success: false,
-        message: error.message,
+        message: error.message || "Failed to create product",
       },
       { status: 500 },
     );

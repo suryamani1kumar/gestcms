@@ -28,6 +28,7 @@ import {
 } from "@mui/material";
 import { FaInfoCircle } from "react-icons/fa";
 import { MdExpandMore, MdOutlineInventory2 } from "react-icons/md";
+import ProductImage from "./ProductImage";
 
 type ProductType = "gemstone" | "rudraksha";
 
@@ -282,34 +283,8 @@ export default function ProductForm({
         </AccordionSummary>
 
         <AccordionDetails>
-          <div className=" pt-3 space-y-5">
-            <InputField
-              label="Gallery Images"
-              value={
-                Array.isArray(formData.gallery)
-                  ? formData.gallery.join(", ")
-                  : ""
-              }
-              placeholder="/images/product-1.webp, /images/product-2.webp"
-              helper="Enter image URLs separated by commas."
-              onChange={(value) =>
-                updateField(
-                  "gallery",
-                  value
-                    .split(",")
-                    .map((item) => item.trim())
-                    .filter(Boolean),
-                )
-              }
-            />
-
-            <InputField
-              label="Video URL"
-              value={formData.videoUrl}
-              placeholder="https://youtube.com/watch?v=..."
-              onChange={(value) => updateField("videoUrl", value)}
-            />
-          </div>
+          <ProductImage formData={formData} setFormData={setFormData}/>
+          
         </AccordionDetails>
       </Accordion>
 
