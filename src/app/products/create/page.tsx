@@ -7,31 +7,15 @@ import { useState } from "react";
 type ProductType = "gemstone" | "rudraksha";
 
 const initialFormData = {
-  // ============================================================
-  // PRODUCT TYPE
-  // ============================================================
-
   productType: "gemstone" as ProductType,
-
-  // ============================================================
-  // BASIC INFORMATION
-  // ============================================================
-
   sku: "GEM-RUBY-001",
   name: "Ruby",
   indianName: "Manik",
   slug: "natural-ruby",
-
   description:
     "This natural Ruby (Manik) is sourced from Burma and is known for its deep red color, excellent transparency, and astrological significance. It is recommended for strengthening the Sun and is suitable for those seeking confidence, leadership, and success.",
-
   category: "Precious",
   subCategory: "Ruby",
-
-  // ============================================================
-  // MEDIA
-  // ============================================================
-
   gallery: [
     "/images/gemstones/ruby-1.webp",
     "/images/gemstones/ruby-2.webp",
@@ -39,11 +23,6 @@ const initialFormData = {
   ],
 
   videoUrl: "https://youtube.com/watch?v=example",
-
-  // ============================================================
-  // PRODUCT SPECIFICATIONS
-  // ============================================================
-
   specifications: {
     // Gemstone basic details
     color: "Pigeon Blood Red",
@@ -84,11 +63,6 @@ const initialFormData = {
       enhancement: "None",
     },
   },
-
-  // ============================================================
-  // ASTROLOGY
-  // ============================================================
-
   astrology: {
     planet: "Sun",
 
@@ -108,11 +82,6 @@ const initialFormData = {
 
     purificationMethod: "",
   },
-
-  // ============================================================
-  // CERTIFICATION
-  // ============================================================
-
   certification: {
     certified: true,
 
@@ -131,10 +100,6 @@ const initialFormData = {
     xrayVerified: false,
   },
 
-  // ============================================================
-  // INVENTORY
-  // ============================================================
-
   inventory: {
     stock: 12,
 
@@ -142,10 +107,6 @@ const initialFormData = {
 
     lowStockAlert: 3,
   },
-
-  // ============================================================
-  // PRICING
-  // ============================================================
 
   pricing: {
     currency: "INR",
@@ -163,10 +124,6 @@ const initialFormData = {
     taxClass: "",
   },
 
-  // ============================================================
-  // BENEFITS
-  // ============================================================
-
   benefits: [
     "Boosts confidence",
     "Enhances leadership qualities",
@@ -174,10 +131,6 @@ const initialFormData = {
     "Provides protection from negativity",
     "Attracts success and prosperity",
   ],
-
-  // ============================================================
-  // CARE INSTRUCTIONS
-  // ============================================================
 
   careInstructions: {
     cleaning: "Clean with lukewarm water and a soft cloth.",
@@ -187,20 +140,12 @@ const initialFormData = {
     precautions: "Avoid harsh chemicals and ultrasonic cleaners.",
   },
 
-  // ============================================================
-  // SEO
-  // ============================================================
-
   seo: {
     metaTitle: "Buy Natural Ruby (Manik) Online | Certified Gemstone",
 
     metaDescription:
       "Shop certified natural Ruby (Manik) gemstone with lab certification, free shipping, and best price in India.",
   },
-
-  // ============================================================
-  // STATUS
-  // ============================================================
 
   status: "Published" as "Draft" | "Published" | "Archived",
 };
@@ -212,14 +157,7 @@ export default function CreateProductPage() {
 
   const [formData, setFormData] = useState(initialFormData);
 
-  // ============================================================
-  // SUBMIT
-  // ============================================================
-
   const handleSubmit = async () => {
-    // ----------------------------------------------------------
-    // Validation
-    // ----------------------------------------------------------
 
     if (!formData.sku.trim()) {
       alert("SKU is required");
@@ -244,10 +182,6 @@ export default function CreateProductPage() {
     try {
       setLoading(true);
 
-      // --------------------------------------------------------
-      // Create Product
-      // --------------------------------------------------------
-
       const response = await fetch("/api/products", {
         method: "POST",
 
@@ -260,17 +194,9 @@ export default function CreateProductPage() {
 
       const data = await response.json();
 
-      // --------------------------------------------------------
-      // API Error
-      // --------------------------------------------------------
-
       if (!response.ok) {
         throw new Error(data.message || "Failed to create product");
       }
-
-      // --------------------------------------------------------
-      // Success
-      // --------------------------------------------------------
 
       console.log("Product created:", data);
 
@@ -289,10 +215,6 @@ export default function CreateProductPage() {
       setLoading(false);
     }
   };
-
-  // ============================================================
-  // UI
-  // ============================================================
 
   return (
     <main className="min-h-screen bg-gray-50">
