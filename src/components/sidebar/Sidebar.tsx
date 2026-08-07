@@ -36,8 +36,6 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: MdDashboard },
     { name: "Create Agent", href: "/agent", icon: MdPeople },
-    { name: "Gemstones", href: "/gemstones", icon: FaRegGem },
-    { name: "Rudraksha", href: "/rudraksha", icon: MdOutlineBrightnessHigh },
     { name: "Products", href: "/products", icon: MdOutlineBrightnessHigh },
   ];
 
