@@ -80,7 +80,7 @@ export default function ProductForm({
     <div className="w-full">
       <div className="mb-4 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">
             Add Product
           </h1>
 
@@ -938,7 +938,7 @@ export default function ProductForm({
           type="button"
           disabled={loading}
           onClick={() => window.history.back()}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <FaArrowLeft />
           Cancel
@@ -948,7 +948,7 @@ export default function ProductForm({
           type="button"
           disabled={loading}
           onClick={handleSubmit}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-black px-7 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <FaFloppyDisk />
 
@@ -959,21 +959,6 @@ export default function ProductForm({
   );
 }
 
-/* ========================================================================== */
-/* SECTION CARD                                                               */
-/* ========================================================================== */
-
-function SectionCard({ children }: { children: React.ReactNode }) {
-  return (
-    <section className="mb-6 rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="p-5 sm:p-6">{children}</div>
-    </section>
-  );
-}
-
-/* ========================================================================== */
-/* SECTION HEADER                                                             */
-/* ========================================================================== */
 
 function SectionHeader({
   icon,
@@ -991,7 +976,7 @@ function SectionHeader({
       </div>
 
       <div>
-        <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+        <h3 className="text-md font-bold text-gray-900">{title}</h3>
 
         {description && (
           <p className="mt-0.5 text-sm text-gray-500">{description}</p>
@@ -1000,10 +985,6 @@ function SectionHeader({
     </div>
   );
 }
-
-/* ========================================================================== */
-/* PRODUCT TYPE BUTTON                                                        */
-/* ========================================================================== */
 
 function ProductTypeButton({
   active,
@@ -1045,10 +1026,6 @@ function ProductTypeButton({
   );
 }
 
-/* ========================================================================== */
-/* INPUT                                                                      */
-/* ========================================================================== */
-
 function InputField({
   label,
   value,
@@ -1087,10 +1064,6 @@ function InputField({
   );
 }
 
-/* ========================================================================== */
-/* NUMBER INPUT                                                               */
-/* ========================================================================== */
-
 function NumberField({
   label,
   value,
@@ -1109,10 +1082,6 @@ function NumberField({
     />
   );
 }
-
-/* ========================================================================== */
-/* TEXTAREA                                                                   */
-/* ========================================================================== */
 
 function TextAreaField({
   label,
@@ -1148,10 +1117,6 @@ function TextAreaField({
   );
 }
 
-/* ========================================================================== */
-/* SELECT                                                                     */
-/* ========================================================================== */
-
 function SelectField({
   label,
   value,
@@ -1183,10 +1148,6 @@ function SelectField({
     </div>
   );
 }
-
-/* ========================================================================== */
-/* TOGGLE                                                                     */
-/* ========================================================================== */
 
 function ToggleField({
   label,
