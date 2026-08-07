@@ -38,6 +38,7 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
     { name: "Create Agent", href: "/agent", icon: MdPeople },
     { name: "Gemstones", href: "/gemstones", icon: FaRegGem },
     { name: "Rudraksha", href: "/rudraksha", icon: MdOutlineBrightnessHigh },
+    { name: "Products", href: "/products", icon: MdOutlineBrightnessHigh },
   ];
 
   const widthClass = isOpen ? "w-50" : "w-15";
