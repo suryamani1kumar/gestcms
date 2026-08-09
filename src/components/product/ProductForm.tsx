@@ -408,15 +408,6 @@ export default function ProductForm({
               />
 
               <InputField
-                label="Wear Time"
-                value={formData.astrology?.wearTime}
-                placeholder="Morning"
-                onChange={(value) =>
-                  updateNestedField("astrology", "wearTime", value)
-                }
-              />
-
-              <InputField
                 label="Wear Method"
                 value={formData.astrology?.wearMethod}
                 placeholder="Wear around neck"

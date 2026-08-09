@@ -220,22 +220,6 @@ export default function RudrakshaFields({
           />
 
           <InputField
-            label="Wear Time"
-            value={formData.astrology?.wearTime}
-            placeholder="Morning"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-                  wearTime: value,
-                },
-              }))
-            }
-          />
-
-          <InputField
             label="Wear Method"
             value={formData.astrology?.wearMethod}
             placeholder="Wear around neck"

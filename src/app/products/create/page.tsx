@@ -17,8 +17,6 @@ const initialFormData = {
   category: "Precious",
   subCategory: "Ruby",
   gallery: [],
-
-  videoUrl: "https://youtube.com/watch?v=example",
   specifications: {
     // Gemstone basic details
     color: "Pigeon Blood Red",
@@ -65,8 +63,6 @@ const initialFormData = {
     zodiacSigns: ["Leo", "Aries", "Scorpio"],
 
     wearDay: "Sunday",
-
-    wearTime: "",
 
     wearMethod: "",
 

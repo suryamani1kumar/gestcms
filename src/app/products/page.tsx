@@ -78,7 +78,7 @@ export default function Products() {
   const [showFilters, setShowFilters] = useState(false);
   const router = useRouter();
 
-  const fetchGemstones = async () => {
+  const fetchProducts = async () => {
     try {
       const res = await fetch("/api/products", {
         cache: "no-store",
@@ -97,7 +97,7 @@ export default function Products() {
   };
 
   useEffect(() => {
-    fetchGemstones();
+    fetchProducts();
   }, []);
 
   const handleEdit = (item: any) => {
@@ -122,7 +122,7 @@ export default function Products() {
         throw new Error(data.message || "Failed to update status");
       }
 
-      fetchGemstones();
+      fetchProducts();
     } catch (error) {
       console.error(error);
       alert("Failed to update status.");
@@ -141,7 +141,7 @@ export default function Products() {
         throw new Error(data.message || "Failed to duplicate gemstone");
       }
 
-      fetchGemstones();
+      fetchProducts();
     } catch (error) {
       console.error(error);
       alert("Failed to duplicate gemstone.");
@@ -166,7 +166,7 @@ export default function Products() {
         throw new Error(data.message || "Failed to delete gemstone");
       }
 
-      fetchGemstones();
+      fetchProducts();
     } catch (error) {
       console.error(error);
       alert("Failed to delete gemstone.");

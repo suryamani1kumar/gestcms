@@ -9,7 +9,6 @@ export interface IAstrology {
   planet?: string;
   zodiacSigns?: string[];
   wearDay?: string;
-  wearTime?: string;
   wearMethod?: string;
   finger?: string;
   metal?: string;
@@ -66,8 +65,6 @@ export interface IProduct extends Document {
 
   gallery: IGalleryImage[];
 
-  videoUrl?: string;
-
   category?: string;
   subCategory?: string;
 
@@ -106,11 +103,6 @@ const AstrologySchema = new Schema<IAstrology>(
     },
 
     wearDay: {
-      type: String,
-      trim: true,
-    },
-
-    wearTime: {
       type: String,
       trim: true,
     },
@@ -361,11 +353,6 @@ const ProductSchema = new Schema<IProduct>(
     gallery: {
       type: [GallerySchema],
       default: [],
-    },
-
-    videoUrl: {
-      type: String,
-      trim: true,
     },
 
     category: {
