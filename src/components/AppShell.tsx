@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
+
 import Header from "@/components/header/Header";
 import Sidebar from "@/components/sidebar/Sidebar";
 
@@ -11,7 +12,10 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
-  const ishidden = ["/login"].some((route) => route === pathname);
+
+  const isHidden = ["/login"].some(
+    (route) => route === pathname
+  );
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -19,23 +23,48 @@ export default function AppShell({ children }: AppShellProps) {
     setIsSidebarOpen((prev) => !prev);
   };
 
-  if (ishidden) {
+  if (isHidden) {
     return <>{children}</>;
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-[#f8f7f4]">
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
+
       <Sidebar isOpen={isSidebarOpen} />
 
-      <div
-        className={`content-wrapper flex flex-col min-h-screen transition-all duration-300 ${
-          isSidebarOpen ? "lg:ml-50" : "lg:ml-15"
-        }`}
-      >
-        <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+      {/* =====================================================
+          MAIN APPLICATION AREA
+      ====================================================== */}
 
-        <main className="flex-1 bg-slate-50 overflow-auto">{children}</main>
+      <div
+        className={`
+          min-h-screen
+          transition-all
+          duration-300
+          ease-in-out
+          ${isSidebarOpen ? "ml-[250px]" : "ml-[64px]"}
+        `}
+      >
+        {/* =================================================
+            HEADER
+        ================================================== */}
+
+        <Header
+          onToggleSidebar={toggleSidebar}
+          isSidebarOpen={isSidebarOpen}
+        />
+
+        {/* =================================================
+            PAGE CONTENT
+        ================================================== */}
+
+        <main className="min-h-[calc(100vh-52px)] bg-[#f8f7f4]">
+          {children}
+        </main>
       </div>
-    </>
+    </div>
   );
 }

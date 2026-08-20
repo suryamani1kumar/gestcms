@@ -1,14 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+
 import {
   MdDashboard,
+  MdShoppingCart,
   MdPeople,
-  MdLogout,
-  MdOutlineBrightnessHigh,
+  MdInventory2,
+  MdSell,
+  MdBusiness,
+  MdPayments,
+  MdLocalOffer,
+  MdBarChart,
+  MdWeb,
+  MdSettings,
+  MdExpandMore,
+  MdExpandLess,
+  MdCardGiftcard,
+  MdDiamond,
+  MdGroup,
 } from "react-icons/md";
-import { FaRegGem } from "react-icons/fa";
+
+import { FaGem } from "react-icons/fa";
+
 import { useAuth } from "../AuthContext";
 
 interface SidebarProps {
@@ -17,93 +33,613 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen = true }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const { user } = useAuth();
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`/api/auth/logout`, {
-        method: "GET",
-        credentials: "include",
-      });
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      router.push("/login");
+  // Scrollbar visibility
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Menu states
+  const [productsOpen, setProductsOpen] = useState(true);
+  const [gemstoneOpen, setGemstoneOpen] = useState(true);
+  const [crmOpen, setCrmOpen] = useState(true);
+
+  const handleScroll = () => {
+    setIsScrolling(true);
+
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current);
     }
+
+    scrollTimeout.current = setTimeout(() => {
+      setIsScrolling(false);
+    }, 800);
   };
 
-  const navItems = [
-    { name: "Dashboard", href: "/dashboard", icon: MdDashboard },
-    { name: "Create Agent", href: "/agent", icon: MdPeople },
-    { name: "Products", href: "/products", icon: MdOutlineBrightnessHigh },
-  ];
+  useEffect(() => {
+    return () => {
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+    };
+  }, []);
 
-  const widthClass = isOpen ? "w-50" : "w-15";
+  const isActive = (href: string) => {
+    return pathname === href;
+  };
 
   return (
-    <>
-      <aside
-        className={`fixed left-0 top-0 h-screen ${widthClass} border-r border-slate-200 bg-slate-900 text-white overflow-y-auto pb-3 transition-all duration-300 ease-in-out flex flex-col justify-between`}
+    <aside
+      className={`
+        fixed
+        left-0
+        top-0
+        z-50
+        flex
+        h-screen
+        flex-col
+        overflow-hidden
+        border-r
+        border-[#1b2430]
+        bg-[#080e17]
+        text-white
+        transition-all
+        duration-300
+        ease-in-out
+        ${isOpen ? "w-[250px]" : "w-[64px]"}
+      `}
+    >
+      {/* =====================================================
+          LOGO
+      ====================================================== */}
+
+      <div
+        className={`
+          flex
+          h-[64px]
+          shrink-0
+          items-center
+          ${isOpen ? "px-5" : "justify-center"}
+        `}
       >
-        <div>
-          <div className="px-3 py-4">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded bg-indigo-500 flex items-center justify-center text-sm font-bold">
-                B
-              </div>
-              {isOpen && user && (
-                <div>
-                  <h2 className="text-lg font-bold">Gemstone Crm</h2>
-                  <p className="text-xs text-slate-400">
-                    {user.name}
-                    <br />
-                    {user.role
-                      ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
-                      : ""}
-                  </p>
-                </div>
-              )}
-            </div>
+        <div className="flex items-center">
+          {/* Diamond Logo */}
+          <div className="relative flex h-[38px] w-[38px] items-center justify-center">
+            <FaGem className="text-[30px] text-[#d6a847]" />
           </div>
 
-          <nav className="space-y-2 px-2 py-6">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              if (user?.role === "agent" && item.name === "Create Agent") {
-                return null;
-              }
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center ${isOpen ? "justify-start" : "justify-center"} gap-3 rounded-lg px-2 py-2 text-sm font-medium transition ${
-                    isActive
-                      ? "bg-indigo-600 text-white border-l-4 border-indigo-400" +
-                        (isOpen ? " pl-3" : "")
-                      : "text-slate-300 hover:bg-slate-800"
-                  }`}
-                >
-                  {item.icon && <item.icon className="text-lg" />}
-                  {isOpen && <span>{item.name}</span>}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+          {/* Brand */}
+          {isOpen && (
+            <div className="ml-2 leading-none">
+              <h1
+                className="
+                  font-serif
+                  text-[19px]
+                  font-medium
+                  tracking-[2px]
+                  text-[#d6a847]
+                "
+              >
+                LUXORA
+              </h1>
 
-        <div className="px-2">
-          <button
-            onClick={handleLogout}
-            className={`w-full flex items-center ${
-              isOpen ? "justify-start" : "justify-center"
-            } gap-3 rounded-lg px-2 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 transition`}
-          >
-            <MdLogout className="text-lg" />
-            {isOpen && <span>Logout</span>}
-          </button>
+              <p
+                className="
+                  mt-[5px]
+                  text-[7px]
+                  font-semibold
+                  tracking-[2.5px]
+                  text-[#d6a847]
+                "
+              >
+                JEWELLERY CRM
+              </p>
+            </div>
+          )}
         </div>
-      </aside>
-    </>
+      </div>
+
+      {/* =====================================================
+          MENU SCROLL AREA
+      ====================================================== */}
+
+      <div
+        onScroll={handleScroll}
+        className={`
+          sidebar-scroll
+          flex-1
+          overflow-y-auto
+          px-2
+          py-2
+          ${isScrolling ? "scrolling" : ""}
+        `}
+      >
+        {/* =================================================
+            DASHBOARD
+        ================================================== */}
+
+        <SidebarItem
+          href="/dashboard"
+          icon={<MdDashboard />}
+          label="Dashboard"
+          active={isActive("/dashboard")}
+          isOpen={isOpen}
+        />
+
+        {/* =================================================
+            ORDERS
+        ================================================== */}
+
+        <SidebarItem
+          href="/orders"
+          icon={<MdShoppingCart />}
+          label="Orders"
+          active={isActive("/orders")}
+          isOpen={isOpen}
+        />
+
+        {/* =================================================
+            CUSTOMERS
+        ================================================== */}
+
+        <SidebarItem
+          href="/customers"
+          icon={<MdPeople />}
+          label="Customers"
+          active={isActive("/customers")}
+          isOpen={isOpen}
+        />
+
+        {/* =================================================
+            PRODUCTS
+        ================================================== */}
+
+        <SidebarGroup
+          label="Products"
+          icon={<MdCardGiftcard />}
+          isOpen={isOpen}
+          expanded={productsOpen}
+          onClick={() => setProductsOpen(!productsOpen)}
+        >
+          <SidebarSubItem
+            href="/products/jewellery"
+            label="Jewellery"
+            active={isActive("/products/jewellery")}
+          />
+
+          <SidebarSubItem
+            href="/products/gemstones"
+            label="Gemstones"
+            active={isActive("/products/gemstones")}
+          />
+
+          <SidebarSubItem
+            href="/products/collections"
+            label="Collections"
+            active={isActive("/products/collections")}
+          />
+        </SidebarGroup>
+
+        {/* =================================================
+            INVENTORY
+        ================================================== */}
+
+        <SidebarItem
+          href="/inventory"
+          icon={<MdInventory2 />}
+          label="Inventory"
+          active={isActive("/inventory")}
+          isOpen={isOpen}
+          hasArrow
+        />
+
+        {/* =================================================
+            GEMSTONE MANAGEMENT
+        ================================================== */}
+
+        <SidebarGroup
+          label="Gemstone Management"
+          icon={<MdDiamond />}
+          isOpen={isOpen}
+          expanded={gemstoneOpen}
+          onClick={() => setGemstoneOpen(!gemstoneOpen)}
+        >
+          <SidebarSubItem
+            href="/gemstone-management/loose-stones"
+            label="Loose Stones"
+            active={isActive("/gemstone-management/loose-stones")}
+          />
+
+          <SidebarSubItem
+            href="/gemstone-management/certificates"
+            label="Certificates"
+            active={isActive("/gemstone-management/certificates")}
+          />
+
+          <SidebarSubItem
+            href="/gemstone-management/inventory"
+            label="Stone Inventory"
+            active={isActive("/gemstone-management/inventory")}
+          />
+        </SidebarGroup>
+
+        {/* =================================================
+            SALES
+        ================================================== */}
+
+        <SidebarItem
+          href="/sales"
+          icon={<MdSell />}
+          label="Sales"
+          active={isActive("/sales")}
+          isOpen={isOpen}
+        />
+
+        {/* =================================================
+            CRM
+        ================================================== */}
+
+        <SidebarGroup
+          label="CRM"
+          icon={<MdGroup />}
+          isOpen={isOpen}
+          expanded={crmOpen}
+          onClick={() => setCrmOpen(!crmOpen)}
+        >
+          <SidebarSubItem
+            href="/crm/leads"
+            label="Leads"
+            active={isActive("/crm/leads")}
+          />
+
+          <SidebarSubItem
+            href="/crm/follow-ups"
+            label="Follow-ups"
+            active={isActive("/crm/follow-ups")}
+          />
+
+          <SidebarSubItem
+            href="/crm/customer-groups"
+            label="Customer Groups"
+            active={isActive("/crm/customer-groups")}
+          />
+        </SidebarGroup>
+
+        {/* =================================================
+            PAYMENTS
+        ================================================== */}
+
+        <SidebarItem
+          href="/payments"
+          icon={<MdPayments />}
+          label="Payments"
+          active={isActive("/payments")}
+          isOpen={isOpen}
+        />
+
+        {/* =================================================
+            OFFERS
+        ================================================== */}
+
+        <SidebarItem
+          href="/offers"
+          icon={<MdLocalOffer />}
+          label="Offers & Coupons"
+          active={isActive("/offers")}
+          isOpen={isOpen}
+        />
+
+        {/* =================================================
+            REPORTS
+        ================================================== */}
+
+        <SidebarItem
+          href="/reports"
+          icon={<MdBarChart />}
+          label="Reports & Analytics"
+          active={isActive("/reports")}
+          isOpen={isOpen}
+        />
+      </div>
+
+      {/* =====================================================
+          PREMIUM COLLECTION CARD
+      ====================================================== */}
+
+      {isOpen && (
+        <div className="shrink-0 px-2 pb-3">
+          <div
+            className="
+              relative
+              overflow-hidden
+              rounded-[4px]
+              border
+              border-[#5c4923]
+              bg-[#0b111a]
+            "
+          >
+            {/* Background Image */}
+            <div
+              className="
+                absolute
+                inset-0
+                bg-cover
+                bg-center
+                opacity-[0.28]
+              "
+              style={{
+                backgroundImage: "url('/images/diamond-sidebar.jpg')",
+              }}
+            />
+
+            {/* Dark Overlay */}
+            <div
+              className="
+                absolute
+                inset-0
+                bg-gradient-to-t
+                from-[#080e17]
+                via-transparent
+                to-transparent
+              "
+            />
+
+            {/* Card Content */}
+            <div className="relative z-10 px-3 py-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p
+                    className="
+                      font-serif
+                      text-[17px]
+                      italic
+                      leading-[18px]
+                      text-white
+                    "
+                  >
+                    Premium
+                  </p>
+
+                  <p
+                    className="
+                      font-serif
+                      text-[17px]
+                      italic
+                      leading-[18px]
+                      text-white
+                    "
+                  >
+                    Collection
+                  </p>
+                </div>
+
+                <FaGem className="mt-1 text-[30px] text-white/70" />
+              </div>
+
+              <p
+                className="
+                  mt-5
+                  text-[10px]
+                  leading-4
+                  text-gray-300
+                "
+              >
+                Explore our exclusive
+                <br />
+                diamond collection
+              </p>
+
+              <Link
+                href="/products"
+                className="
+                  mt-3
+                  flex
+                  h-[29px]
+                  items-center
+                  justify-center
+                  rounded-[3px]
+                  border
+                  border-[#80672d]
+                  bg-[#111923]
+                  text-[10px]
+                  font-medium
+                  text-white
+                  transition
+                  duration-200
+                  hover:bg-[#d6a847]
+                  hover:text-[#080e17]
+                "
+              >
+                View Collection
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </aside>
+  );
+}
+
+/* ============================================================
+   SIDEBAR ITEM
+============================================================ */
+
+interface SidebarItemProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+  isOpen: boolean;
+  hasArrow?: boolean;
+}
+
+function SidebarItem({
+  href,
+  icon,
+  label,
+  active = false,
+  isOpen,
+  hasArrow = false,
+}: SidebarItemProps) {
+  return (
+    <Link
+      href={href}
+      title={!isOpen ? label : undefined}
+      className={`
+        group
+        mb-[2px]
+        flex
+        h-[32px]
+        items-center
+        rounded-[4px]
+        text-[11px]
+        transition-all
+        duration-200
+
+        ${isOpen ? "gap-3 px-2" : "justify-center"}
+
+        ${
+          active
+            ? "bg-[#3d3a35] text-white"
+            : "text-[#c3c6cb] hover:bg-[#151d28] hover:text-white"
+        }
+      `}
+    >
+      {/* Icon */}
+      <span
+        className={`
+          shrink-0
+          text-[15px]
+          transition-colors
+
+          ${active ? "text-white" : "text-[#b8bdc3] group-hover:text-[#d6a847]"}
+        `}
+      >
+        {icon}
+      </span>
+
+      {/* Label */}
+      {isOpen && <span className="flex-1 whitespace-nowrap">{label}</span>}
+
+      {/* Arrow */}
+      {isOpen && hasArrow && (
+        <MdExpandMore className="text-[15px] text-[#aeb4bb]" />
+      )}
+    </Link>
+  );
+}
+
+/* ============================================================
+   SIDEBAR GROUP
+============================================================ */
+
+interface SidebarGroupProps {
+  label: string;
+  icon: React.ReactNode;
+  isOpen: boolean;
+  expanded: boolean;
+  onClick: () => void;
+  children?: React.ReactNode;
+}
+
+function SidebarGroup({
+  label,
+  icon,
+  isOpen,
+  expanded,
+  onClick,
+  children,
+}: SidebarGroupProps) {
+  return (
+    <div className="mb-[2px]">
+      {/* Group Header */}
+      <button
+        type="button"
+        onClick={onClick}
+        title={!isOpen ? label : undefined}
+        className={`
+          group
+          flex
+          h-[32px]
+          w-full
+          items-center
+          rounded-[4px]
+          text-left
+          text-[11px]
+          text-[#c3c6cb]
+          transition
+          hover:bg-[#151d28]
+          hover:text-white
+
+          ${isOpen ? "gap-3 px-2" : "justify-center"}
+        `}
+      >
+        {/* Icon */}
+        <span
+          className="
+            shrink-0
+            text-[15px]
+            text-[#b8bdc3]
+            transition-colors
+            group-hover:text-[#d6a847]
+          "
+        >
+          {icon}
+        </span>
+
+        {isOpen && (
+          <>
+            {/* Label */}
+            <span className="flex-1 whitespace-nowrap">{label}</span>
+
+            {/* Chevron */}
+            {expanded ? (
+              <MdExpandLess className="text-[15px] text-[#aeb4bb]" />
+            ) : (
+              <MdExpandMore className="text-[15px] text-[#aeb4bb]" />
+            )}
+          </>
+        )}
+      </button>
+
+      {/* Children */}
+      {isOpen && expanded && <div className="ml-[28px]">{children}</div>}
+    </div>
+  );
+}
+
+/* ============================================================
+   SIDEBAR SUB ITEM
+============================================================ */
+
+interface SidebarSubItemProps {
+  href: string;
+  label: string;
+  active?: boolean;
+}
+
+function SidebarSubItem({ href, label, active = false }: SidebarSubItemProps) {
+  return (
+    <Link
+      href={href}
+      className={`
+        flex
+        h-[26px]
+        items-center
+        rounded-[3px]
+        pl-1
+        text-[10px]
+        transition-colors
+
+        ${
+          active
+            ? "font-medium text-[#d6a847]"
+            : "text-[#b7bbc1] hover:text-white"
+        }
+      `}
+    >
+      {label}
+    </Link>
   );
 }
