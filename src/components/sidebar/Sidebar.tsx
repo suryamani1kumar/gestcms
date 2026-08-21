@@ -26,6 +26,7 @@ import {
 import { FaGem } from "react-icons/fa";
 
 import { useAuth } from "../AuthContext";
+import { HiUsers } from "react-icons/hi";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -190,6 +191,26 @@ export default function Sidebar({ isOpen = true }: SidebarProps) {
           active={isActive("/customers")}
           isOpen={isOpen}
         />
+
+        <SidebarGroup
+          label="Users"
+          icon={<HiUsers  />}
+          isOpen={isOpen}
+          expanded={productsOpen}
+          onClick={() => setProductsOpen(!productsOpen)}
+        >
+          <SidebarSubItem
+            href="/users"
+            label="User"
+            active={isActive("/user")}
+          />
+
+          <SidebarSubItem
+            href="/users/roles"
+            label="Roles & Permissions"
+            active={isActive("/user/roles")}
+          />
+        </SidebarGroup>
 
         {/* =================================================
             PRODUCTS

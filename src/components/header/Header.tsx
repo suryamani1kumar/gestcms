@@ -43,36 +43,14 @@ export default function Header({
   };
 
   return (
-    <header
-      className="
-        sticky
-        top-0
-        z-40
-        h-[52px]
-        border-b
-        border-[#e8e5df]
-        bg-white
-      "
-    >
+    <header className="sticky top-0 z-40 h-[52px] border-b border-[#e8e5df] bg-white">
       <div className="flex h-full items-center justify-between px-3">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {/* Sidebar Toggle */}
           <button
             type="button"
             onClick={onToggleSidebar}
-            className="
-              flex
-              h-[32px]
-              w-[32px]
-              shrink-0
-              items-center
-              justify-center
-              rounded-[4px]
-              text-[#555b62]
-              transition
-              hover:bg-[#f5f3ef]
-              hover:text-[#222]
-            "
+            className=" flex cursor-pointer h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[4px] text-[#555b62] transition hover:bg-[#f5f3ef] hover:text-[#222] "
             aria-label={isSidebarOpen ? "Hide sidebar" : "Show sidebar"}
           >
             {isSidebarOpen ? (
@@ -87,23 +65,7 @@ export default function Header({
             <input
               type="text"
               placeholder="Search customers, orders, products..."
-              className="
-                h-[31px]
-                w-full
-                rounded-[4px]
-                border
-                border-[#e5e1da]
-                bg-white
-                px-3
-                pr-9
-                text-[10px]
-                text-[#333]
-                outline-none
-                placeholder:text-[#96999d]
-                focus:border-[#c9a45c]
-                focus:ring-1
-                focus:ring-[#c9a45c]/20
-              "
+              className=" h-[31px] w-full rounded-[4px] border border-[#e5e1da] bg-white px-3 pr-9 text-[10px] text-[#333] outline-none placeholder:text-[#96999d] focus:border-[#c9a45c] focus:ring-1 focus:ring-[#c9a45c]/20"
             />
 
             <MdSearch
@@ -203,7 +165,7 @@ export default function Header({
             <button
               type="button"
               onClick={() => setProfileOpen(!profileOpen)}
-              className="
+              className="cursor-pointer
                 flex
                 h-[36px]
                 items-center
@@ -310,16 +272,7 @@ export default function Header({
                     setProfileOpen(false);
                     router.push("/profile");
                   }}
-                  className="
-      flex
-      w-full
-      px-3
-      py-2
-      text-left
-      text-[10px]
-      text-[#444]
-      hover:bg-[#f7f4ee]
-    "
+                  className="cursor-pointer flex w-full px-3 py-2 text-left text-[10px] text-[#444] hover:bg-[#f7f4ee] "
                 >
                   My Profile
                 </button>
@@ -331,16 +284,7 @@ export default function Header({
                     setProfileOpen(false);
                     router.push("/settings");
                   }}
-                  className="
-      flex
-      w-full
-      px-3
-      py-2
-      text-left
-      text-[10px]
-      text-[#444]
-      hover:bg-[#f7f4ee]
-    "
+                  className="cursor-pointer flex w-full px-3 py-2 text-left text-[10px] text-[#444] hover:bg-[#f7f4ee] "
                 >
                   Account Settings
                 </button>
@@ -351,19 +295,7 @@ export default function Header({
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="
-      flex
-      w-full
-      items-center
-      gap-2
-      px-3
-      py-2
-      text-left
-      text-[10px]
-      font-medium
-      text-red-500
-      hover:bg-red-50
-    "
+                  className="cursor-pointer flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] font-medium text-red-500 hover:bg-red-50 "
                 >
                   <MdLogout className="text-[14px]" />
                   Logout
