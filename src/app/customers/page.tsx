@@ -1,5 +1,7 @@
 "use client";
 
+import PageHeader from "@/components/pageheader/PageHeader";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 import {
@@ -16,10 +18,7 @@ import {
   FiUserX,
 } from "react-icons/fi";
 
-import {
-  HiOutlineUserGroup,
-  HiOutlineSparkles,
-} from "react-icons/hi2";
+import { HiOutlineUserGroup, HiOutlineSparkles } from "react-icons/hi2";
 
 /* =========================================================
    TYPES
@@ -53,8 +52,7 @@ const customers: Customer[] = [
     spent: "₹4,25,600",
     type: "VIP",
     status: "Active",
-    avatar:
-      "https://i.pravatar.cc/100?img=12",
+    avatar: "https://i.pravatar.cc/100?img=12",
   },
   {
     id: "CUST00126",
@@ -66,8 +64,7 @@ const customers: Customer[] = [
     spent: "₹2,85,400",
     type: "Regular",
     status: "Active",
-    avatar:
-      "https://i.pravatar.cc/100?img=47",
+    avatar: "https://i.pravatar.cc/100?img=47",
   },
   {
     id: "CUST00127",
@@ -79,8 +76,7 @@ const customers: Customer[] = [
     spent: "₹1,95,200",
     type: "VIP",
     status: "Active",
-    avatar:
-      "https://i.pravatar.cc/100?img=11",
+    avatar: "https://i.pravatar.cc/100?img=11",
   },
   {
     id: "CUST00128",
@@ -92,8 +88,7 @@ const customers: Customer[] = [
     spent: "₹1,45,300",
     type: "Regular",
     status: "Active",
-    avatar:
-      "https://i.pravatar.cc/100?img=44",
+    avatar: "https://i.pravatar.cc/100?img=44",
   },
   {
     id: "CUST00129",
@@ -105,8 +100,7 @@ const customers: Customer[] = [
     spent: "₹98,600",
     type: "Regular",
     status: "Inactive",
-    avatar:
-      "https://i.pravatar.cc/100?img=68",
+    avatar: "https://i.pravatar.cc/100?img=68",
   },
   {
     id: "CUST00130",
@@ -118,8 +112,7 @@ const customers: Customer[] = [
     spent: "₹76,400",
     type: "New",
     status: "Active",
-    avatar:
-      "https://i.pravatar.cc/100?img=32",
+    avatar: "https://i.pravatar.cc/100?img=32",
   },
 ];
 
@@ -174,9 +167,7 @@ const Card = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={`rounded-lg border border-slate-200 bg-white ${className}`}
-    >
+    <div className={`rounded-lg border border-slate-200 bg-white ${className}`}>
       {children}
     </div>
   );
@@ -204,7 +195,6 @@ const StatCard = ({
   return (
     <Card className="h-[62px] px-3 py-2">
       <div className="flex h-full items-center gap-2.5">
-
         <div
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[15px] ${iconBg} ${iconColor}`}
         >
@@ -212,22 +202,17 @@ const StatCard = ({
         </div>
 
         <div className="min-w-0">
-          <p className="text-[7px] font-medium text-slate-600">
-            {title}
-          </p>
+          <p className="text-[7px] font-medium text-slate-600">{title}</p>
 
           <p className="mt-0.5 text-[14px] font-bold leading-none text-slate-800">
             {value}
           </p>
 
           <p className="mt-1 text-[6px] text-slate-400">
-            <span className="font-semibold text-emerald-500">
-              ↑ {change}
-            </span>{" "}
+            <span className="font-semibold text-emerald-500">↑ {change}</span>{" "}
             vs last month
           </p>
         </div>
-
       </div>
     </Card>
   );
@@ -237,11 +222,7 @@ const StatCard = ({
    CUSTOMER TYPE BADGE
 ========================================================= */
 
-const CustomerType = ({
-  type,
-}: {
-  type: Customer["type"];
-}) => {
+const CustomerType = ({ type }: { type: Customer["type"] }) => {
   const styles = {
     VIP: "bg-red-50 text-red-500",
     Regular: "bg-slate-50 text-slate-500 border border-slate-200",
@@ -261,11 +242,7 @@ const CustomerType = ({
    STATUS
 ========================================================= */
 
-const StatusBadge = ({
-  status,
-}: {
-  status: Customer["status"];
-}) => {
+const StatusBadge = ({ status }: { status: Customer["status"] }) => {
   if (status === "Active") {
     return (
       <span className="inline-flex rounded bg-emerald-50 px-1.5 py-[2px] text-[6px] font-medium text-emerald-500">
@@ -285,19 +262,13 @@ const StatusBadge = ({
    CUSTOMER TABLE
 ========================================================= */
 
-const CustomerTable = ({
-  data,
-}: {
-  data: Customer[];
-}) => {
+const CustomerTable = ({ data }: { data: Customer[] }) => {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[850px]">
-
         {/* TABLE HEADER */}
         <thead>
           <tr className="border-y border-slate-100 bg-[#fcfcfc]">
-
             <th className="w-8 px-3 py-2 text-center text-[6px] font-medium text-slate-500">
               #
             </th>
@@ -333,19 +304,16 @@ const CustomerTable = ({
             <th className="px-3 py-2 text-center text-[6px] font-medium text-slate-500">
               Action
             </th>
-
           </tr>
         </thead>
 
         {/* TABLE BODY */}
         <tbody>
-
           {data.map((customer, index) => (
             <tr
               key={customer.id}
               className="border-b border-slate-50 transition hover:bg-slate-50/50"
             >
-
               {/* NUMBER */}
               <td className="px-3 py-2 text-center text-[7px] text-slate-500">
                 {index + 1}
@@ -354,7 +322,6 @@ const CustomerTable = ({
               {/* CUSTOMER */}
               <td className="px-2 py-2">
                 <div className="flex items-center gap-2">
-
                   <img
                     src={customer.avatar}
                     alt={customer.name}
@@ -370,16 +337,13 @@ const CustomerTable = ({
                       {customer.id}
                     </p>
                   </div>
-
                 </div>
               </td>
 
               {/* CONTACT */}
               <td className="px-2 py-2">
                 <div>
-                  <p className="text-[6px] text-slate-600">
-                    {customer.phone}
-                  </p>
+                  <p className="text-[6px] text-slate-600">{customer.phone}</p>
 
                   <p className="mt-0.5 max-w-[130px] truncate text-[6px] text-slate-400">
                     {customer.email}
@@ -393,9 +357,7 @@ const CustomerTable = ({
                   {customer.location}
                 </p>
 
-                <p className="text-[6px] text-slate-400">
-                  India
-                </p>
+                <p className="text-[6px] text-slate-400">India</p>
               </td>
 
               {/* ORDERS */}
@@ -424,10 +386,8 @@ const CustomerTable = ({
                   <FiMoreVertical className="text-[11px]" />
                 </button>
               </td>
-
             </tr>
           ))}
-
         </tbody>
       </table>
     </div>
@@ -443,13 +403,11 @@ const Pagination = () => {
 
   return (
     <div className="flex flex-col gap-2 border-t border-slate-100 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-
       <p className="text-[6px] text-slate-400">
         Showing 1 to 10 of 8,542 results
       </p>
 
       <div className="flex items-center gap-1">
-
         <button
           disabled={page === 1}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -472,9 +430,7 @@ const Pagination = () => {
           </button>
         ))}
 
-        <span className="px-1 text-[7px] text-slate-400">
-          ...
-        </span>
+        <span className="px-1 text-[7px] text-slate-400">...</span>
 
         <button
           onClick={() => setPage(855)}
@@ -498,9 +454,7 @@ const Pagination = () => {
           10 / page
           <FiChevronDown className="text-[8px]" />
         </button>
-
       </div>
-
     </div>
   );
 };
@@ -512,18 +466,12 @@ const Pagination = () => {
 const Customers = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
-
+  const router = useRouter();
   const filteredCustomers = customers.filter((customer) => {
     const matchesSearch =
-      customer.name
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      customer.email
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      customer.phone
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      customer.name.toLowerCase().includes(search.toLowerCase()) ||
+      customer.email.toLowerCase().includes(search.toLowerCase()) ||
+      customer.phone.toLowerCase().includes(search.toLowerCase());
 
     const matchesFilter =
       filter === "All" ||
@@ -535,38 +483,22 @@ const Customers = () => {
 
   return (
     <div className="min-h-screen bg-[#fafafa] p-2.5 text-slate-800">
-
       <div className="mx-auto max-w-[1500px]">
-
-        {/* =================================================
-            PAGE HEADER
-        ================================================== */}
-
-        <header className="mb-2.5">
-
-          <h1 className="text-[17px] font-bold tracking-tight text-slate-900">
-            Customers
-          </h1>
-
-          <p className="mt-0.5 text-[8px] text-slate-500">
-            Manage your customers and relationships.
-          </p>
-
-        </header>
+        <PageHeader
+          title="Customers"
+          description="Manage your customers and their information."
+          buttonText="Add Customer"
+          onButtonClick={() => router.push("/customers/create")}
+        />
 
         {/* =================================================
             STAT CARDS
         ================================================== */}
 
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-
           {stats.map((stat) => (
-            <StatCard
-              key={stat.title}
-              {...stat}
-            />
+            <StatCard key={stat.title} {...stat} />
           ))}
-
         </div>
 
         {/* =================================================
@@ -574,17 +506,14 @@ const Customers = () => {
         ================================================== */}
 
         <Card className="mt-2.5 overflow-hidden">
-
           {/* ===============================================
               TOOLBAR
           ================================================ */}
 
           <div className="flex flex-col gap-2 border-b border-slate-100 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-
             {/* SEARCH */}
 
             <div className="relative w-full sm:w-[180px]">
-
               <FiSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400" />
 
               <input
@@ -594,13 +523,11 @@ const Customers = () => {
                 placeholder="Search customers..."
                 className="h-7 w-full rounded border border-slate-200 bg-white pl-7 pr-2 text-[7px] text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d4a04b]"
               />
-
             </div>
 
             {/* FILTER */}
 
             <div className="relative">
-
               <button
                 onClick={() =>
                   setFilter(
@@ -616,20 +543,15 @@ const Customers = () => {
                 className="flex h-7 items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 text-[7px] text-slate-600 hover:bg-slate-50"
               >
                 <FiFilter className="text-[9px]" />
-
                 Filter
-
                 {filter !== "All" && (
                   <span className="font-semibold text-[#c58a2c]">
                     ({filter})
                   </span>
                 )}
-
                 <FiChevronDown className="ml-0.5 text-[8px]" />
               </button>
-
             </div>
-
           </div>
 
           {/* ===============================================
@@ -643,11 +565,8 @@ const Customers = () => {
           ================================================ */}
 
           <Pagination />
-
         </Card>
-
       </div>
-
     </div>
   );
 };

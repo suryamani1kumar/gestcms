@@ -1,10 +1,9 @@
 "use client";
 
+import PageHeader from "@/components/pageheader/PageHeader";
 import React, { useMemo, useState } from "react";
 import {
   FiPlus,
-  FiFilter,
-  FiDownload,
   FiSearch,
   FiMoreVertical,
   FiChevronLeft,
@@ -14,16 +13,7 @@ import {
   FiUserX,
   FiShield,
   FiUserPlus,
-  FiSettings,
-  FiUpload,
-  FiActivity,
-  FiCheck,
-  FiUsers,
 } from "react-icons/fi";
-
-/* =========================================================
-   TYPES
-========================================================= */
 
 type User = {
   id: number;
@@ -31,7 +21,6 @@ type User = {
   username: string;
   email: string;
   role: string;
-  department: string;
   status: "Active" | "Inactive";
   lastLogin: string;
   lastLoginTime: string;
@@ -45,10 +34,6 @@ type Role = {
   color: string;
 };
 
-/* =========================================================
-   DATA
-========================================================= */
-
 const users: User[] = [
   {
     id: 1,
@@ -56,7 +41,6 @@ const users: User[] = [
     username: "@nehakapoor",
     email: "neha.kapoor@luxora.com",
     role: "Administrator",
-    department: "IT Department",
     status: "Active",
     lastLogin: "17 May 2025",
     lastLoginTime: "10:30 AM",
@@ -69,7 +53,6 @@ const users: User[] = [
     username: "@rahulverma",
     email: "rahul.verma@luxora.com",
     role: "Manager",
-    department: "Sales Department",
     status: "Active",
     lastLogin: "17 May 2025",
     lastLoginTime: "09:15 AM",
@@ -82,7 +65,6 @@ const users: User[] = [
     username: "@priyasharma",
     email: "priya.sharma@luxora.com",
     role: "Sales Executive",
-    department: "Sales Department",
     status: "Active",
     lastLogin: "17 May 2025",
     lastLoginTime: "08:45 AM",
@@ -95,7 +77,6 @@ const users: User[] = [
     username: "@amitsingh",
     email: "amit.singh@luxora.com",
     role: "Support Agent",
-    department: "Support Department",
     status: "Active",
     lastLogin: "16 May 2025",
     lastLoginTime: "05:30 PM",
@@ -108,7 +89,6 @@ const users: User[] = [
     username: "@kavyapatel",
     email: "kavya.patel@luxora.com",
     role: "Accountant",
-    department: "Finance Department",
     status: "Active",
     lastLogin: "16 May 2025",
     lastLoginTime: "04:20 PM",
@@ -121,7 +101,6 @@ const users: User[] = [
     username: "@arjunmehta",
     email: "arjun.mehta@luxora.com",
     role: "Manager",
-    department: "Operations",
     status: "Active",
     lastLogin: "16 May 2025",
     lastLoginTime: "02:15 PM",
@@ -134,7 +113,6 @@ const users: User[] = [
     username: "@ananyarao",
     email: "ananya.rao@luxora.com",
     role: "Sales Executive",
-    department: "Sales Department",
     status: "Inactive",
     lastLogin: "14 May 2025",
     lastLoginTime: "11:10 AM",
@@ -142,10 +120,6 @@ const users: User[] = [
     avatar: "https://i.pravatar.cc/80?img=48",
   },
 ];
-
-/* =========================================================
-   ROLE DATA
-========================================================= */
 
 const roles: Role[] = [
   {
@@ -180,10 +154,6 @@ const roles: Role[] = [
   },
 ];
 
-/* =========================================================
-   CARD
-========================================================= */
-
 const Card = ({
   children,
   className = "",
@@ -200,26 +170,18 @@ const Card = ({
   );
 };
 
-/* =========================================================
-   STAT CARD
-========================================================= */
-
 const StatCard = ({
   icon: Icon,
   title,
   value,
-  percentage,
   iconBg,
   iconColor,
-  negative = false,
 }: {
   icon: React.ElementType;
   title: string;
   value: string;
-  percentage: string;
   iconBg: string;
   iconColor: string;
-  negative?: boolean;
 }) => {
   return (
     <div className="rounded-[7px] border border-[#e8e8e8] bg-white px-4 py-3.5">
@@ -236,42 +198,19 @@ const StatCard = ({
           <p className="mt-0.5 text-[15px] font-semibold leading-4 text-[#222]">
             {value}
           </p>
-
-          <div className="mt-1 flex items-center gap-1">
-            <span
-              className={`text-[6.5px] font-semibold ${
-                negative ? "text-red-500" : "text-[#1ca05a]"
-              }`}
-            >
-              {negative ? "↓" : "↑"} {percentage}
-            </span>
-
-            <span className="text-[6px] text-[#999]">
-              vs last month
-            </span>
-          </div>
         </div>
       </div>
     </div>
   );
 };
 
-/* =========================================================
-   ROLE BADGE
-========================================================= */
-
 const RoleBadge = ({ role }: { role: string }) => {
   const styles: Record<string, string> = {
-    Administrator:
-      "bg-[#f1eaff] text-[#7147c9]",
-    Manager:
-      "bg-[#eaf3ff] text-[#4385df]",
-    "Sales Executive":
-      "bg-[#e9f8ef] text-[#2f9b61]",
-    "Support Agent":
-      "bg-[#fff3df] text-[#dc8b20]",
-    Accountant:
-      "bg-[#edf5ff] text-[#3d83d7]",
+    Administrator: "bg-[#f1eaff] text-[#7147c9]",
+    Manager: "bg-[#eaf3ff] text-[#4385df]",
+    "Sales Executive": "bg-[#e9f8ef] text-[#2f9b61]",
+    "Support Agent": "bg-[#fff3df] text-[#dc8b20]",
+    Accountant: "bg-[#edf5ff] text-[#3d83d7]",
   };
 
   return (
@@ -285,15 +224,7 @@ const RoleBadge = ({ role }: { role: string }) => {
   );
 };
 
-/* =========================================================
-   STATUS BADGE
-========================================================= */
-
-const StatusBadge = ({
-  status,
-}: {
-  status: "Active" | "Inactive";
-}) => {
+const StatusBadge = ({ status }: { status: "Active" | "Inactive" }) => {
   return (
     <span
       className={`inline-flex rounded px-2 py-1 text-[6.5px] font-semibold ${
@@ -307,16 +238,10 @@ const StatusBadge = ({
   );
 };
 
-/* =========================================================
-   ROLE SUMMARY
-========================================================= */
-
 const RoleSummary = () => {
   return (
     <Card className="p-3">
-      <h3 className="text-[9px] font-bold text-[#222]">
-        Role Summary
-      </h3>
+      <h3 className="text-[9px] font-bold text-[#222]">Role Summary</h3>
 
       <div className="mt-3 flex justify-center">
         <div className="relative h-[105px] w-[105px]">
@@ -329,23 +254,16 @@ const RoleSummary = () => {
           />
 
           <div className="absolute inset-[17px] flex flex-col items-center justify-center rounded-full bg-white">
-            <span className="text-[14px] font-semibold text-[#222]">
-              48
-            </span>
+            <span className="text-[14px] font-semibold text-[#222]">48</span>
 
-            <span className="text-[7px] text-[#777]">
-              Users
-            </span>
+            <span className="text-[7px] text-[#777]">Users</span>
           </div>
         </div>
       </div>
 
       <div className="mt-2 space-y-1.5">
         {roles.map((role) => (
-          <div
-            key={role.name}
-            className="flex items-center justify-between"
-          >
+          <div key={role.name} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
                 className="h-1.5 w-1.5 rounded-full"
@@ -354,14 +272,11 @@ const RoleSummary = () => {
                 }}
               />
 
-              <span className="text-[6.5px] text-[#555]">
-                {role.name}
-              </span>
+              <span className="text-[6.5px] text-[#555]">{role.name}</span>
             </div>
 
             <span className="text-[6.5px] text-[#555]">
-              {role.count} (
-              {((role.count / 48) * 100).toFixed(1)}%)
+              {role.count} ({((role.count / 48) * 100).toFixed(1)}%)
             </span>
           </div>
         ))}
@@ -369,89 +284,6 @@ const RoleSummary = () => {
     </Card>
   );
 };
-
-/* =========================================================
-   QUICK ACTIONS
-========================================================= */
-
-const QuickActions = () => {
-  const actions = [
-    {
-      icon: FiUserPlus,
-      title: "Add New User",
-      description: "Create a new system user",
-      bg: "bg-[#eaf8ef]",
-      color: "text-[#2d9a5d]",
-    },
-    {
-      icon: FiUsers,
-      title: "Manage Roles",
-      description: "View and edit user roles",
-      bg: "bg-[#edf5ff]",
-      color: "text-[#4285df]",
-    },
-    {
-      icon: FiShield,
-      title: "Permission Settings",
-      description: "Manage system permissions",
-      bg: "bg-[#fff4df]",
-      color: "text-[#e39425]",
-    },
-    {
-      icon: FiUpload,
-      title: "Bulk Import Users",
-      description: "Import users from CSV",
-      bg: "bg-[#edf5ff]",
-      color: "text-[#4285df]",
-    },
-    {
-      icon: FiActivity,
-      title: "Activity Log",
-      description: "View user activity logs",
-      bg: "bg-[#fff0f1]",
-      color: "text-[#e7474d]",
-    },
-  ];
-
-  return (
-    <Card className="p-3">
-      <h3 className="text-[9px] font-bold text-[#222]">
-        Quick Actions
-      </h3>
-
-      <div className="mt-3 space-y-3">
-        {actions.map((action) => (
-          <button
-            key={action.title}
-            className="flex w-full items-center gap-2.5 text-left"
-          >
-            <div
-              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${action.bg}`}
-            >
-              <action.icon
-                className={`text-[11px] ${action.color}`}
-              />
-            </div>
-
-            <div>
-              <p className="text-[7px] font-semibold text-[#444]">
-                {action.title}
-              </p>
-
-              <p className="mt-0.5 text-[6px] text-[#888]">
-                {action.description}
-              </p>
-            </div>
-          </button>
-        ))}
-      </div>
-    </Card>
-  );
-};
-
-/* =========================================================
-   RECENT ACTIVITIES
-========================================================= */
 
 const RecentActivities = () => {
   const activities = [
@@ -484,16 +316,14 @@ const RecentActivities = () => {
   return (
     <Card className="p-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-[9px] font-bold text-[#222]">
-          Recent Activities
-        </h3>
+        <h3 className="text-[9px] font-bold text-[#222]">Recent Activities</h3>
 
         <button className="text-[7px] font-medium text-[#bd7f1d]">
           View All
         </button>
       </div>
 
-      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="mt-3 grid grid-cols-1 gap-3">
         {activities.map((activity) => (
           <div
             key={`${activity.name}-${activity.action}`}
@@ -513,9 +343,7 @@ const RecentActivities = () => {
                 {activity.action}
               </p>
 
-              <p className="mt-0.5 text-[5.5px] text-[#999]">
-                {activity.date}
-              </p>
+              <p className="mt-0.5 text-[5.5px] text-[#999]">{activity.date}</p>
             </div>
           </div>
         ))}
@@ -524,18 +352,12 @@ const RecentActivities = () => {
   );
 };
 
-/* =========================================================
-   USERS PAGE
-========================================================= */
-
 const Users = () => {
   const [activeTab, setActiveTab] = useState("All Users");
 
   const [search, setSearch] = useState("");
 
-  const [selectedUsers, setSelectedUsers] = useState<number[]>(
-    []
-  );
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
 
   const [page, setPage] = useState(1);
 
@@ -558,29 +380,19 @@ const Users = () => {
     },
   ];
 
-  /* =======================================================
-     FILTER USERS
-  ======================================================= */
-
   const filteredUsers = useMemo(() => {
     let result = [...users];
 
     if (activeTab === "Active") {
-      result = result.filter(
-        (user) => user.status === "Active"
-      );
+      result = result.filter((user) => user.status === "Active");
     }
 
     if (activeTab === "Inactive") {
-      result = result.filter(
-        (user) => user.status === "Inactive"
-      );
+      result = result.filter((user) => user.status === "Inactive");
     }
 
     if (activeTab === "Administrators") {
-      result = result.filter(
-        (user) => user.role === "Administrator"
-      );
+      result = result.filter((user) => user.role === "Administrator");
     }
 
     if (search.trim()) {
@@ -590,23 +402,18 @@ const Users = () => {
         (user) =>
           user.name.toLowerCase().includes(query) ||
           user.email.toLowerCase().includes(query) ||
-          user.department.toLowerCase().includes(query) ||
-          user.role.toLowerCase().includes(query)
+          user.role.toLowerCase().includes(query),
       );
     }
 
     return result;
   }, [activeTab, search]);
 
-  /* =======================================================
-     SELECTION
-  ======================================================= */
-
   const toggleUser = (id: number) => {
     setSelectedUsers((current) =>
       current.includes(id)
         ? current.filter((userId) => userId !== id)
-        : [...current, id]
+        : [...current, id],
     );
   };
 
@@ -617,58 +424,25 @@ const Users = () => {
     ) {
       setSelectedUsers([]);
     } else {
-      setSelectedUsers(
-        filteredUsers.map((user) => user.id)
-      );
+      setSelectedUsers(filteredUsers.map((user) => user.id));
     }
   };
 
   return (
-    <main className="min-h-screen bg-[#fafafa]">
-      {/* ===================================================
-          HEADER
-      ==================================================== */}
-
-      <header className="flex items-start justify-between px-4 pb-4 pt-3">
-        <div>
-          <h1 className="text-[17px] font-bold leading-5 text-[#171717]">
-            Users
-          </h1>
-
-          <p className="mt-1 text-[8px] text-[#777]">
-            Manage system users and their access permissions.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button className="flex h-8 items-center gap-2 rounded-md bg-[#bd7f1d] px-3.5 text-[7px] font-semibold text-white shadow-sm hover:bg-[#a97017]">
-            <FiPlus className="text-[10px]" />
-            Add User
-          </button>
-
-          <button className="flex h-8 items-center gap-2 rounded-md border border-[#dedede] bg-white px-3 text-[7px] font-medium text-[#555]">
-            <FiFilter className="text-[9px]" />
-            Filters
-          </button>
-
-          <button className="flex h-8 items-center gap-2 rounded-md border border-[#dedede] bg-white px-3 text-[7px] font-medium text-[#555]">
-            <FiDownload className="text-[9px]" />
-            Export
-          </button>
-        </div>
-      </header>
-
-      <div className="space-y-3 px-3 pb-5">
-        {/* =================================================
-            STATISTICS
-        ================================================== */}
+    <main className="min-h-screen bg-[#fafafa] p-3 font-sans text-[#292d32]">
+      <div className="space-y-3">
+        <PageHeader
+          title="Users"
+          description="Manage system users and their access permissions."
+          buttonText="Add User"
+          onButtonClick={() => console.log("Heloo")}
+        />
 
         <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
           <StatCard
             icon={FiUser}
             title="Total Users"
             value="48"
-            percentage="12.5%"
             iconBg="bg-[#f5efff]"
             iconColor="text-[#8150e5]"
           />
@@ -677,7 +451,6 @@ const Users = () => {
             icon={FiUserCheck}
             title="Active Users"
             value="42"
-            percentage="10.3%"
             iconBg="bg-[#ecfaf2]"
             iconColor="text-[#16a05a]"
           />
@@ -686,7 +459,6 @@ const Users = () => {
             icon={FiShield}
             title="Administrators"
             value="6"
-            percentage="0%"
             iconBg="bg-[#fff5e5]"
             iconColor="text-[#ef9517]"
           />
@@ -695,8 +467,6 @@ const Users = () => {
             icon={FiUserX}
             title="Inactive Users"
             value="6"
-            percentage="14.3%"
-            negative
             iconBg="bg-[#fff0f1]"
             iconColor="text-[#ef4148]"
           />
@@ -705,22 +475,13 @@ const Users = () => {
             icon={FiUserPlus}
             title="New Users"
             value="8"
-            percentage="33.3%"
             iconBg="bg-[#edf5ff]"
             iconColor="text-[#4285df]"
           />
         </div>
 
-        {/* =================================================
-            MAIN GRID
-        ================================================== */}
-
         <div className="grid grid-cols-12 gap-3">
-          {/* ===============================================
-              USER TABLE
-          ================================================ */}
-
-          <Card className="col-span-12 overflow-hidden xl:col-span-8">
+          <Card className="col-span-12 overflow-hidden xl:col-span-9">
             {/* TABS + SEARCH */}
 
             <div className="flex items-center justify-between border-b border-[#ededed] px-3">
@@ -736,13 +497,10 @@ const Users = () => {
                         setPage(1);
                       }}
                       className={`relative py-3 text-[7px] font-medium ${
-                        active
-                          ? "text-[#bd7f1d]"
-                          : "text-[#555]"
+                        active ? "text-[#bd7f1d]" : "text-[#555]"
                       }`}
                     >
                       {tab.name} ({tab.count})
-
                       {active && (
                         <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#bd7f1d]" />
                       )}
@@ -782,8 +540,7 @@ const Users = () => {
                       <input
                         type="checkbox"
                         checked={
-                          selectedUsers.length ===
-                            filteredUsers.length &&
+                          selectedUsers.length === filteredUsers.length &&
                           filteredUsers.length > 0
                         }
                         onChange={toggleAll}
@@ -801,10 +558,6 @@ const Users = () => {
 
                     <th className="px-2 py-2.5 text-left text-[6.5px] font-semibold text-[#555]">
                       Role
-                    </th>
-
-                    <th className="px-2 py-2.5 text-left text-[6.5px] font-semibold text-[#555]">
-                      Department
                     </th>
 
                     <th className="px-2 py-2.5 text-left text-[6.5px] font-semibold text-[#555]">
@@ -834,12 +587,8 @@ const Users = () => {
                       <td className="px-3 py-2.5">
                         <input
                           type="checkbox"
-                          checked={selectedUsers.includes(
-                            user.id
-                          )}
-                          onChange={() =>
-                            toggleUser(user.id)
-                          }
+                          checked={selectedUsers.includes(user.id)}
+                          onChange={() => toggleUser(user.id)}
                           className="h-3 w-3 accent-[#bd7f1d]"
                         />
                       </td>
@@ -872,10 +621,6 @@ const Users = () => {
                         <RoleBadge role={user.role} />
                       </td>
 
-                      <td className="px-2 py-2.5 text-[6.5px] text-[#666]">
-                        {user.department}
-                      </td>
-
                       <td className="px-2 py-2.5">
                         <StatusBadge status={user.status} />
                       </td>
@@ -906,9 +651,7 @@ const Users = () => {
 
               {filteredUsers.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-[9px] text-[#777]">
-                    No users found.
-                  </p>
+                  <p className="text-[9px] text-[#777]">No users found.</p>
                 </div>
               )}
             </div>
@@ -922,9 +665,7 @@ const Users = () => {
 
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() =>
-                    setPage(Math.max(1, page - 1))
-                  }
+                  onClick={() => setPage(Math.max(1, page - 1))}
                   className="flex h-7 w-7 items-center justify-center rounded border border-[#e2e2e2] text-[#777]"
                 >
                   <FiChevronLeft className="text-[9px]" />
@@ -944,9 +685,7 @@ const Users = () => {
                   </button>
                 ))}
 
-                <span className="px-1 text-[7px] text-[#777]">
-                  ...
-                </span>
+                <span className="px-1 text-[7px] text-[#777]">...</span>
 
                 <button className="flex h-7 w-7 items-center justify-center rounded border border-[#e2e2e2] text-[#777]">
                   <FiChevronRight className="text-[9px]" />
@@ -960,14 +699,8 @@ const Users = () => {
             </div>
           </Card>
 
-          {/* ===============================================
-              RIGHT SIDEBAR
-          ================================================ */}
-
-          <div className="col-span-12 space-y-3 xl:col-span-4">
+          <div className="col-span-12 space-y-3 xl:col-span-3">
             <RoleSummary />
-
-            <QuickActions />
 
             <RecentActivities />
           </div>

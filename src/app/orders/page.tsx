@@ -1,5 +1,7 @@
 "use client";
 
+import PageHeader from "@/components/pageheader/PageHeader";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import {
   MdAdd,
@@ -239,23 +241,17 @@ const stats = [
 
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order>(orders[0]);
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-[#fafafa] p-3 font-sans text-[#292d32]">
       <div className="w-full space-y-3">
-        {/* =====================================================
-            PAGE HEADER
-        ====================================================== */}
-
-        <div>
-          <h1 className="text-[16px] font-semibold text-[#24282d]">Orders</h1>
-
-          <div className="mt-0.5 flex items-center gap-1 text-[8px] text-[#8b8e92]">
-            <span>Dashboard</span>
-            <span>›</span>
-            <span>Orders</span>
-          </div>
-        </div>
+        <PageHeader
+          title="Orders"
+          description="View and manage all customer orders."
+          buttonText="Add Order"
+          onButtonClick={() => router.push("/orders/create")}
+        />
 
         {/* =====================================================
             ORDER STATS
@@ -720,9 +716,10 @@ function PaymentBadge({ payment }: { payment: "Paid" | "COD" }) {
         py-0.5
         text-[7px]
         font-medium
-        ${payment === "Paid"
-          ? "bg-[#e5f6e7] text-[#43a25d]"
-          : "bg-[#fff0d4] text-[#d09328]"
+        ${
+          payment === "Paid"
+            ? "bg-[#e5f6e7] text-[#43a25d]"
+            : "bg-[#fff0d4] text-[#d09328]"
         }
       `}
     >
@@ -834,9 +831,10 @@ function PageButton({
         rounded-[4px]
         border
         text-[8px]
-        ${active
-          ? "border-[#c29443] bg-[#c29443] text-white"
-          : "border-[#e5e2dd] bg-white text-[#555] hover:bg-[#faf8f3]"
+        ${
+          active
+            ? "border-[#c29443] bg-[#c29443] text-white"
+            : "border-[#e5e2dd] bg-white text-[#555] hover:bg-[#faf8f3]"
         }
       `}
     >
@@ -1102,11 +1100,12 @@ function SummaryRow({
       <span
         className={`
           text-[7px]
-          ${green
-            ? "text-[#43a66a]"
-            : bold
-              ? "font-semibold text-[#333]"
-              : "text-[#555]"
+          ${
+            green
+              ? "text-[#43a66a]"
+              : bold
+                ? "font-semibold text-[#333]"
+                : "text-[#555]"
           }
         `}
       >

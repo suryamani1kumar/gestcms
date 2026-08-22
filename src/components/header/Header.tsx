@@ -8,7 +8,6 @@ import {
   MdNotificationsNone,
   MdMailOutline,
   MdKeyboardArrowDown,
-  MdAdd,
   MdLogout,
 } from "react-icons/md";
 
@@ -27,6 +26,7 @@ export default function Header({
   const { user } = useAuth();
 
   const [profileOpen, setProfileOpen] = useState(false);
+
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -43,14 +43,57 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-40 h-[52px] border-b border-[#e8e5df] bg-white">
-      <div className="flex h-full items-center justify-between px-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          {/* Sidebar Toggle */}
+    <header
+      className="
+        sticky
+        top-0
+        z-40
+        h-[52px]
+        w-full
+        border-b
+        border-[#e8e5df]
+        bg-white
+      "
+    >
+      <div
+        className="
+          flex
+          h-full
+          w-full
+          items-center
+          justify-between
+          gap-2
+          px-2
+          sm:px-3
+        "
+      >
+        <div
+          className="
+            flex
+            min-w-0
+            flex-1
+            items-center
+            gap-2
+            sm:gap-3
+          "
+        >
           <button
             type="button"
             onClick={onToggleSidebar}
-            className=" flex cursor-pointer h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[4px] text-[#555b62] transition hover:bg-[#f5f3ef] hover:text-[#222] "
+            className="
+              flex
+              h-[32px]
+              w-[32px]
+              shrink-0
+              cursor-pointer
+              items-center
+              justify-center
+              rounded-[4px]
+              text-[#555b62]
+              transition
+              hover:bg-[#f5f3ef]
+              hover:text-[#222]
+            "
             aria-label={isSidebarOpen ? "Hide sidebar" : "Show sidebar"}
           >
             {isSidebarOpen ? (
@@ -60,12 +103,36 @@ export default function Header({
             )}
           </button>
 
-          {/* Search */}
-          <div className="relative w-full max-w-[385px]">
+          <div
+            className="
+              relative
+              hidden
+              min-w-0
+              flex-1
+              sm:block
+              sm:max-w-[385px]
+            "
+          >
             <input
               type="text"
               placeholder="Search customers, orders, products..."
-              className=" h-[31px] w-full rounded-[4px] border border-[#e5e1da] bg-white px-3 pr-9 text-[10px] text-[#333] outline-none placeholder:text-[#96999d] focus:border-[#c9a45c] focus:ring-1 focus:ring-[#c9a45c]/20"
+              className="
+                h-[31px]
+                w-full
+                rounded-[4px]
+                border
+                border-[#e5e1da]
+                bg-white
+                px-3
+                pr-9
+                text-[12px]
+                text-[#333]
+                outline-none
+                placeholder:text-[#96999d]
+                focus:border-[#c9a45c]
+                focus:ring-1
+                focus:ring-[#c9a45c]/20
+              "
             />
 
             <MdSearch
@@ -80,102 +147,139 @@ export default function Header({
               "
             />
           </div>
-        </div>
 
-        <div className="flex shrink-0 items-center gap-4">
-          {/* Notifications */}
+          {/* Mobile Search Button */}
+
           <button
             type="button"
             className="
-              relative
               flex
               h-[32px]
               w-[32px]
+              shrink-0
               items-center
               justify-center
               rounded-[4px]
               text-[#444a50]
               hover:bg-[#f5f3ef]
+              sm:hidden
             "
+            aria-label="Search"
+          >
+            <MdSearch className="text-[20px]" />
+          </button>
+        </div>
+
+        <div
+          className="
+            flex
+            shrink-0
+            items-center
+            gap-1
+            sm:gap-2
+            md:gap-4
+          "
+        >
+          <button
+            type="button"
+            className="
+    relative
+    flex
+    h-[32px]
+    w-[32px]
+    shrink-0
+    items-center
+    justify-center
+    rounded-[4px]
+    text-[#444a50]
+    hover:bg-[#f5f3ef]
+  "
+            aria-label="Notifications"
           >
             <MdNotificationsNone className="text-[20px]" />
 
             <span
               className="
-                absolute
-                right-[1px]
-                top-[1px]
-                flex
-                h-[13px]
-                min-w-[13px]
-                items-center
-                justify-center
-                rounded-full
-                bg-[#17202b]
-                px-[3px]
-                text-[7px]
-                font-semibold
-                text-white
-              "
+      absolute
+      right-[1px]
+      top-[1px]
+      flex
+      h-[13px]
+      min-w-[13px]
+      items-center
+      justify-center
+      rounded-full
+      bg-[#17202b]
+      px-[3px]
+      text-[8px]
+      font-semibold
+      text-white
+    "
             >
               6
             </span>
           </button>
 
-          {/* Messages */}
           <button
             type="button"
             className="
-              relative
-              flex
-              h-[32px]
-              w-[32px]
-              items-center
-              justify-center
-              rounded-[4px]
-              text-[#444a50]
-              hover:bg-[#f5f3ef]
-            "
+    relative
+    flex
+    h-[32px]
+    w-[32px]
+    shrink-0
+    items-center
+    justify-center
+    rounded-[4px]
+    text-[#444a50]
+    hover:bg-[#f5f3ef]
+  "
+            aria-label="Messages"
           >
             <MdMailOutline className="text-[19px]" />
 
             <span
               className="
-                absolute
-                right-[1px]
-                top-[1px]
-                flex
-                h-[13px]
-                min-w-[13px]
-                items-center
-                justify-center
-                rounded-full
-                bg-[#17202b]
-                px-[3px]
-                text-[7px]
-                font-semibold
-                text-white
-              "
+      absolute
+      right-[1px]
+      top-[1px]
+      flex
+      h-[13px]
+      min-w-[13px]
+      items-center
+      justify-center
+      rounded-full
+      bg-[#17202b]
+      px-[3px]
+      text-[8px]
+      font-semibold
+      text-white
+    "
             >
               3
             </span>
           </button>
 
-          <div className="relative ml-1">
+          <div className="relative ml-0 sm:ml-1">
             <button
               type="button"
               onClick={() => setProfileOpen(!profileOpen)}
-              className="cursor-pointer
+              className="
                 flex
                 h-[36px]
+                cursor-pointer
                 items-center
-                gap-2
+                gap-1.5
                 rounded-[4px]
-                px-1.5
+                px-1
                 hover:bg-[#f7f5f1]
+                sm:gap-2
+                sm:px-1.5
               "
+              aria-expanded={profileOpen}
             >
               {/* Avatar */}
+
               <div
                 className="
                   flex
@@ -186,7 +290,7 @@ export default function Header({
                   justify-center
                   rounded-full
                   bg-[#ded8cc]
-                  text-[11px]
+                  text-[18px]
                   font-semibold
                   text-[#514c44]
                 "
@@ -194,14 +298,18 @@ export default function Header({
                 {user?.name ? user.name.charAt(0).toUpperCase() : "S"}
               </div>
 
-              {/* User */}
+              {/* User Information */}
+
               <div className="hidden text-left sm:block">
                 <div
                   className="
-                    text-[10px]
+                    max-w-[100px]
+                    truncate
+                    text-[12px]
                     font-semibold
                     leading-[12px]
                     text-[#292d32]
+                    md:max-w-[140px]
                   "
                 >
                   {user?.name || "Super Admin"}
@@ -209,7 +317,7 @@ export default function Header({
 
                 <div
                   className="
-                    text-[8px]
+                    text-[10px]
                     leading-[11px]
                     text-[#85898d]
                   "
@@ -230,72 +338,123 @@ export default function Header({
               />
             </button>
 
-            {/* Profile Dropdown */}
             {profileOpen && (
               <div
                 className="
-    absolute
-    right-0
-    top-[41px]
-    z-50
-    w-[180px]
-    rounded-[5px]
-    border
-    border-[#e5e1da]
-    bg-white
-    py-1
-    shadow-lg
-  "
+                  absolute
+                  right-0
+                  top-[41px]
+                  z-50
+                  w-[180px]
+                  overflow-hidden
+                  rounded-[5px]
+                  border
+                  border-[#e5e1da]
+                  bg-white
+                  py-1
+                  shadow-lg
+                "
               >
                 {/* User Info */}
+
                 <div
                   className="
-      border-b
-      border-[#eeeae4]
-      px-3
-      py-2
-    "
+                    border-b
+                    border-[#eeeae4]
+                    px-3
+                    py-2
+                  "
                 >
-                  <p className="text-[10px] font-semibold text-[#333]">
+                  <p
+                    className="
+                      truncate
+                      text-[13px]
+                      font-semibold
+                      text-[#333]
+                    "
+                  >
                     {user?.name || "Super Admin"}
                   </p>
 
-                  <p className="mt-0.5 truncate text-[8px] text-[#888]">
+                  <p
+                    className="
+                      mt-0.5
+                      truncate
+                      text-[12px]
+                      text-[#888]
+                    "
+                  >
                     {user?.email || "admin@luxora.com"}
                   </p>
                 </div>
 
                 {/* My Profile */}
+
                 <button
                   type="button"
                   onClick={() => {
                     setProfileOpen(false);
                     router.push("/profile");
                   }}
-                  className="cursor-pointer flex w-full px-3 py-2 text-left text-[10px] text-[#444] hover:bg-[#f7f4ee] "
+                  className="
+                    flex
+                    w-full
+                    cursor-pointer
+                    px-3
+                    py-1
+                    text-left
+                    text-[12px]
+                    text-[#444]
+                    hover:bg-[#f7f4ee]
+                  "
                 >
                   My Profile
                 </button>
 
                 {/* Account Settings */}
+
                 <button
                   type="button"
                   onClick={() => {
                     setProfileOpen(false);
                     router.push("/settings");
                   }}
-                  className="cursor-pointer flex w-full px-3 py-2 text-left text-[10px] text-[#444] hover:bg-[#f7f4ee] "
+                  className="
+                    flex
+                    w-full
+                    cursor-pointer
+                    px-3
+                    py-1
+                    text-left
+                    text-[12px]
+                    text-[#444]
+                    hover:bg-[#f7f4ee]
+                  "
                 >
                   Account Settings
                 </button>
 
                 {/* Logout */}
+
                 <div className="my-1 border-t border-[#eeeae4]" />
 
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="cursor-pointer flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] font-medium text-red-500 hover:bg-red-50 "
+                  className="
+                    flex
+                    w-full
+                    cursor-pointer
+                    items-center
+                    gap-2
+                    px-3
+                    py-1
+                    text-left
+                    text-[12px]
+                    font-medium
+                    text-red-500
+                    hover:bg-red-50
+                  "
                 >
                   <MdLogout className="text-[14px]" />
                   Logout

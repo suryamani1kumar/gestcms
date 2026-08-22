@@ -13,12 +13,8 @@ import {
   MdVisibility,
   MdWatchLater,
 } from "react-icons/md";
-import {
-  FaGem,
-  FaRupeeSign,
-  FaUserPlus,
-  FaBoxOpen,
-} from "react-icons/fa";
+import { FaGem, FaRupeeSign, FaUserPlus, FaBoxOpen } from "react-icons/fa";
+import PageHeader from "@/components/pageheader/PageHeader";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -304,43 +300,11 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#fafafa] p-3 font-sans text-[#292d32]">
       <div className="mx-auto w-full max-w-[1600px] space-y-3">
-        {/* =====================================================
-            PAGE HEADER
-        ====================================================== */}
-
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-[16px] font-bold leading-5 text-[#25282c]">
-              Good Morning, {user?.name || "Admin"}! 👋
-            </h1>
-
-            <p className="mt-0.5 text-[9px] text-[#85898d]">
-              Here&apos;s what&apos;s happening with your store today.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="
-              flex
-              h-[30px]
-              items-center
-              gap-1.5
-              rounded-[4px]
-              bg-[#111923]
-              px-3
-              text-[9px]
-              font-medium
-              text-white
-              shadow-sm
-              transition
-              hover:bg-[#202b39]
-            "
-          >
-            <MdAdd className="text-[14px]" />
-            Add Order
-          </button>
-        </div>
+        <PageHeader
+          title={`Good Morning, ${user?.name || "Admin"}! 👋`}
+          description="Here's what's happening with your store today."
+          showButton={false}
+        />
 
         {/* =====================================================
             STAT CARDS
@@ -356,7 +320,7 @@ export default function DashboardPage() {
             SALES + ORDER STATUS
         ====================================================== */}
 
-        <div className="grid grid-cols-1 gap-2 xl:grid-cols-[1.05fr_1fr]">
+        <div className="grid grid-cols-1 gap-2 xl:grid-cols-[1.55fr_1fr]">
           <SalesOverview />
 
           <OrderStatus />
@@ -440,9 +404,7 @@ function StatCard({
         </div>
 
         <div className="min-w-0">
-          <p className="text-[8px] font-medium text-[#666b70]">
-            {title}
-          </p>
+          <p className="text-[8px] font-medium text-[#666b70]">{title}</p>
 
           <p className="mt-0.5 text-[15px] font-semibold leading-4 text-[#282c30]">
             {value}
@@ -493,9 +455,7 @@ function DashboardCard({
       `}
     >
       <div className="flex items-center justify-between px-3 py-2">
-        <h2 className="text-[10px] font-semibold text-[#292d32]">
-          {title}
-        </h2>
+        <h2 className="text-[10px] font-semibold text-[#292d32]">{title}</h2>
 
         {action}
       </div>
@@ -515,12 +475,11 @@ function SalesOverview() {
       title="Sales Overview"
       action={
         <div className="flex overflow-hidden rounded-[4px] border border-[#e8e5df]">
-          {["Daily", "Weekly", "Monthly", "Yearly"].map(
-            (item) => (
-              <button
-                key={item}
-                type="button"
-                className={`
+          {["Daily", "Weekly", "Monthly", "Yearly"].map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={`
                   h-[20px]
                   px-2
                   text-[7px]
@@ -530,11 +489,10 @@ function SalesOverview() {
                       : "text-[#666] hover:bg-[#faf8f4]"
                   }
                 `}
-              >
-                {item}
-              </button>
-            )
-          )}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       }
     >
@@ -546,12 +504,7 @@ function SalesOverview() {
           purple={false}
         />
 
-        <Chart
-          title="Orders"
-          value="1,284"
-          change="12.4%"
-          purple
-        />
+        <Chart title="Orders" value="1,284" change="12.4%" purple />
       </div>
 
       <div className="grid grid-cols-3 gap-2 border-t border-[#f0eee9] p-2">
@@ -561,18 +514,9 @@ function SalesOverview() {
           change="14.2%"
         />
 
-        <MiniMetric
-          title="Conversion Rate"
-          value="2.35%"
-          change="5.6%"
-        />
+        <MiniMetric title="Conversion Rate" value="2.35%" change="5.6%" />
 
-        <MiniMetric
-          title="Refunds"
-          value="₹45,210"
-          change="3.2%"
-          negative
-        />
+        <MiniMetric title="Refunds" value="₹45,210" change="3.2%" negative />
       </div>
     </DashboardCard>
   );
@@ -602,25 +546,16 @@ function Chart({
       <div className="flex items-end gap-1">
         <span className="text-[7px] text-[#777]">{title}</span>
 
-        <span className="text-[13px] font-medium text-[#444]">
-          {value}
-        </span>
+        <span className="text-[13px] font-medium text-[#444]">{value}</span>
 
-        <span className="mb-[1px] text-[7px] text-[#49a86b]">
-          ↑ {change}
-        </span>
+        <span className="mb-[1px] text-[7px] text-[#49a86b]">↑ {change}</span>
       </div>
 
       <div className="relative mt-2 h-[85px]">
         <div className="absolute inset-0 flex flex-col justify-between">
           {[40, 30, 20, 10, 0].map((num) => (
-            <div
-              key={num}
-              className="flex items-center gap-1"
-            >
-              <span className="w-[20px] text-[6px] text-[#a5a8ab]">
-                {num}K
-              </span>
+            <div key={num} className="flex items-center gap-1">
+              <span className="w-[20px] text-[6px] text-[#a5a8ab]">{num}K</span>
 
               <div className="h-px flex-1 bg-[#f1efeb]" />
             </div>
@@ -688,15 +623,11 @@ function MiniMetric({
       <p className="text-[7px] text-[#777]">{title}</p>
 
       <div className="mt-0.5 flex items-center gap-1">
-        <span className="text-[10px] font-semibold text-[#333]">
-          {value}
-        </span>
+        <span className="text-[10px] font-semibold text-[#333]">{value}</span>
 
         <span
           className={`text-[6px] ${
-            negative
-              ? "text-[#e36363]"
-              : "text-[#4ba66a]"
+            negative ? "text-[#e36363]" : "text-[#4ba66a]"
           }`}
         >
           {negative ? "↓" : "↑"} {change}
@@ -767,9 +698,7 @@ function OrderStatus() {
                 1,284
               </span>
 
-              <span className="text-[7px] text-[#777]">
-                Total Orders
-              </span>
+              <span className="text-[7px] text-[#777]">Total Orders</span>
             </div>
           </div>
         </div>
@@ -777,10 +706,7 @@ function OrderStatus() {
         {/* Legend */}
         <div className="w-[52%] space-y-2">
           {statuses.map((status) => (
-            <div
-              key={status.name}
-              className="flex items-center gap-2"
-            >
+            <div key={status.name} className="flex items-center gap-2">
               <span
                 className="h-[6px] w-[6px] rounded-[1px]"
                 style={{
@@ -831,36 +757,19 @@ function TopProducts({
         <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr className="text-[7px] text-[#777]">
-              <th className="px-2 py-1.5 text-left font-medium">
-                #
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Product
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                SKU
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Category
-              </th>
-              <th className="px-1 py-1.5 text-right font-medium">
-                Sold
-              </th>
-              <th className="px-1 py-1.5 text-right font-medium">
-                Revenue
-              </th>
-              <th className="px-2 py-1.5 text-right font-medium">
-                Stock
-              </th>
+              <th className="px-2 py-1.5 text-left font-medium">#</th>
+              <th className="px-1 py-1.5 text-left font-medium">Product</th>
+              <th className="px-1 py-1.5 text-left font-medium">SKU</th>
+              <th className="px-1 py-1.5 text-left font-medium">Category</th>
+              <th className="px-1 py-1.5 text-right font-medium">Sold</th>
+              <th className="px-1 py-1.5 text-right font-medium">Revenue</th>
+              <th className="px-2 py-1.5 text-right font-medium">Stock</th>
             </tr>
           </thead>
 
           <tbody>
             {products.map((product) => (
-              <tr
-                key={product.sku}
-                className="border-t border-[#f3f1ed]"
-              >
+              <tr key={product.sku} className="border-t border-[#f3f1ed]">
                 <td className="px-2 py-1 text-[7px] text-[#555]">
                   {product.no}
                 </td>
@@ -919,7 +828,12 @@ function TopProducts({
         </table>
       </div>
 
-      <ViewAll text="View All Products" />
+      <ViewAll
+        text="View All Products"
+        onClick={() => {
+          console.log("hee");
+        }}
+      />
     </DashboardCard>
   );
 }
@@ -995,18 +909,12 @@ function GemstoneInventory({
                 `}
               />
 
-              <span className="text-[7px] text-[#444]">
-                {stone.name}
-              </span>
+              <span className="text-[7px] text-[#444]">{stone.name}</span>
             </div>
 
-            <span className="text-[7px] text-[#555]">
-              {stone.total}
-            </span>
+            <span className="text-[7px] text-[#555]">{stone.total}</span>
 
-            <span className="text-[7px] text-[#555]">
-              {stone.available}
-            </span>
+            <span className="text-[7px] text-[#555]">{stone.available}</span>
 
             <span className="text-right text-[7px] text-[#444]">
               {stone.value}
@@ -1015,7 +923,12 @@ function GemstoneInventory({
         ))}
       </div>
 
-      <ViewAll text="View All Gemstones" />
+      <ViewAll
+        text="View All Gemstones"
+        onClick={() => {
+          console.log("hee");
+        }}
+      />
     </DashboardCard>
   );
 }
@@ -1073,22 +986,22 @@ function CustomerActivity({
               <span
                 className={`
                   text-[6px]
-                  ${
-                    activity.positive
-                      ? "text-[#4ba66a]"
-                      : "text-[#e36363]"
-                  }
+                  ${activity.positive ? "text-[#4ba66a]" : "text-[#e36363]"}
                 `}
               >
-                {activity.positive ? "↑" : "↓"}{" "}
-                {activity.change}
+                {activity.positive ? "↑" : "↓"} {activity.change}
               </span>
             )}
           </div>
         ))}
       </div>
 
-      <ViewAll text="View All Activity" />
+      <ViewAll
+        text="View All Activity"
+        onClick={() => {
+          console.log("hee");
+        }}
+      />
     </DashboardCard>
   );
 }
@@ -1116,39 +1029,20 @@ function RecentOrders({
         <table className="w-full min-w-[780px] border-collapse">
           <thead>
             <tr className="text-[7px] text-[#777]">
-              <th className="px-2 py-1.5 text-left font-medium">
-                Order ID
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Customer
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Product
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Amount
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Payment
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Status
-              </th>
-              <th className="px-1 py-1.5 text-left font-medium">
-                Date
-              </th>
-              <th className="px-2 py-1.5 text-right font-medium">
-                Action
-              </th>
+              <th className="px-2 py-1.5 text-left font-medium">Order ID</th>
+              <th className="px-1 py-1.5 text-left font-medium">Customer</th>
+              <th className="px-1 py-1.5 text-left font-medium">Product</th>
+              <th className="px-1 py-1.5 text-left font-medium">Amount</th>
+              <th className="px-1 py-1.5 text-left font-medium">Payment</th>
+              <th className="px-1 py-1.5 text-left font-medium">Status</th>
+              <th className="px-1 py-1.5 text-left font-medium">Date</th>
+              <th className="px-2 py-1.5 text-right font-medium">Action</th>
             </tr>
           </thead>
 
           <tbody>
             {orders.map((order) => (
-              <tr
-                key={order.id}
-                className="border-t border-[#f3f1ed]"
-              >
+              <tr key={order.id} className="border-t border-[#f3f1ed]">
                 <td className="px-2 py-1.5 text-[7px] text-[#555]">
                   {order.id}
                 </td>
@@ -1174,11 +1068,7 @@ function RecentOrders({
                 <td className="px-1 py-1.5">
                   <StatusBadge
                     text={order.payment}
-                    type={
-                      order.payment === "COD"
-                        ? "yellow"
-                        : "green"
-                    }
+                    type={order.payment === "COD" ? "yellow" : "green"}
                   />
                 </td>
 
@@ -1207,7 +1097,12 @@ function RecentOrders({
         </table>
       </div>
 
-      <ViewAll text="View All Orders" />
+      <ViewAll
+        text="View All Orders"
+        onClick={() => {
+          console.log("hee");
+        }}
+      />
     </DashboardCard>
   );
 }
@@ -1238,13 +1133,7 @@ function StatusBadge({
   type,
 }: {
   text: string;
-  type:
-    | "green"
-    | "yellow"
-    | "purple"
-    | "blue"
-    | "cyan"
-    | "gray";
+  type: "green" | "yellow" | "purple" | "blue" | "cyan" | "gray";
 }) {
   const styles = {
     green: "bg-[#e5f6e8] text-[#42a15f]",
@@ -1351,24 +1240,25 @@ function UpcomingReminders({
    VIEW ALL
 ============================================================ */
 
-function ViewAll({ text }: { text: string }) {
+function ViewAll({ text, onClick }: { text: string; onClick: () => void }) {
   return (
     <div className="border-t border-[#f0eee9] px-2 py-1.5 text-center">
       <button
         type="button"
-        className="
+        className="cursor-pointer
           inline-flex
           items-center
           gap-1
-          text-[7px]
+          text-[10px]
           font-medium
           text-[#c39442]
           hover:text-[#9e752c]
         "
+        onClick={onClick}
       >
         {text}
 
-        <MdArrowForward className="text-[10px]" />
+        <MdArrowForward className="text-[14px]" />
       </button>
     </div>
   );

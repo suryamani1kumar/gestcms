@@ -126,7 +126,7 @@ export default function ProductForm({
               <SelectField
                 label="Product Type"
                 value={formData.productType}
-                options={["gemstone", "rudraksha"]}
+                options={["gemstone", "rudraksha", "jewellery"]}
                 onChange={(value) =>
                   handleProductTypeChange(value as "gemstone" | "rudraksha")
                 }
@@ -283,8 +283,7 @@ export default function ProductForm({
         </AccordionSummary>
 
         <AccordionDetails>
-          <ProductImage formData={formData} setFormData={setFormData}/>
-          
+          <ProductImage formData={formData} setFormData={setFormData} />
         </AccordionDetails>
       </Accordion>
 
@@ -924,7 +923,6 @@ export default function ProductForm({
     </div>
   );
 }
-
 
 function SectionHeader({
   icon,
