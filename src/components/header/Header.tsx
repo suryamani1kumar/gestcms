@@ -48,7 +48,7 @@ export default function Header({
         sticky
         top-0
         z-40
-        h-[52px]
+        h-[55px]
         w-full
         border-b
         border-[#e8e5df]
@@ -117,7 +117,7 @@ export default function Header({
               type="text"
               placeholder="Search customers, orders, products..."
               className="
-                h-[31px]
+                h-[35px]
                 w-full
                 rounded-[4px]
                 border

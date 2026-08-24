@@ -432,35 +432,18 @@
 
 // export default Product;
 
-
 import mongoose, { Schema, Document, Model } from "mongoose";
-
-/* =========================================================
-   TYPES
-========================================================= */
 
 export type ProductType = "gemstone" | "rudraksha" | "jewellery";
 
 export type ProductStatus = "Draft" | "Published" | "Archived";
 
-export type StockStatus =
-  | "In Stock"
-  | "Out of Stock"
-  | "Low Stock";
-
-/* =========================================================
-   GALLERY
-========================================================= */
+export type StockStatus = "In Stock" | "Out of Stock" | "Low Stock";
 
 export interface IGalleryImage {
   url: string;
   publicId: string;
 }
-
-/* =========================================================
-   ASTROLOGY
-   Mainly useful for Gemstones / Rudraksha
-========================================================= */
 
 export interface IAstrology {
   planet?: string;
@@ -473,10 +456,6 @@ export interface IAstrology {
   purificationMethod?: string;
 }
 
-/* =========================================================
-   CERTIFICATION
-========================================================= */
-
 export interface ICertification {
   certified?: boolean;
   certificationType?: string;
@@ -487,10 +466,6 @@ export interface ICertification {
   certificatePdf?: string;
   certificateImage?: string;
 }
-
-/* =========================================================
-   PRICING
-========================================================= */
 
 export interface IPricing {
   currency?: string;
@@ -504,13 +479,7 @@ export interface IPricing {
   discount?: number;
 
   gst?: number;
-
-  taxClass?: string;
 }
-
-/* =========================================================
-   INVENTORY
-========================================================= */
 
 export interface IInventory {
   stock?: number;
@@ -520,19 +489,9 @@ export interface IInventory {
   lowStockAlert?: number;
 
   reservedStock?: number;
-
-  warehouse?: string;
 }
 
-/* =========================================================
-   JEWELLERY
-========================================================= */
-
 export interface IJewellery {
-  /* -------------------------
-     Metal
-  ------------------------- */
-
   metalType?: string;
 
   purity?: string;
@@ -543,19 +502,11 @@ export interface IJewellery {
 
   metalWeightUnit?: "gram" | "kg";
 
-  /* -------------------------
-     Making Charges
-  ------------------------- */
-
   makingCharges?: number;
 
   makingChargesType?: "fixed" | "percentage";
 
   makingChargesPercentage?: number;
-
-  /* -------------------------
-     Diamond
-  ------------------------- */
 
   hasDiamond?: boolean;
 
@@ -575,10 +526,6 @@ export interface IJewellery {
 
   diamondShape?: string;
 
-  /* -------------------------
-     Gemstones used in Jewellery
-  ------------------------- */
-
   hasGemstone?: boolean;
 
   gemstoneType?: string;
@@ -588,10 +535,6 @@ export interface IJewellery {
   gemstoneWeight?: number;
 
   gemstoneWeightUnit?: "carat" | "gram";
-
-  /* -------------------------
-     Jewellery Details
-  ------------------------- */
 
   grossWeight?: number;
 
@@ -605,25 +548,13 @@ export interface IJewellery {
 
   dimensions?: string;
 
-  /* -------------------------
-     Setting
-  ------------------------- */
-
   settingType?: string;
-
-  /* -------------------------
-     Hallmark
-  ------------------------- */
 
   hallmark?: string;
 
   hallmarkNumber?: string;
 
   hallmarkVerified?: boolean;
-
-  /* -------------------------
-     Certificate
-  ------------------------- */
 
   certificateIncluded?: boolean;
 
@@ -633,38 +564,22 @@ export interface IJewellery {
 
   certificateLab?: string;
 
-  /* -------------------------
-     Collection
-  ------------------------- */
-
   collection?: string;
 
   occasion?: string;
 
   gender?: "Men" | "Women" | "Unisex";
 
-  /* -------------------------
-     Size / Fit
-  ------------------------- */
-
   availableSizes?: string[];
 
   customizable?: boolean;
 }
-
-/* =========================================================
-   SEO
-========================================================= */
 
 export interface ISeo {
   metaTitle?: string;
 
   metaDescription?: string;
 }
-
-/* =========================================================
-   CARE INSTRUCTIONS
-========================================================= */
 
 export interface ICareInstructions {
   cleaning?: string;
@@ -673,10 +588,6 @@ export interface ICareInstructions {
 
   precautions?: string;
 }
-
-/* =========================================================
-   PRODUCT
-========================================================= */
 
 export interface IProduct extends Document {
   productType: ProductType;
@@ -697,80 +608,30 @@ export interface IProduct extends Document {
 
   subCategory?: string;
 
-  /*
-   * Flexible fields for:
-   * Gemstone
-   * Rudraksha
-   */
-
   specifications: Record<string, any>;
-
-  /*
-   * Jewellery-specific information
-   */
 
   jewellery?: IJewellery;
 
-  /*
-   * Astrology information
-   */
-
   astrology?: IAstrology;
-
-  /*
-   * Certification
-   */
 
   certification?: ICertification;
 
-  /*
-   * Pricing
-   */
-
   pricing?: IPricing;
-
-  /*
-   * Inventory
-   */
 
   inventory?: IInventory;
 
-  /*
-   * Benefits
-   */
-
   benefits?: string[];
-
-  /*
-   * SEO
-   */
 
   seo?: ISeo;
 
-  /*
-   * Care
-   */
-
   careInstructions?: ICareInstructions;
 
-  /*
-   * Status
-   */
-
   status?: ProductStatus;
-
-  /*
-   * Audit
-   */
 
   createdBy?: string;
 
   updatedBy?: string;
 }
-
-/* =========================================================
-   ASTROLOGY SCHEMA
-========================================================= */
 
 const AstrologySchema = new Schema<IAstrology>(
   {
@@ -819,10 +680,6 @@ const AstrologySchema = new Schema<IAstrology>(
   },
 );
 
-/* =========================================================
-   CERTIFICATION SCHEMA
-========================================================= */
-
 const CertificationSchema = new Schema<ICertification>(
   {
     certified: {
@@ -870,10 +727,6 @@ const CertificationSchema = new Schema<ICertification>(
   },
 );
 
-/* =========================================================
-   PRICING SCHEMA
-========================================================= */
-
 const PricingSchema = new Schema<IPricing>(
   {
     currency: {
@@ -907,20 +760,11 @@ const PricingSchema = new Schema<IPricing>(
       default: 3,
       min: 0,
     },
-
-    taxClass: {
-      type: String,
-      trim: true,
-    },
   },
   {
     _id: false,
   },
 );
-
-/* =========================================================
-   INVENTORY SCHEMA
-========================================================= */
 
 const InventorySchema = new Schema<IInventory>(
   {
@@ -932,11 +776,7 @@ const InventorySchema = new Schema<IInventory>(
 
     stockStatus: {
       type: String,
-      enum: [
-        "In Stock",
-        "Out of Stock",
-        "Low Stock",
-      ],
+      enum: ["In Stock", "Out of Stock", "Low Stock"],
       default: "In Stock",
     },
 
@@ -951,20 +791,11 @@ const InventorySchema = new Schema<IInventory>(
       default: 0,
       min: 0,
     },
-
-    warehouse: {
-      type: String,
-      trim: true,
-    },
   },
   {
     _id: false,
   },
 );
-
-/* =========================================================
-   SEO SCHEMA
-========================================================= */
 
 const SeoSchema = new Schema<ISeo>(
   {
@@ -982,10 +813,6 @@ const SeoSchema = new Schema<ISeo>(
     _id: false,
   },
 );
-
-/* =========================================================
-   GALLERY SCHEMA
-========================================================= */
 
 const GallerySchema = new Schema<IGalleryImage>(
   {
@@ -1006,43 +833,30 @@ const GallerySchema = new Schema<IGalleryImage>(
   },
 );
 
-/* =========================================================
-   CARE INSTRUCTIONS SCHEMA
-========================================================= */
-
-const CareInstructionsSchema =
-  new Schema<ICareInstructions>(
-    {
-      cleaning: {
-        type: String,
-        trim: true,
-      },
-
-      storage: {
-        type: String,
-        trim: true,
-      },
-
-      precautions: {
-        type: String,
-        trim: true,
-      },
+const CareInstructionsSchema = new Schema<ICareInstructions>(
+  {
+    cleaning: {
+      type: String,
+      trim: true,
     },
-    {
-      _id: false,
-    },
-  );
 
-/* =========================================================
-   JEWELLERY SCHEMA
-========================================================= */
+    storage: {
+      type: String,
+      trim: true,
+    },
+
+    precautions: {
+      type: String,
+      trim: true,
+    },
+  },
+  {
+    _id: false,
+  },
+);
 
 const JewellerySchema = new Schema<IJewellery>(
   {
-    /* -------------------------
-       Metal
-    ------------------------- */
-
     metalType: {
       type: String,
       trim: true,
@@ -1069,10 +883,6 @@ const JewellerySchema = new Schema<IJewellery>(
       default: "gram",
     },
 
-    /* -------------------------
-       Making Charges
-    ------------------------- */
-
     makingCharges: {
       type: Number,
       min: 0,
@@ -1088,10 +898,6 @@ const JewellerySchema = new Schema<IJewellery>(
       type: Number,
       min: 0,
     },
-
-    /* -------------------------
-       Diamond
-    ------------------------- */
 
     hasDiamond: {
       type: Boolean,
@@ -1139,10 +945,6 @@ const JewellerySchema = new Schema<IJewellery>(
       trim: true,
     },
 
-    /* -------------------------
-       Gemstone
-    ------------------------- */
-
     hasGemstone: {
       type: Boolean,
       default: false,
@@ -1168,10 +970,6 @@ const JewellerySchema = new Schema<IJewellery>(
       enum: ["carat", "gram"],
       default: "carat",
     },
-
-    /* -------------------------
-       Weight / Dimensions
-    ------------------------- */
 
     grossWeight: {
       type: Number,
@@ -1203,18 +1001,10 @@ const JewellerySchema = new Schema<IJewellery>(
       trim: true,
     },
 
-    /* -------------------------
-       Setting
-    ------------------------- */
-
     settingType: {
       type: String,
       trim: true,
     },
-
-    /* -------------------------
-       Hallmark
-    ------------------------- */
 
     hallmark: {
       type: String,
@@ -1231,34 +1021,6 @@ const JewellerySchema = new Schema<IJewellery>(
       default: false,
     },
 
-    /* -------------------------
-       Certificate
-    ------------------------- */
-
-    certificateIncluded: {
-      type: Boolean,
-      default: false,
-    },
-
-    certificateNumber: {
-      type: String,
-      trim: true,
-    },
-
-    certificateType: {
-      type: String,
-      trim: true,
-    },
-
-    certificateLab: {
-      type: String,
-      trim: true,
-    },
-
-    /* -------------------------
-       Collection
-    ------------------------- */
-
     collection: {
       type: String,
       trim: true,
@@ -1273,10 +1035,6 @@ const JewellerySchema = new Schema<IJewellery>(
       type: String,
       enum: ["Men", "Women", "Unisex"],
     },
-
-    /* -------------------------
-       Size
-    ------------------------- */
 
     availableSizes: {
       type: [String],
@@ -1293,30 +1051,14 @@ const JewellerySchema = new Schema<IJewellery>(
   },
 );
 
-/* =========================================================
-   PRODUCT SCHEMA
-========================================================= */
-
 const ProductSchema = new Schema<IProduct>(
   {
-    /* -------------------------
-       Product Type
-    ------------------------- */
-
     productType: {
       type: String,
-      enum: [
-        "gemstone",
-        "rudraksha",
-        "jewellery",
-      ],
+      enum: ["gemstone", "rudraksha", "jewellery"],
       required: true,
       index: true,
     },
-
-    /* -------------------------
-       Basic Information
-    ------------------------- */
 
     sku: {
       type: String,
@@ -1350,18 +1092,10 @@ const ProductSchema = new Schema<IProduct>(
       trim: true,
     },
 
-    /* -------------------------
-       Gallery
-    ------------------------- */
-
     gallery: {
       type: [GallerySchema],
       default: [],
     },
-
-    /* -------------------------
-       Category
-    ------------------------- */
 
     category: {
       type: String,
@@ -1374,110 +1108,57 @@ const ProductSchema = new Schema<IProduct>(
       trim: true,
     },
 
-    /* -------------------------
-       Generic Specifications
-       
-       Useful for:
-       - Gemstone
-       - Rudraksha
-       - Other future products
-    ------------------------- */
-
     specifications: {
       type: Schema.Types.Mixed,
       default: {},
     },
-
-    /* -------------------------
-       Jewellery
-    ------------------------- */
 
     jewellery: {
       type: JewellerySchema,
       default: undefined,
     },
 
-    /* -------------------------
-       Astrology
-    ------------------------- */
-
     astrology: {
       type: AstrologySchema,
       default: undefined,
     },
-
-    /* -------------------------
-       Certification
-    ------------------------- */
 
     certification: {
       type: CertificationSchema,
       default: undefined,
     },
 
-    /* -------------------------
-       Pricing
-    ------------------------- */
-
     pricing: {
       type: PricingSchema,
       default: undefined,
     },
-
-    /* -------------------------
-       Inventory
-    ------------------------- */
 
     inventory: {
       type: InventorySchema,
       default: undefined,
     },
 
-    /* -------------------------
-       Benefits
-    ------------------------- */
-
     benefits: {
       type: [String],
       default: [],
     },
-
-    /* -------------------------
-       SEO
-    ------------------------- */
 
     seo: {
       type: SeoSchema,
       default: undefined,
     },
 
-    /* -------------------------
-       Care Instructions
-    ------------------------- */
-
     careInstructions: {
       type: CareInstructionsSchema,
       default: undefined,
     },
 
-    /* -------------------------
-       Status
-    ------------------------- */
-
     status: {
       type: String,
-      enum: [
-        "Draft",
-        "Published",
-        "Archived",
-      ],
+      enum: ["Draft", "Published", "Archived"],
       default: "Draft",
       index: true,
     },
-
-    /* -------------------------
-       Audit
-    ------------------------- */
 
     createdBy: {
       type: String,
@@ -1494,15 +1175,7 @@ const ProductSchema = new Schema<IProduct>(
   },
 );
 
-/* =========================================================
-   MODEL
-========================================================= */
-
 const Product: Model<IProduct> =
-  mongoose.models.Product ||
-  mongoose.model<IProduct>(
-    "Product",
-    ProductSchema,
-  );
+  mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema);
 
 export default Product;

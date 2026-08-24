@@ -33,12 +33,7 @@ type PermissionKey =
   | "export"
   | "import";
 
-type RoleColor =
-  | "orange"
-  | "blue"
-  | "green"
-  | "purple"
-  | "red";
+type RoleColor = "orange" | "blue" | "green" | "purple" | "red";
 
 type Role = {
   id: string;
@@ -120,14 +115,6 @@ const initialRoles: Role[] = [
     users: 6,
     color: "purple",
     icon: FiPackage,
-  },
-  {
-    id: "warehouse-staff",
-    name: "Warehouse Staff",
-    description: "Warehouse and stock operations",
-    users: 4,
-    color: "red",
-    icon: FiTruck,
   },
 ];
 
@@ -217,7 +204,7 @@ const permissionColumns: {
 ========================================================= */
 
 const createInitialPermissions = (
-  roleList: Role[] = initialRoles
+  roleList: Role[] = initialRoles,
 ): Permissions => {
   const result: Permissions = {};
 
@@ -228,8 +215,7 @@ const createInitialPermissions = (
       permissionColumns.forEach(({ key }) => {
         const permissionKey = `${module.name}:${key}`;
 
-        result[role.id][permissionKey] =
-          role.id === "administrator";
+        result[role.id][permissionKey] = role.id === "administrator";
       });
     });
   });
@@ -296,18 +282,14 @@ const PermissionCheckbox = ({
     <button
       type="button"
       onClick={onChange}
-      aria-label={
-        checked ? "Disable permission" : "Enable permission"
-      }
+      aria-label={checked ? "Disable permission" : "Enable permission"}
       className={`flex h-[11px] w-[11px] items-center justify-center rounded-[2px] border transition ${
         checked
           ? "border-[#c58620] bg-[#c58620] text-white"
           : "border-[#cfd4dc] bg-white hover:border-[#c58620]"
       }`}
     >
-      {checked && (
-        <FiCheck className="text-[8px] stroke-[3]" />
-      )}
+      {checked && <FiCheck className="text-[8px] stroke-[3]" />}
     </button>
   );
 };
@@ -372,18 +354,10 @@ const PermissionLevel = ({
    INFO ROW
 ========================================================= */
 
-const InfoRow = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) => {
+const InfoRow = ({ label, value }: { label: string; value: string }) => {
   return (
     <div className="grid grid-cols-[82px_1fr] gap-[8px]">
-      <span className="text-[6px] font-medium text-[#667085]">
-        {label}
-      </span>
+      <span className="text-[6px] font-medium text-[#667085]">{label}</span>
 
       <span className="text-[6px] font-medium leading-[1.3] text-[#344054]">
         {value}
@@ -397,36 +371,27 @@ const InfoRow = ({
 ========================================================= */
 
 const RolePermissions = () => {
-  const [selectedRole, setSelectedRole] =
-    useState<string>("administrator");
+  const [selectedRole, setSelectedRole] = useState<string>("administrator");
 
-  const [rolesList, setRolesList] =
-    useState<Role[]>(initialRoles);
+  const [rolesList, setRolesList] = useState<Role[]>(initialRoles);
 
-  const [permissions, setPermissions] =
-    useState<Permissions>(() =>
-      createInitialPermissions(initialRoles)
-    );
+  const [permissions, setPermissions] = useState<Permissions>(() =>
+    createInitialPermissions(initialRoles),
+  );
 
   /* =======================================================
      SELECTED ROLE
   ======================================================= */
 
   const selectedRoleData = useMemo(() => {
-    return (
-      rolesList.find((role) => role.id === selectedRole) ??
-      rolesList[0]
-    );
+    return rolesList.find((role) => role.id === selectedRole) ?? rolesList[0];
   }, [rolesList, selectedRole]);
 
   /* =======================================================
      TOGGLE PERMISSION
   ======================================================= */
 
-  const togglePermission = (
-    moduleName: string,
-    permission: PermissionKey
-  ) => {
+  const togglePermission = (moduleName: string, permission: PermissionKey) => {
     if (!selectedRoleData) return;
 
     const key = `${moduleName}:${permission}`;
@@ -529,8 +494,7 @@ const RolePermissions = () => {
         </h1>
 
         <p className="mt-[5px] text-[7px] leading-none text-[#667085]">
-          Manage roles and configure permissions for system
-          modules.
+          Manage roles and configure permissions for system modules.
         </p>
       </div>
 
@@ -545,9 +509,7 @@ const RolePermissions = () => {
 
         <Card className="min-w-0">
           <div className="flex h-[34px] items-center justify-between border-b border-[#edf0f2] px-[9px]">
-            <h2 className="text-[9px] font-semibold text-[#344054]">
-              Roles
-            </h2>
+            <h2 className="text-[9px] font-semibold text-[#344054]">Roles</h2>
 
             <button
               type="button"
@@ -555,7 +517,6 @@ const RolePermissions = () => {
               className="flex h-[21px] items-center gap-[4px] rounded-[4px] border border-[#e0e3e7] px-[7px] text-[6px] font-medium text-[#667085] hover:bg-[#fafafa]"
             >
               <FiPlus className="text-[8px]" />
-
               Add Role
             </button>
           </div>
@@ -620,7 +581,6 @@ const RolePermissions = () => {
               className="ml-[8px] flex h-[21px] shrink-0 items-center gap-[5px] rounded-[4px] border border-[#e0e3e7] px-[7px] text-[6px] font-medium text-[#667085] hover:bg-[#fafafa]"
             >
               <FiCopy className="text-[8px]" />
-
               Clone Role
             </button>
           </div>
@@ -669,9 +629,7 @@ const RolePermissions = () => {
                         const key = `${module.name}:${permission.key}`;
 
                         const checked =
-                          permissions[selectedRoleData.id]?.[
-                            key
-                          ] ?? false;
+                          permissions[selectedRoleData.id]?.[key] ?? false;
 
                         return (
                           <div
@@ -681,10 +639,7 @@ const RolePermissions = () => {
                             <PermissionCheckbox
                               checked={checked}
                               onChange={() =>
-                                togglePermission(
-                                  module.name,
-                                  permission.key
-                                )
+                                togglePermission(module.name, permission.key)
                               }
                             />
                           </div>
@@ -713,10 +668,7 @@ const RolePermissions = () => {
             </h2>
 
             <div className="space-y-[8px]">
-              <InfoRow
-                label="Role Name"
-                value={selectedRoleData.name}
-              />
+              <InfoRow label="Role Name" value={selectedRoleData.name} />
 
               <InfoRow
                 label="Description"
@@ -732,20 +684,11 @@ const RolePermissions = () => {
                 value={selectedRoleData.users.toString()}
               />
 
-              <InfoRow
-                label="Created By"
-                value="Neha Kapoor"
-              />
+              <InfoRow label="Created By" value="Neha Kapoor" />
 
-              <InfoRow
-                label="Created Date"
-                value="15 Jan 2025, 11:20 AM"
-              />
+              <InfoRow label="Created Date" value="15 Jan 2025, 11:20 AM" />
 
-              <InfoRow
-                label="Last Updated"
-                value="17 May 2025, 09:30 AM"
-              />
+              <InfoRow label="Last Updated" value="17 May 2025, 09:30 AM" />
             </div>
           </Card>
 

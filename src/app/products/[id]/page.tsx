@@ -70,7 +70,6 @@ const product = {
   reservedStock: 2,
   availableStock: 16,
   lowStockAlert: 10,
-  warehouse: "Main Warehouse",
 
   status: "Active",
   addedOn: "18 May 2025",
@@ -793,10 +792,7 @@ export default function ProductDetailsPage() {
               value="10 Pcs"
             />
 
-            <SideRow
-              label="Warehouse"
-              value="Main Warehouse"
-            />
+           
           </SideCard>
 
           {/* Product Status */}

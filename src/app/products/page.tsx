@@ -295,11 +295,12 @@
 "use client";
 
 import PageHeader from "@/components/pageheader/PageHeader";
+import StatCard from "@/components/statcard/StatCard";
+import { generateSKU } from "@/lib/product";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FaSearch,
-  FaPlus,
   FaSlidersH,
   FaChevronDown,
   FaChevronLeft,
@@ -307,14 +308,13 @@ import {
   FaEye,
   FaPencilAlt,
   FaTrash,
-  FaDownload,
-  FaBoxes,
   FaGem,
   FaExclamationTriangle,
-  FaCheckCircle,
   FaTimesCircle,
   FaEllipsisV,
+  FaRupeeSign,
 } from "react-icons/fa";
+import { MdShoppingBag } from "react-icons/md";
 
 interface Product {
   id: number;
@@ -506,6 +506,30 @@ export default function ProductsPage() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [openMenu, setOpenMenu] = useState<number | null>(null);
+  console.log(generateSKU("gemstone", "ruby"));
+  const [loading, setLoading] = useState(false);
+  console.log("products", products);
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products", {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setProducts(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // fetchProducts();
+  }, []);
 
   const categories = [
     "All Categories",
@@ -635,7 +659,53 @@ export default function ProductsPage() {
 
     return "text-[#333]";
   };
-
+  const stats = [
+    {
+      title: "Total Products",
+      value: "3,842",
+      change: "8.7%",
+      positive: true,
+      icon: <MdShoppingBag />,
+      iconBg: "bg-[#f0eaff]",
+      iconColor: "text-[#8c6dd7]",
+    },
+    {
+      title: "Active Products",
+      value: "1,284",
+      change: "12.4%",
+      positive: true,
+      icon: <FaGem />,
+      iconBg: "bg-[#e9f8ef]",
+      iconColor: "text-[#25a25a]",
+    },
+    {
+      title: "Low Stock",
+      value: "28",
+      change: "5",
+      positive: false,
+      icon: <FaExclamationTriangle />,
+      iconBg: "bg-[#fff3d5]",
+      iconColor: "text-[#d5a332]",
+    },
+    {
+      title: "Out of Stock",
+      value: "46",
+      change: "8",
+      positive: false,
+      icon: <FaTimesCircle />,
+      iconBg: "bg-[#fff0f0]",
+      iconColor: "text-[#d64747]",
+    },
+    {
+      title: "Total Value",
+      value: "₹24,85,600",
+      change: "18.6%",
+      positive: true,
+      icon: <FaRupeeSign />,
+      iconBg: "bg-[#ffe8e2]",
+      iconColor: "text-[#ee806b]",
+    },
+  ];
   return (
     <div className=" min-h-screen bg-[#fafafa] p-3 md:p-6">
       <PageHeader
@@ -645,203 +715,10 @@ export default function ProductsPage() {
         onButtonClick={() => router.push("/products/create")}
       />
 
-      {/* =====================================================
-          SUMMARY CARDS
-      ====================================================== */}
-
-      <div
-        className="
-          mb-5
-          grid
-          grid-cols-1
-          gap-3
-          sm:grid-cols-2
-          xl:grid-cols-5
-        "
-      >
-        {/* TOTAL PRODUCTS */}
-
-        <div
-          className="
-            rounded-lg
-            border
-            border-[#e8e8e8]
-            bg-white
-            p-4
-          "
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-full
-                bg-[#fff5dc]
-                text-[#c99438]
-              "
-            >
-              <FaBoxes className="text-[16px]" />
-            </div>
-
-            <div>
-              <p className="text-[10px] text-[#888]">Total Products</p>
-
-              <p className="mt-0.5 text-xl font-semibold text-[#222]">
-                {totalProducts.toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ACTIVE */}
-
-        <div
-          className="
-            rounded-lg
-            border
-            border-[#e8e8e8]
-            bg-white
-            p-4
-          "
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-full
-                bg-[#e9f8ef]
-                text-[#25a25a]
-              "
-            >
-              <FaCheckCircle className="text-[16px]" />
-            </div>
-
-            <div>
-              <p className="text-[10px] text-[#888]">Active Products</p>
-
-              <p className="mt-0.5 text-xl font-semibold text-[#222]">
-                {activeProducts.toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* LOW STOCK */}
-
-        <div
-          className="
-            rounded-lg
-            border
-            border-[#e8e8e8]
-            bg-white
-            p-4
-          "
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-full
-                bg-[#fff5e5]
-                text-[#d18b1c]
-              "
-            >
-              <FaExclamationTriangle className="text-[15px]" />
-            </div>
-
-            <div>
-              <p className="text-[10px] text-[#888]">Low Stock</p>
-
-              <p className="mt-0.5 text-xl font-semibold text-[#222]">
-                {lowStock}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* OUT OF STOCK */}
-
-        <div
-          className="
-            rounded-lg
-            border
-            border-[#e8e8e8]
-            bg-white
-            p-4
-          "
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-full
-                bg-[#fff0f0]
-                text-[#d64747]
-              "
-            >
-              <FaTimesCircle className="text-[16px]" />
-            </div>
-
-            <div>
-              <p className="text-[10px] text-[#888]">Out of Stock</p>
-
-              <p className="mt-0.5 text-xl font-semibold text-[#222]">
-                {outOfStock}
-              </p>
-            </div>
-          </div>
-        </div>
-        {/* Total Value Of Product */}
-
-        <div
-          className="
-            rounded-lg
-            border
-            border-[#e8e8e8]
-            bg-white
-            p-4
-          "
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-full
-                bg-[#fff0f0]
-                text-[#d64747]
-              "
-            >
-              <FaTimesCircle className="text-[16px]" />
-            </div>
-
-            <div>
-              <p className="text-[10px] text-[#888]">Out of Stock</p>
-
-              <p className="mt-0.5 text-xl font-semibold text-[#222]">
-                {outOfStock}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-3 xl:grid-cols-5">
+        {stats.map((stat) => (
+          <StatCard key={stat.title} {...stat} />
+        ))}
       </div>
 
       {/* =====================================================
@@ -849,7 +726,7 @@ export default function ProductsPage() {
       ====================================================== */}
 
       <div
-        className="
+        className="mt-3
           overflow-hidden
           rounded-lg
           border
@@ -893,7 +770,7 @@ export default function ProductsPage() {
               onChange={handleSearch}
               placeholder="Search product, SKU or category..."
               className="
-                h-10
+                h-9
                 w-full
                 rounded-md
                 border
@@ -919,7 +796,7 @@ export default function ProductsPage() {
               value={category}
               onChange={handleCategoryChange}
               className="
-                h-10
+                h-9
                 min-w-[155px]
                 appearance-none
                 rounded-md
@@ -959,7 +836,7 @@ export default function ProductsPage() {
               value={type}
               onChange={handleTypeChange}
               className="
-                h-10
+                h-9
                 min-w-[125px]
                 appearance-none
                 rounded-md
@@ -977,6 +854,7 @@ export default function ProductsPage() {
               <option>All Types</option>
               <option>Jewellery</option>
               <option>Gemstone</option>
+              <option>Rudraksha</option>
             </select>
 
             <FaChevronDown
@@ -999,7 +877,7 @@ export default function ProductsPage() {
               value={status}
               onChange={handleStatusChange}
               className="
-                h-10
+                h-9
                 min-w-[130px]
                 appearance-none
                 rounded-md
@@ -1039,7 +917,7 @@ export default function ProductsPage() {
             type="button"
             className="
               flex
-              h-10
+              h-9
               items-center
               justify-center
               gap-2
@@ -1085,72 +963,72 @@ export default function ProductsPage() {
           <table className="w-full min-w-[1100px] border-collapse">
             <thead>
               <tr className="border-b border-[#eeeeee] bg-[#fcfcfc]">
-                <th className="w-10 px-4 py-3 text-left text-[10px] font-semibold text-[#666]">
+                <th className="w-10 px-4 py-3 text-left text-[12px] font-semibold text-[#666]">
                   #
                 </th>
 
-                <th className="px-4 py-3 text-left text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-left text-[12px] font-semibold text-[#666]">
                   Product
                 </th>
 
-                <th className="px-4 py-3 text-left text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-left text-[12px] font-semibold text-[#666]">
                   SKU
                 </th>
 
-                <th className="px-4 py-3 text-left text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-left text-[12px] font-semibold text-[#666]">
                   Category
                 </th>
 
-                <th className="px-4 py-3 text-left text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-left text-[12px] font-semibold text-[#666]">
                   Type
                 </th>
 
-                <th className="px-4 py-3 text-right text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-right text-[12px] font-semibold text-[#666]">
                   Price
                 </th>
 
-                <th className="px-4 py-3 text-center text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-center text-[12px] font-semibold text-[#666]">
                   Stock
                 </th>
 
-                <th className="px-4 py-3 text-center text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-center text-[12px] font-semibold text-[#666]">
                   Status
                 </th>
 
-                <th className="px-4 py-3 text-left text-[10px] font-semibold text-[#666]">
-                  Created
+                <th className="px-4 py-3 text-left text-[12px] font-semibold text-[#666]">
+                  Add On
                 </th>
 
-                <th className="px-4 py-3 text-center text-[10px] font-semibold text-[#666]">
+                <th className="px-4 py-3 text-center text-[12px] font-semibold text-[#666]">
                   Action
                 </th>
               </tr>
             </thead>
-
-            <tbody>
-              {visibleProducts.map((product, index) => (
-                <tr
-                  key={product.id}
-                  className="
+            {!loading ? (
+              <tbody>
+                {visibleProducts.map((product, index) => (
+                  <tr
+                    key={product.id}
+                    className="
                     border-b
                     border-[#eeeeee]
                     transition
                     hover:bg-[#fffdf9]
                   "
-                >
-                  {/* NUMBER */}
+                  >
+                    {/* NUMBER */}
 
-                  <td className="px-4 py-3 text-[11px] text-[#777]">
-                    {startIndex + index + 1}
-                  </td>
+                    <td className="px-4 py-3 text-[12px] text-[#777]">
+                      {startIndex + index + 1}
+                    </td>
 
-                  {/* PRODUCT */}
+                    {/* PRODUCT */}
 
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="
-                          h-11
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="
+                          h-9
                           w-11
                           shrink-0
                           overflow-hidden
@@ -1159,63 +1037,63 @@ export default function ProductsPage() {
                           border-[#e5e0d8]
                           bg-[#f8f8f8]
                         "
-                      >
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="h-full w-full object-cover"
-                          onError={(event) => {
-                            event.currentTarget.style.display = "none";
-                          }}
-                        />
+                        >
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="h-full w-full object-cover"
+                            onError={(event) => {
+                              event.currentTarget.style.display = "none";
+                            }}
+                          />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="truncate text-[12px] font-semibold text-[#252525]">
+                            {product.name}
+                          </p>
+
+                          <p className="mt-0.5 text-[10px] text-[#92969d]">
+                            {product.material}
+                          </p>
+                        </div>
                       </div>
+                    </td>
 
-                      <div className="min-w-0">
-                        <p className="truncate text-[11px] font-semibold text-[#252525]">
-                          {product.name}
-                        </p>
+                    {/* SKU */}
 
-                        <p className="mt-0.5 text-[9px] text-[#92969d]">
-                          {product.material}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
+                    <td className="px-4 py-3">
+                      <span className="text-[11px] font-medium text-[#555]">
+                        {product.sku}
+                      </span>
+                    </td>
 
-                  {/* SKU */}
+                    {/* CATEGORY */}
 
-                  <td className="px-4 py-3">
-                    <span className="text-[10px] font-medium text-[#555]">
-                      {product.sku}
-                    </span>
-                  </td>
-
-                  {/* CATEGORY */}
-
-                  <td className="px-4 py-3">
-                    <span
-                      className="
+                    <td className="px-4 py-3">
+                      <span
+                        className="
                         rounded
                         bg-[#f5f3ef]
                         px-2
                         py-1
-                        text-[10px]
+                        text-[11px]
                         text-[#666]
                       "
-                    >
-                      {product.category}
-                    </span>
-                  </td>
+                      >
+                        {product.category}
+                      </span>
+                    </td>
 
-                  {/* TYPE */}
+                    {/* TYPE */}
 
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`
                           flex
-                          h-6
-                          w-6
+                          h-8
+                          w-8
                           items-center
                           justify-center
                           rounded-full
@@ -1225,82 +1103,91 @@ export default function ProductsPage() {
                               : "bg-[#fff5dc] text-[#c99438]"
                           }
                         `}
-                      >
-                        <FaGem className="text-[9px]" />
+                        >
+                          <FaGem className="text-[11px]" />
+                        </div>
+
+                        <span className="text-[11px] text-[#555]">
+                          {product.type}
+                        </span>
                       </div>
+                    </td>
 
-                      <span className="text-[10px] text-[#555]">
-                        {product.type}
+                    {/* PRICE */}
+
+                    <td className="px-4 py-3 text-right">
+                      <span className="text-[12px] font-bold text-[#333]">
+                        {formatCurrency(12000)}
                       </span>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* PRICE */}
+                    {/* STOCK */}
 
-                  <td className="px-4 py-3 text-right">
-                    <span className="text-[11px] font-semibold text-[#333]">
-                      {formatCurrency(product.price)}
-                    </span>
-                  </td>
-
-                  {/* STOCK */}
-
-                  <td className="px-4 py-3 text-center">
-                    <span
-                      className={`
-                        text-[11px]
+                    <td className="px-4 py-3 text-center">
+                      <span
+                        className={`
+                        text-[12px]
                         font-semibold
                         ${getStockStyle(product.stock)}
                       `}
-                    >
-                      {product.stock}
-                    </span>
+                      >
+                        {product.stock}
+                      </span>
 
-                    {product.stock > 0 && product.stock <= 5 && (
-                      <p className="mt-0.5 text-[8px] text-[#c88a20]">
-                        Low stock
-                      </p>
-                    )}
+                      {product.stock > 0 && product.stock <= 5 && (
+                        <p className="mt-0.5 text-[10px] text-[#c88a20]">
+                          Low stock
+                        </p>
+                      )}
 
-                    {product.stock === 0 && (
-                      <p className="mt-0.5 text-[8px] text-[#d64747]">
-                        Out of stock
-                      </p>
-                    )}
-                  </td>
+                      {product.stock === 0 && (
+                        <p className="mt-0.5 text-[10px] text-[#d64747]">
+                          Out of stock
+                        </p>
+                      )}
+                    </td>
 
-                  {/* STATUS */}
+                    {/* STATUS */}
 
-                  <td className="px-4 py-3 text-center">
-                    <span
-                      className={`
+                    <td className="px-4 py-3 text-center">
+                      <span
+                        className={`
                         inline-flex
                         rounded
                         px-2.5
                         py-1
-                        text-[9px]
+                        text-[11px]
                         font-medium
                         ${getStatusStyle(product.status)}
                       `}
-                    >
-                      {product.status}
-                    </span>
-                  </td>
+                      >
+                        {product.status}
+                      </span>
+                    </td>
 
-                  {/* CREATED */}
+                    {/* CREATED */}
 
-                  <td className="px-4 py-3 text-[10px] text-[#777]">
-                    {product.createdAt}
-                  </td>
+                    <td className="px-4 py-3 text-[12px] text-[#777]">
+                      {product.createdAt}
+                    </td>
 
-                  {/* ACTION */}
+                    {/* ACTION */}
 
-                  <td className="relative px-4 py-3">
-                    <div className="flex items-center justify-center gap-1">
-                      <button
-                        type="button"
-                        title="View"
-                        className="
+                    <td className="relative px-4 py-3">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          type="button"
+                          title="View"
+                          className="cursor-pointer flex h-8 w-8 items-center justify-center rounded border border-[#e0e0e0] text-[#666] transition hover:border-[#c99438] hover:bg-[#fffaf2] hover:text-[#b67d20]"
+                          onClick={() => router.push("/products/1")}
+                        >
+                          <FaEye className="text-[13px]" />
+                        </button>
+
+                        <button
+                          type="button"
+                          title="Edit"
+                          className="
                           flex
                           h-8
                           w-8
@@ -1315,41 +1202,19 @@ export default function ProductsPage() {
                           hover:bg-[#fffaf2]
                           hover:text-[#b67d20]
                         "
-                      >
-                        <FaEye className="text-[11px]" />
-                      </button>
+                        >
+                          <FaPencilAlt className="text-[12px]" />
+                        </button>
 
-                      <button
-                        type="button"
-                        title="Edit"
-                        className="
-                          flex
-                          h-8
-                          w-8
-                          items-center
-                          justify-center
-                          rounded
-                          border
-                          border-[#e0e0e0]
-                          text-[#666]
-                          transition
-                          hover:border-[#c99438]
-                          hover:bg-[#fffaf2]
-                          hover:text-[#b67d20]
-                        "
-                      >
-                        <FaPencilAlt className="text-[10px]" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setOpenMenu(
-                            openMenu === product.id ? null : product.id,
-                          )
-                        }
-                        title="More"
-                        className="
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenMenu(
+                              openMenu === product.id ? null : product.id,
+                            )
+                          }
+                          title="More"
+                          className="
                           flex
                           h-8
                           w-8
@@ -1360,14 +1225,14 @@ export default function ProductsPage() {
                           transition
                           hover:bg-[#f5f5f5]
                         "
-                      >
-                        <FaEllipsisV className="text-[11px]" />
-                      </button>
-                    </div>
+                        >
+                          <FaEllipsisV className="text-[12px]" />
+                        </button>
+                      </div>
 
-                    {openMenu === product.id && (
-                      <div
-                        className="
+                      {openMenu === product.id && (
+                        <div
+                          className="
                           absolute
                           right-4
                           top-12
@@ -1380,10 +1245,10 @@ export default function ProductsPage() {
                           py-1
                           shadow-lg
                         "
-                      >
-                        <button
-                          type="button"
-                          className="
+                        >
+                          <button
+                            type="button"
+                            className="
                             flex
                             w-full
                             items-center
@@ -1395,15 +1260,15 @@ export default function ProductsPage() {
                             text-[#555]
                             hover:bg-[#faf8f4]
                           "
-                          onClick={() => setOpenMenu(null)}
-                        >
-                          <FaEye className="text-[10px]" />
-                          View Product
-                        </button>
+                            onClick={() => setOpenMenu(null)}
+                          >
+                            <FaEye className="text-[10px]" />
+                            View Product
+                          </button>
 
-                        <button
-                          type="button"
-                          className="
+                          <button
+                            type="button"
+                            className="
                             flex
                             w-full
                             items-center
@@ -1415,15 +1280,15 @@ export default function ProductsPage() {
                             text-[#555]
                             hover:bg-[#faf8f4]
                           "
-                          onClick={() => setOpenMenu(null)}
-                        >
-                          <FaPencilAlt className="text-[10px]" />
-                          Edit Product
-                        </button>
+                            onClick={() => setOpenMenu(null)}
+                          >
+                            <FaPencilAlt className="text-[10px]" />
+                            Edit Product
+                          </button>
 
-                        <button
-                          type="button"
-                          className="
+                          <button
+                            type="button"
+                            className="
                             flex
                             w-full
                             items-center
@@ -1435,31 +1300,50 @@ export default function ProductsPage() {
                             text-red-500
                             hover:bg-red-50
                           "
-                          onClick={() => handleDelete(product.id)}
-                        >
-                          <FaTrash className="text-[10px]" />
-                          Delete
-                        </button>
+                            onClick={() => handleDelete(product.id)}
+                          >
+                            <FaTrash className="text-[10px]" />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+
+                {visibleProducts.length === 0 && (
+                  <tr>
+                    <td colSpan={10} className="px-4 py-16 text-center">
+                      <div className="text-sm font-medium text-[#555]">
+                        No products found
                       </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
 
-              {visibleProducts.length === 0 && (
+                      <p className="mt-1 text-xs text-[#999]">
+                        Try changing your search or filters.
+                      </p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            ) : (
+              <tbody>
                 <tr>
-                  <td colSpan={10} className="px-4 py-16 text-center">
-                    <div className="text-sm font-medium text-[#555]">
-                      No products found
-                    </div>
+                  <td colSpan={10} className="h-64">
+                    <div className="flex h-full w-full flex-col items-center justify-center">
+                      {/* Spinner */}
+                      <div className="relative h-10 w-10">
+                        <div className="absolute inset-0 animate-spin rounded-full border-2 border-[#E5E7EB] border-t-[#080e17]" />
+                      </div>
 
-                    <p className="mt-1 text-xs text-[#999]">
-                      Try changing your search or filters.
-                    </p>
+                      {/* Loading text */}
+                      <p className="mt-3 text-xs font-semibold text-gray-500">
+                        Loading Product
+                      </p>
+                    </div>
                   </td>
                 </tr>
-              )}
-            </tbody>
+              </tbody>
+            )}
           </table>
         </div>
 
@@ -1467,21 +1351,8 @@ export default function ProductsPage() {
             PAGINATION
         ==================================================== */}
 
-        <div
-          className="
-            flex
-            flex-col
-            gap-3
-            border-t
-            border-[#eeeeee]
-            px-5
-            py-3
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-          "
-        >
-          <p className="text-[10px] text-[#777]">
+        <div className="flex flex-col gap-3 border-t border-[#eeeeee] px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[12px] text-[#777]">
             Showing {filteredProducts.length === 0 ? 0 : startIndex + 1} to{" "}
             {Math.min(startIndex + itemsPerPage, filteredProducts.length)} of{" "}
             {filteredProducts.length} products
@@ -1492,20 +1363,7 @@ export default function ProductsPage() {
               type="button"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              className="
-                flex
-                h-8
-                w-8
-                items-center
-                justify-center
-                rounded
-                border
-                border-[#dedede]
-                text-[#777]
-                hover:bg-[#fafafa]
-                disabled:cursor-not-allowed
-                disabled:opacity-40
-              "
+              className="flex h-7 w-7 items-center justify-center rounded border border-[#dedede] text-[#777] hover:bg-[#fafafa] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <FaChevronLeft className="text-[9px]" />
             </button>
@@ -1517,15 +1375,7 @@ export default function ProductsPage() {
                   key={page}
                   type="button"
                   onClick={() => setCurrentPage(page)}
-                  className={`
-                    flex
-                    h-8
-                    w-8
-                    items-center
-                    justify-center
-                    rounded
-                    text-[10px]
-                    font-medium
+                  className={`flex h-7 w-7 items-center justify-center rounded text-[10px] font-medium
                     ${
                       currentPage === page
                         ? "bg-[#c99438] text-white"
@@ -1543,48 +1393,24 @@ export default function ProductsPage() {
               onClick={() =>
                 setCurrentPage((prev) => Math.min(totalPages, prev + 1))
               }
-              className="
-                flex
-                h-8
-                w-8
-                items-center
-                justify-center
-                rounded
-                border
-                border-[#dedede]
-                text-[#777]
-                hover:bg-[#fafafa]
-                disabled:cursor-not-allowed
-                disabled:opacity-40
-              "
+              className="flex h-7 w-7 items-center justify-center rounded border border-[#dedede] text-[#777] hover:bg-[#fafafa] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <FaChevronRight className="text-[9px]" />
             </button>
-
-            <select
-              value={itemsPerPage}
-              onChange={(event) => {
-                setItemsPerPage(Number(event.target.value));
-                setCurrentPage(1);
-              }}
-              className="
-                ml-2
-                h-8
-                rounded
-                border
-                border-[#dedede]
-                bg-white
-                px-2
-                text-[10px]
-                text-[#555]
-                outline-none
-              "
-            >
-              <option value={5}>5 / page</option>
-              <option value={10}>10 / page</option>
-              <option value={20}>20 / page</option>
-            </select>
           </div>
+          <select
+            value={itemsPerPage}
+            onChange={(event) => {
+              setItemsPerPage(Number(event.target.value));
+              setCurrentPage(1);
+            }}
+            className="h-7 rounded border border-[#dedede] bg-white px-1 text-[12px] text-[#555] outline-none"
+          >
+            <option value={10}>10 / page</option>
+            <option value={20}>20 / page</option>
+            <option value={30}>30 / page</option>
+            <option value={40}>40 / page</option>
+          </select>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ export default function PageHeader({
           {title}
         </h1>
 
-        <p className="mt-0.5 text-[11px] text-[#85898d]">{description}</p>
+        <p className="mt-0.5 text-[12px] text-[#85898d]">{description}</p>
       </div>
 
       {showButton && (

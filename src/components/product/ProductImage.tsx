@@ -1,13 +1,8 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import {
-  FiUploadCloud,
-  FiX,
-  FiImage,
-  FiLoader,
-  FiCheckCircle,
-} from "react-icons/fi";
+import { FaCloudArrowUp } from "react-icons/fa6";
+import { FiX, FiImage, FiLoader } from "react-icons/fi";
 
 interface ProductImageItem {
   url: string;
@@ -19,7 +14,7 @@ interface ProductImageProps {
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 8;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const ProductImage = ({ formData, setFormData }: ProductImageProps) => {
@@ -158,25 +153,6 @@ const ProductImage = ({ formData, setFormData }: ProductImageProps) => {
 
   return (
     <div className="w-full">
-      {/* Header */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-semibold text-gray-800">
-              Product Images
-            </h2>
-
-            <p className="mt-1 text-xs text-gray-500">
-              Upload product images. JPG, PNG or WEBP up to 5MB each.
-            </p>
-          </div>
-
-          <span className="text-xs text-gray-500">
-            {images.length}/{MAX_IMAGES}
-          </span>
-        </div>
-      </div>
-
       {/* Hidden Input */}
       <input
         ref={fileInputRef}
@@ -192,33 +168,28 @@ const ProductImage = ({ formData, setFormData }: ProductImageProps) => {
         type="button"
         onClick={openFilePicker}
         disabled={uploading || deleting !== null || images.length >= MAX_IMAGES}
-        className="group relative flex min-h-[230px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-10 text-center transition-all hover:border-gray-400 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+        className="group relative flex h-[148px] w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-10 text-center transition-all hover:border-gray-400 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+        <div className="mb-2 flex h-16 w-16 items-center justify-center">
           {uploading ? (
             <FiLoader className="h-7 w-7 animate-spin text-gray-600" />
           ) : (
-            <FiUploadCloud className="h-7 w-7 text-gray-600 transition-transform group-hover:-translate-y-1" />
+            <FaCloudArrowUp className="h-7 w-7 text-gray-600 transition-transform group-hover:-translate-y-1" />
           )}
         </div>
-
-        <h3 className="text-sm font-semibold text-gray-800">
+        <p className="text-[12px] font-semibold text-slate-700">
           {uploading
             ? "Uploading images..."
             : images.length >= MAX_IMAGES
               ? "Maximum images reached"
-              : "Upload product images"}
-        </h3>
-
-        <p className="mt-2 text-xs text-gray-500">
-          Select multiple images at once
+              : "Click to upload images"}
         </p>
 
-        {!uploading && images.length < MAX_IMAGES && (
-          <span className="mt-4 rounded-lg bg-gray-900 px-4 py-2 text-xs font-medium text-white">
-            Choose Images
-          </span>
-        )}
+        <p className="mt-1 text-[10px] text-slate-500">JPG, PNG, WEBP</p>
+
+        <p className="mt-3 text-[10px] text-slate-400">
+          Max 8 images · 5MB each
+        </p>
       </button>
 
       {/* Error */}
@@ -236,13 +207,13 @@ const ProductImage = ({ formData, setFormData }: ProductImageProps) => {
             <div className="flex items-center gap-2">
               <FiImage className="h-4 w-4 text-gray-600" />
 
-              <span className="text-sm font-semibold text-gray-800">
+              <p className="text-[12px] font-semibold text-slate-700">
                 Uploaded Images
-              </span>
+              </p>
 
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+              <p className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-600">
                 {images.length}
-              </span>
+              </p>
             </div>
 
             <button
@@ -251,14 +222,14 @@ const ProductImage = ({ formData, setFormData }: ProductImageProps) => {
               disabled={
                 uploading || deleting !== null || images.length >= MAX_IMAGES
               }
-              className="text-xs font-semibold text-gray-700 underline underline-offset-2 hover:text-black disabled:opacity-50"
+              className="text-[10px] cursor-pointer font-semibold text-gray-700 underline underline-offset-2 hover:text-black disabled:opacity-50"
             >
               + Add More
             </button>
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-4 gap-1.5">
             {images.map((image, index) => {
               const isDeleting = deleting === image.publicId;
 
@@ -278,34 +249,20 @@ const ProductImage = ({ formData, setFormData }: ProductImageProps) => {
                     />
                   </div>
 
-                  {/* Main Image Badge */}
-                  {index === 0 && (
-                    <div className="absolute left-2 top-2 rounded-md bg-black/70 px-2 py-1 text-[10px] font-medium text-white">
-                      Main Image
-                    </div>
-                  )}
-
                   {/* Remove */}
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(image)}
                     disabled={uploading || deleting !== null}
-                    className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-gray-700 opacity-0 shadow-sm transition-all hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-gray-700 opacity-0 shadow-sm transition-all hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
                     title="Remove image"
                   >
                     {isDeleting ? (
-                      <FiLoader className="h-4 w-4 animate-spin" />
+                      <FiLoader className="h-3 w-3 animate-spin" />
                     ) : (
-                      <FiX className="h-4 w-4" />
+                      <FiX className="h-3 w-3" />
                     )}
                   </button>
-
-                  {/* Number */}
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-md bg-white/90 px-2 py-1 text-[10px] text-gray-600">
-                    <FiCheckCircle className="h-3 w-3 text-green-600" />
-
-                    {index + 1}
-                  </div>
                 </div>
               );
             })}
