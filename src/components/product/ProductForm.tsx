@@ -1,1146 +1,1535 @@
 "use client";
 
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { ChangeEvent, useEffect, useState } from "react";
+
 import {
-  FaGem,
-  FaCircle,
-  FaBoxOpen,
-  FaImages,
-  FaStar,
-  FaCertificate,
-  FaIndianRupeeSign,
-  FaBoxesStacked,
-  FaHeart,
-  FaShieldHeart,
-  FaMagnifyingGlass,
-  FaFloppyDisk,
-  FaArrowLeft,
+  FaArrowUpFromBracket,
+  FaPlus,
+  FaRegCircleCheck,
+  FaTrash,
 } from "react-icons/fa6";
-import { RiCertificate2Line } from "react-icons/ri";
 
-import GemstoneFields from "./GemstoneFields";
-import RudrakshaFields from "./RudrakshaFields";
+import ProductImage from "@/components/product/ProductImage";
+import Jewellery from "@/components/product/Jewellery";
+
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-} from "@mui/material";
-import { FaInfoCircle } from "react-icons/fa";
-import { MdExpandMore, MdOutlineInventory2 } from "react-icons/md";
-import ProductImage from "./ProductImage";
+  ProductFormData,
+  ProductStatus,
+  ProductType,
+  StockStatus,
+} from "@/lib/type";
 
-type ProductType = "gemstone" | "rudraksha";
+type Option = {
+  label: string;
+  value: string;
+};
 
+const inputClass =
+  "w-full h-9 rounded-md border border-[#e5e1da] bg-white px-3 text-[11px] text-slate-700 outline-none placeholder:text-[#96999d] focus:border-[#c9a45c] focus:ring-1 focus:ring-[#c9a45c]/20";
+
+const labelClass = "mb-1.5 block text-[10px] font-semibold text-slate-700";
+
+const selectClass =
+  "w-full h-9 appearance-none rounded-md border border-[#e5e1da] bg-white px-3 text-[11px] text-slate-700 outline-none focus:border-[#c9a45c] focus:ring-1 focus:ring-[#c9a45c]/20";
+
+const textareaClass =
+  "w-full resize-none rounded-md border border-[#e5e1da] bg-white px-3 py-2 text-[11px] text-slate-700 outline-none placeholder:text-[#96999d] focus:border-[#c9a45c] focus:ring-1 focus:ring-[#c9a45c]/20";
+
+const Section = ({
+  title,
+  children,
+  className = "",
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <section
+    className={`rounded-md border border-slate-200 bg-white p-3 ${className}`}
+  >
+    <h2 className="mb-3 text-[11px] font-bold text-slate-800">{title}</h2>
+
+    {children}
+  </section>
+);
+
+const Field = ({
+  label,
+  required = false,
+  children,
+  className = "",
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div className={className}>
+    <label className={labelClass}>
+      {label}
+
+      {required && <span className="ml-0.5 text-red-500">*</span>}
+    </label>
+
+    {children}
+  </div>
+);
+
+const Input = ({
+  placeholder,
+  type = "text",
+  value,
+  onChange,
+}: {
+  placeholder?: string;
+  type?: string;
+  value?: string | number;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+}) => (
+  <input
+    type={type}
+    placeholder={placeholder}
+    value={value ?? ""}
+    onChange={onChange}
+    className={inputClass}
+  />
+);
+
+const Select = ({
+  options,
+  placeholder = "Select",
+  value,
+  onChange,
+  disabled = false,
+}: {
+  options: Option[];
+  placeholder?: string;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLSelectElement>) => void;
+  disabled?: boolean;
+}) => (
+  <div className="relative">
+    <select
+      className={`${selectClass} ${
+        disabled ? "cursor-not-allowed bg-slate-50" : ""
+      }`}
+      value={value ?? ""}
+      onChange={onChange}
+      disabled={disabled}
+    >
+      <option value="" disabled>
+        {placeholder}
+      </option>
+
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+
+    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-slate-500">
+      ▼
+    </span>
+  </div>
+);
+
+const Toggle = ({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onChange}
+    className={`relative h-4 w-8 rounded-full transition ${
+      checked ? "bg-slate-800" : "bg-slate-200"
+    }`}
+  >
+    <span
+      className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition ${
+        checked ? "left-[18px]" : "left-0.5"
+      }`}
+    />
+  </button>
+);
+
+const EmptyState = ({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) => (
+  <div className="flex min-h-[120px] flex-col items-center justify-center text-center">
+    <div className="mb-3 text-xl text-slate-400">{icon}</div>
+
+    <p className="text-[11px] font-semibold text-slate-600">{title}</p>
+
+    <p className="mt-1 max-w-[230px] text-[9px] leading-4 text-slate-400">
+      {description}
+    </p>
+  </div>
+);
+
+const numberValue = (value: string): number | undefined => {
+  if (value === "") return undefined;
+
+  const number = Number(value);
+
+  return Number.isNaN(number) ? undefined : number;
+};
 interface ProductFormProps {
-  formData: any;
-  setFormData: React.Dispatch<React.SetStateAction<any>>;
-  handleSubmit: () => void;
-  loading: boolean;
+  formData: ProductFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
 }
-
 export default function ProductForm({
   formData,
   setFormData,
-  handleSubmit,
-  loading,
 }: ProductFormProps) {
-  const [expanded, setExpanded] = useState<string>("type");
+  const router = useRouter();
+  const [categories, setCategories] = useState<Option[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [showBenefitForm, setShowBenefitForm] = useState(false);
+  const [benefitInput, setBenefitInput] = useState("");
 
-  const handleAccordion =
-    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : "");
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+
+        const response = await fetch("/api/categories", {
+          method: "GET",
+          cache: "no-store",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.message || "Failed to fetch categories");
+        }
+
+        const categoryList = Array.isArray(data?.data)
+          ? data.data
+          : Array.isArray(data?.categories)
+            ? data.categories
+            : [];
+
+        const categoryOptions: Option[] = categoryList.map(
+          (category: { _id: string; name: string }) => ({
+            label: category.name,
+            value: category._id,
+          }),
+        );
+
+        setCategories(categoryOptions);
+      } catch (error) {
+        console.error("Fetch categories error:", error);
+
+        alert(
+          error instanceof Error ? error.message : "Failed to load categories",
+        );
+      } finally {
+        setCategoriesLoading(false);
+      }
     };
 
-  const updateField = (field: string, value: any) => {
-    setFormData((prev: any) => ({
+    fetchCategories();
+  }, []);
+
+  const updateField = <K extends keyof ProductFormData>(
+    field: K,
+    value: ProductFormData[K],
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const updateNestedField = (parent: string, field: string, value: any) => {
-    setFormData((prev: any) => ({
+  const updateNestedField = (
+    section:
+      | "gemstone"
+      | "rudraksha"
+      | "jewellery"
+      | "astrology"
+      | "certification"
+      | "pricing"
+      | "inventory"
+      | "seo"
+      | "careInstructions",
+    field: string,
+    value: any,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [parent]: {
-        ...prev[parent],
+
+      [section]: {
+        ...(prev[section] || {}),
         [field]: value,
       },
     }));
   };
 
   const handleProductTypeChange = (type: ProductType) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
+
       productType: type,
-      specifications: {},
+
+      gemstone: type === "gemstone" ? prev.gemstone || {} : undefined,
+
+      rudraksha: type === "rudraksha" ? prev.rudraksha || {} : undefined,
+
+      jewellery: type === "jewellery" ? prev.jewellery || {} : undefined,
+    }));
+  };
+
+  const addBenefit = () => {
+    const value = benefitInput.trim();
+
+    if (!value) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      benefits: [...prev.benefits, value],
+    }));
+
+    setBenefitInput("");
+    setShowBenefitForm(false);
+  };
+
+  const removeBenefit = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      benefits: prev.benefits.filter((_, i) => i !== index),
     }));
   };
 
   return (
-    <div className="w-full">
-      <div className="mb-4 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight text-gray-900">
-            Add Product
-          </h1>
+    <>
+      <div className="grid grid-cols-1 gap-2.5 xl:grid-cols-12">
+        <Section title="Basic Information" className="xl:col-span-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {/* PRODUCT TYPE */}
 
-          <p className=" text-sm text-gray-500">Add product to your catalog.</p>
-        </div>
-      </div>
-
-      <Accordion
-        expanded={expanded === "type"}
-        onChange={handleAccordion("type")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={
-              formData.productType === "gemstone" ? <FaGem /> : <FaCircle />
-            }
-            title="Product Type"
-            description="Select the type of product you are adding."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <div className=" pt-3">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <SelectField
-                label="Product Type"
+            <Field label="Product Type" required>
+              <Select
                 value={formData.productType}
-                options={["gemstone", "rudraksha", "jewellery"]}
-                onChange={(value) =>
-                  handleProductTypeChange(value as "gemstone" | "rudraksha")
+                onChange={(e) =>
+                  handleProductTypeChange(e.target.value as ProductType)
                 }
+                options={[
+                  {
+                    label: "Gemstone",
+                    value: "gemstone",
+                  },
+                  {
+                    label: "Rudraksha",
+                    value: "rudraksha",
+                  },
+                  {
+                    label: "Jewellery",
+                    value: "jewellery",
+                  },
+                ]}
               />
-              <SelectField
-                label="Status"
-                value={formData.status || "Draft"}
-                options={["Draft", "Published", "Archived"]}
-                onChange={(value) => updateField("status", value)}
-              />
-            </div>
-          </div>
-        </AccordionDetails>
-      </Accordion>
-      {/* BASIC INFORMATION */}
-      <Accordion
-        expanded={expanded === "basic"}
-        onChange={handleAccordion("basic")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<FaBoxOpen />}
-            title="Basic Information"
-            description="Basic information about your product."
-          />
-        </AccordionSummary>
+            </Field>
 
-        <AccordionDetails>
-          <div className=" pt-3">
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              <InputField
-                label="SKU"
-                required
-                value={formData.sku}
-                placeholder={
-                  formData.productType === "gemstone"
-                    ? "GEM-RUBY-001"
-                    : "RUD-5M-001"
-                }
-                onChange={(value) => updateField("sku", value)}
-              />
+            {/* PRODUCT NAME */}
 
-              <InputField
-                label="Product Name"
-                required
+            <Field label="Product Name" required>
+              <Input
+                placeholder="Enter product name"
                 value={formData.name}
-                placeholder={
-                  formData.productType === "gemstone"
-                    ? "Natural Ruby"
-                    : "5 Mukhi Rudraksha"
-                }
-                onChange={(value) => updateField("name", value)}
+                onChange={(e) => updateField("name", e.target.value)}
               />
+            </Field>
 
-              <InputField
-                label="Indian Name"
-                value={formData.indianName}
-                placeholder={
-                  formData.productType === "gemstone"
-                    ? "Manik"
-                    : "Panchmukhi Rudraksha"
-                }
-                onChange={(value) => updateField("indianName", value)}
-              />
+            {/* CATEGORY */}
 
-              <InputField
-                label="Slug"
-                required
-                value={formData.slug}
-                placeholder="natural-ruby"
-                onChange={(value) =>
-                  updateField("slug", value.toLowerCase().replace(/\s+/g, "-"))
-                }
-              />
-
-              <InputField
-                label="Category"
-                required
+            <Field label="Category" required>
+              <Select
                 value={formData.category}
                 placeholder={
-                  formData.productType === "gemstone" ? "Precious" : "Rudraksha"
+                  categoriesLoading
+                    ? "Loading categories..."
+                    : "Select category"
                 }
-                onChange={(value) => updateField("category", value)}
+                disabled={categoriesLoading}
+                onChange={(e) => updateField("category", e.target.value)}
+                options={categories}
               />
+            </Field>
 
-              <InputField
-                label="Sub Category"
-                value={formData.subCategory}
-                placeholder={
-                  formData.productType === "gemstone" ? "Ruby" : "5 Mukhi"
+            {/* SLUG */}
+
+            <Field label="Slug">
+              <Input
+                placeholder="product-url-slug"
+                value={formData.slug}
+                onChange={(e) => updateField("slug", e.target.value)}
+              />
+            </Field>
+
+            {/* STATUS */}
+
+            <Field label="Status">
+              <Select
+                value={formData.status}
+                onChange={(e) =>
+                  updateField("status", e.target.value as ProductStatus)
                 }
-                onChange={(value) => updateField("subCategory", value)}
+                options={[
+                  {
+                    label: "Draft",
+                    value: "Draft",
+                  },
+                  {
+                    label: "Published",
+                    value: "Published",
+                  },
+                  {
+                    label: "Archived",
+                    value: "Archived",
+                  },
+                ]}
               />
-            </div>
+            </Field>
 
-            <div className="mt-5">
-              <TextAreaField
-                label="Description"
+            {/* DESCRIPTION */}
+
+            <Field label="Description" className="sm:col-span-2">
+              <textarea
+                rows={4}
+                maxLength={1000}
                 value={formData.description}
-                placeholder="Enter detailed product description..."
-                rows={5}
-                onChange={(value) => updateField("description", value)}
+                onChange={(e) => updateField("description", e.target.value)}
+                placeholder="Enter product description..."
+                className={textareaClass}
               />
-            </div>
+
+              <div className="mt-1 text-right text-[8px] text-slate-400">
+                {formData.description.length}
+                /1000
+              </div>
+            </Field>
           </div>
-        </AccordionDetails>
-      </Accordion>
-      {/* MEDIA */}
+        </Section>
 
-      <Accordion
-        expanded={expanded === "MEDIA"}
-        onChange={handleAccordion("MEDIA")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<FaImages />}
-            title="Product Media"
-            description="Add product images and video."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
+        <Section title="Gallery Images" className="xl:col-span-3">
           <ProductImage formData={formData} setFormData={setFormData} />
-        </AccordionDetails>
-      </Accordion>
+        </Section>
 
-      {/*Product SPECIFIC */}
-      <Accordion
-        expanded={expanded === "SPECIFIC"}
-        onChange={handleAccordion("SPECIFIC")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={
-              formData.productType === "gemstone" ? <FaGem /> : <FaCircle />
-            }
-            title={
-              formData.productType === "gemstone"
-                ? "Gemstone Details"
-                : "Rudraksha Details"
-            }
-            description={
-              formData.productType === "gemstone"
-                ? "Enter gemstone-specific information."
-                : "Enter Rudraksha-specific information."
-            }
-          />
-        </AccordionSummary>
+        {/* SEO */}
 
-        <AccordionDetails>
-          <div className=" pt-3">
-            {formData.productType === "gemstone" ? (
-              <GemstoneFields formData={formData} setFormData={setFormData} />
-            ) : (
-              <RudrakshaFields formData={formData} setFormData={setFormData} />
-            )}
-          </div>
-        </AccordionDetails>
-      </Accordion>
-
-      {/* ASTROLOGY */}
-      <Accordion
-        expanded={expanded === "astrology"}
-        onChange={handleAccordion("astrology")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<FaStar />}
-            title="Astrology"
-            description="Astrological and wearing information."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <div className=" pt-3">
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              <InputField
-                label="Ruling Planet"
-                value={formData.astrology?.planet}
-                placeholder="Sun"
-                onChange={(value) =>
-                  updateNestedField("astrology", "planet", value)
+        <Section title="SEO" className="xl:col-span-4">
+          <div className="grid grid-cols-1 gap-3">
+            <Field label="Meta Title">
+              <Input
+                placeholder="Enter meta title"
+                value={formData.seo?.metaTitle ?? ""}
+                onChange={(e) =>
+                  updateNestedField("seo", "metaTitle", e.target.value)
                 }
               />
+            </Field>
 
-              <InputField
-                label="Zodiac Signs"
-                value={formData.astrology?.zodiacSigns?.join(", ") || ""}
-                placeholder="Leo, Aries, Scorpio"
-                helper="Separate multiple signs with commas."
-                onChange={(value) =>
+            <Field label="Meta Description">
+              <textarea
+                rows={3}
+                maxLength={160}
+                value={formData.seo?.metaDescription ?? ""}
+                onChange={(e) =>
+                  updateNestedField("seo", "metaDescription", e.target.value)
+                }
+                placeholder="Enter meta description"
+                className={textareaClass}
+              />
+
+              <div className="mt-1 text-right text-[8px] text-slate-400">
+                {formData.seo?.metaDescription?.length}
+                /160
+              </div>
+            </Field>
+          </div>
+        </Section>
+      </div>
+
+      {formData.productType === "gemstone" && (
+        <Section title="Gemstone Details" className="mt-2.5">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+            <Field label="Gemstone Type" required>
+              <Input
+                placeholder="e.g. Ruby"
+                value={formData.gemstone?.gemstoneType ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "gemstoneType", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Indian Name">
+              <Input
+                placeholder="Enter Indian name"
+                value={formData.gemstone?.indianName ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "indianName", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Variety">
+              <Input
+                placeholder="e.g. Natural Ruby"
+                value={formData.gemstone?.variety ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "variety", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Color">
+              <Input
+                placeholder="e.g. Pigeon Blood Red"
+                value={formData.gemstone?.color ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "color", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Shape">
+              <Input
+                placeholder="e.g. Oval"
+                value={formData.gemstone?.shape ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "shape", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Cut">
+              <Input
+                placeholder="e.g. Mixed Cut"
+                value={formData.gemstone?.cut ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "cut", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Transparency">
+              <Input
+                placeholder="e.g. Transparent"
+                value={formData.gemstone?.transparency ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "transparency", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Origin">
+              <Input
+                placeholder="e.g. Burma"
+                value={formData.gemstone?.origin ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "origin", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Treatment">
+              <Input
+                placeholder="e.g. Unheated"
+                value={formData.gemstone?.treatment ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "treatment", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Weight">
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={formData.gemstone?.weight ?? ""}
+                onChange={(e) =>
                   updateNestedField(
-                    "astrology",
-                    "zodiacSigns",
-                    value
-                      .split(",")
-                      .map((item) => item.trim())
-                      .filter(Boolean),
+                    "gemstone",
+                    "weight",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Weight Unit">
+              <Select
+                value={formData.gemstone?.weightUnit ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "weightUnit", e.target.value)
+                }
+                options={[
+                  {
+                    label: "Carat",
+                    value: "carat",
+                  },
+                  {
+                    label: "Gram",
+                    value: "gram",
+                  },
+                ]}
+              />
+            </Field>
+
+            <Field label="Length">
+              <Input
+                type="number"
+                value={formData.gemstone?.length ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "gemstone",
+                    "length",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Width">
+              <Input
+                type="number"
+                value={formData.gemstone?.width ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "gemstone",
+                    "width",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Height">
+              <Input
+                type="number"
+                value={formData.gemstone?.height ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "gemstone",
+                    "height",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Hardness">
+              <Input
+                placeholder="e.g. 9 Mohs"
+                value={formData.gemstone?.hardness ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "hardness", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Refractive Index">
+              <Input
+                placeholder="e.g. 1.762 - 1.770"
+                value={formData.gemstone?.refractiveIndex ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "gemstone",
+                    "refractiveIndex",
+                    e.target.value,
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Specific Gravity">
+              <Input
+                placeholder="e.g. 4.00"
+                value={formData.gemstone?.specificGravity ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "gemstone",
+                    "specificGravity",
+                    e.target.value,
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Luster">
+              <Input
+                placeholder="e.g. Vitreous"
+                value={formData.gemstone?.luster ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "luster", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Quality Grade">
+              <Input
+                placeholder="e.g. AAA"
+                value={formData.gemstone?.qualityGrade ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "qualityGrade", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Clarity">
+              <Input
+                placeholder="e.g. VVS"
+                value={formData.gemstone?.clarity ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "clarity", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Color Grade">
+              <Input
+                placeholder="e.g. Excellent"
+                value={formData.gemstone?.colorGrade ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "colorGrade", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Enhancement">
+              <Input
+                placeholder="e.g. None"
+                value={formData.gemstone?.enhancement ?? ""}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "enhancement", e.target.value)
+                }
+              />
+            </Field>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-5">
+            <label className="flex items-center gap-2 text-[9px]">
+              <input
+                type="checkbox"
+                checked={formData.gemstone?.natural ?? false}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "natural", e.target.checked)
+                }
+              />
+              Natural
+            </label>
+
+            <label className="flex items-center gap-2 text-[9px]">
+              <input
+                type="checkbox"
+                checked={formData.gemstone?.synthetic ?? false}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "synthetic", e.target.checked)
+                }
+              />
+              Synthetic
+            </label>
+
+            <label className="flex items-center gap-2 text-[9px]">
+              <input
+                type="checkbox"
+                checked={formData.gemstone?.heated ?? false}
+                onChange={(e) =>
+                  updateNestedField("gemstone", "heated", e.target.checked)
+                }
+              />
+              Heated
+            </label>
+          </div>
+        </Section>
+      )}
+
+      {formData.productType === "rudraksha" && (
+        <Section title="Rudraksha Details" className="mt-2.5">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+            <Field label="Mukhi" required>
+              <Input
+                type="number"
+                placeholder="e.g. 5"
+                value={formData.rudraksha?.mukhi ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "rudraksha",
+                    "mukhi",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Bead Type">
+              <Input
+                placeholder="e.g. Natural"
+                value={formData.rudraksha?.beadType ?? ""}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "beadType", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Origin">
+              <Input
+                placeholder="e.g. Nepal"
+                value={formData.rudraksha?.origin ?? ""}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "origin", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Color">
+              <Input
+                placeholder="e.g. Brown"
+                value={formData.rudraksha?.color ?? ""}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "color", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Shape">
+              <Input
+                placeholder="e.g. Round"
+                value={formData.rudraksha?.shape ?? ""}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "shape", e.target.value)
+                }
+              />
+            </Field>
+
+            <Field label="Size">
+              <Input
+                type="number"
+                placeholder="0"
+                value={formData.rudraksha?.size ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "rudraksha",
+                    "size",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Size Unit">
+              <Select
+                value={formData.rudraksha?.sizeUnit ?? ""}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "sizeUnit", e.target.value)
+                }
+                options={[
+                  {
+                    label: "mm",
+                    value: "mm",
+                  },
+                  {
+                    label: "cm",
+                    value: "cm",
+                  },
+                ]}
+              />
+            </Field>
+
+            <Field label="Weight">
+              <Input
+                type="number"
+                placeholder="0"
+                value={formData.rudraksha?.weight ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "rudraksha",
+                    "weight",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Weight Unit">
+              <Select
+                value={formData.rudraksha?.weightUnit ?? ""}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "weightUnit", e.target.value)
+                }
+                options={[
+                  {
+                    label: "Gram",
+                    value: "gram",
+                  },
+                  {
+                    label: "Kg",
+                    value: "kg",
+                  },
+                ]}
+              />
+            </Field>
+
+            <Field label="Quality">
+              <Input
+                placeholder="e.g. Premium"
+                value={formData.rudraksha?.quality ?? ""}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "quality", e.target.value)
+                }
+              />
+            </Field>
+          </div>
+
+          <div className="mt-4 flex gap-6">
+            <label className="flex items-center gap-2 text-[9px]">
+              <input
+                type="checkbox"
+                checked={formData.rudraksha?.energized ?? false}
+                onChange={(e) =>
+                  updateNestedField("rudraksha", "energized", e.target.checked)
+                }
+              />
+              Energized
+            </label>
+
+            <label className="flex items-center gap-2 text-[9px]">
+              <input
+                type="checkbox"
+                checked={formData.rudraksha?.labCertified ?? false}
+                onChange={(e) =>
+                  updateNestedField(
+                    "rudraksha",
+                    "labCertified",
+                    e.target.checked,
+                  )
+                }
+              />
+              Lab Certified
+            </label>
+          </div>
+        </Section>
+      )}
+
+      {formData.productType === "jewellery" && (
+        <Section title="Jewellery Details" className="mt-2.5">
+          <Jewellery formData={formData} setFormData={setFormData} />
+        </Section>
+      )}
+
+      <div className="mt-2.5 grid grid-cols-1 gap-2.5 xl:grid-cols-12">
+        {/* PRICING */}
+
+        <Section title="Pricing" className="xl:col-span-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Currency">
+              <Select
+                value={formData.pricing?.currency ?? ""}
+                onChange={(e) =>
+                  updateNestedField("pricing", "currency", e.target.value)
+                }
+                options={[
+                  {
+                    label: "INR",
+                    value: "INR",
+                  },
+                  {
+                    label: "USD",
+                    value: "USD",
+                  },
+                  {
+                    label: "EUR",
+                    value: "EUR",
+                  },
+                ]}
+              />
+            </Field>
+
+            <Field label="Cost Price">
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={formData.pricing?.costPrice ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "pricing",
+                    "costPrice",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Selling Price" required>
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={formData.pricing?.sellingPrice ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "pricing",
+                    "sellingPrice",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Sale Price">
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={formData.pricing?.salePrice ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "pricing",
+                    "salePrice",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Discount %">
+              <Input
+                type="number"
+                placeholder="0"
+                value={formData.pricing?.discount ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "pricing",
+                    "discount",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="GST %">
+              <Input
+                type="number"
+                placeholder="3"
+                value={formData.pricing?.gst ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "pricing",
+                    "gst",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+          </div>
+        </Section>
+
+        {/* INVENTORY */}
+
+        <Section title="Inventory" className="xl:col-span-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Stock">
+              <Input
+                type="number"
+                placeholder="0"
+                value={formData.inventory?.stock ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "inventory",
+                    "stock",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Stock Status">
+              <Select
+                value={formData.inventory?.stockStatus ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "inventory",
+                    "stockStatus",
+                    e.target.value as StockStatus,
+                  )
+                }
+                options={[
+                  {
+                    label: "In Stock",
+                    value: "In Stock",
+                  },
+                  {
+                    label: "Out of Stock",
+                    value: "Out of Stock",
+                  },
+                  {
+                    label: "Low Stock",
+                    value: "Low Stock",
+                  },
+                ]}
+              />
+            </Field>
+
+            <Field label="Low Stock Alert">
+              <Input
+                type="number"
+                value={formData.inventory?.lowStockAlert ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "inventory",
+                    "lowStockAlert",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+
+            <Field label="Reserved Stock">
+              <Input
+                type="number"
+                value={formData.inventory?.reservedStock ?? ""}
+                onChange={(e) =>
+                  updateNestedField(
+                    "inventory",
+                    "reservedStock",
+                    numberValue(e.target.value),
+                  )
+                }
+              />
+            </Field>
+          </div>
+        </Section>
+
+        {(formData.productType === "gemstone" ||
+          formData.productType === "rudraksha") && (
+          <Section title="Certification" className="xl:col-span-4">
+            <div className="mb-3 flex items-center gap-2">
+              <Toggle
+                checked={formData.certification?.certified ?? false}
+                onChange={() =>
+                  updateNestedField(
+                    "certification",
+                    "certified",
+                    !(formData.certification?.certified ?? false),
                   )
                 }
               />
 
-              <InputField
-                label="Wear Day"
-                value={formData.astrology?.wearDay}
-                placeholder="Sunday"
-                onChange={(value) =>
-                  updateNestedField("astrology", "wearDay", value)
-                }
-              />
+              <span className="text-[10px] font-semibold">Certified</span>
+            </div>
 
-              <InputField
-                label="Wear Method"
-                value={formData.astrology?.wearMethod}
-                placeholder="Wear around neck"
-                onChange={(value) =>
-                  updateNestedField("astrology", "wearMethod", value)
-                }
-              />
-
-              {formData.productType === "gemstone" && (
-                <InputField
-                  label="Finger"
-                  value={formData.astrology?.finger}
-                  placeholder="Ring Finger"
-                  onChange={(value) =>
-                    updateNestedField("astrology", "finger", value)
-                  }
-                />
-              )}
-
-              <InputField
-                label="Metal"
-                value={formData.astrology?.metal}
-                placeholder="Gold"
-                onChange={(value) =>
-                  updateNestedField("astrology", "metal", value)
-                }
-              />
-
-              {formData.productType === "rudraksha" && (
-                <>
-                  <InputField
-                    label="Thread Color"
-                    value={formData.astrology?.threadColor}
-                    placeholder="Red"
-                    onChange={(value) =>
-                      updateNestedField("astrology", "threadColor", value)
-                    }
-                  />
-
-                  <InputField
-                    label="Purification Method"
-                    value={formData.astrology?.purificationMethod}
-                    placeholder="Gangajal"
-                    onChange={(value) =>
+            {formData.certification?.certified && (
+              <div className="grid grid-cols-1 gap-3">
+                <Field label="Certification Type">
+                  <Input
+                    placeholder="Gemstone Report"
+                    value={formData.certification?.certificationType ?? ""}
+                    onChange={(e) =>
                       updateNestedField(
-                        "astrology",
-                        "purificationMethod",
-                        value,
+                        "certification",
+                        "certificationType",
+                        e.target.value,
                       )
                     }
                   />
-                </>
-              )}
+                </Field>
+
+                <Field label="Lab Name">
+                  <Input
+                    placeholder="GIA / IGI"
+                    value={formData.certification?.labName ?? ""}
+                    onChange={(e) =>
+                      updateNestedField(
+                        "certification",
+                        "labName",
+                        e.target.value,
+                      )
+                    }
+                  />
+                </Field>
+
+                <Field label="Certificate Number">
+                  <Input
+                    placeholder="Certificate number"
+                    value={formData.certification?.certificateNumber ?? ""}
+                    onChange={(e) =>
+                      updateNestedField(
+                        "certification",
+                        "certificateNumber",
+                        e.target.value,
+                      )
+                    }
+                  />
+                </Field>
+
+                <Field label="Issue Date">
+                  <Input
+                    type="date"
+                    value={formData.certification?.issueDate ?? ""}
+                    onChange={(e) =>
+                      updateNestedField(
+                        "certification",
+                        "issueDate",
+                        e.target.value,
+                      )
+                    }
+                  />
+                </Field>
+              </div>
+            )}
+
+            <div className="mt-3 flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.certification?.xrayVerified ?? false}
+                onChange={(e) =>
+                  updateNestedField(
+                    "certification",
+                    "xrayVerified",
+                    e.target.checked,
+                  )
+                }
+              />
+
+              <span className="text-[9px]">X-Ray Verified</span>
             </div>
-          </div>
-        </AccordionDetails>
-      </Accordion>
 
-      {/* CERTIFICATION */}
-      <Accordion
-        expanded={expanded === "certified"}
-        onChange={handleAccordion("certified")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<RiCertificate2Line />}
-            title="Certification"
-            description="Laboratory and certification information."
-          />
-        </AccordionSummary>
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+              <Field label="Certificate PDF">
+                <button
+                  type="button"
+                  className="flex h-9 w-full items-center justify-center gap-2 rounded-md border border-slate-200 text-[9px] font-semibold"
+                >
+                  <FaArrowUpFromBracket />
+                  Upload PDF
+                </button>
+              </Field>
 
-        <AccordionDetails>
-          <div className=" pt-3">
-            <ToggleField
-              label="Product is Certified"
-              checked={formData.certification?.certified || false}
-              onChange={(checked) =>
-                updateNestedField("certification", "certified", checked)
-              }
-            />
+              <Field label="Certificate Image">
+                <button
+                  type="button"
+                  className="flex h-9 w-full items-center justify-center gap-2 rounded-md border border-slate-200 text-[9px] font-semibold"
+                >
+                  <FaArrowUpFromBracket />
+                  Upload Image
+                </button>
+              </Field>
+            </div>
+          </Section>
+        )}
 
-            <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              <InputField
-                label="Lab Name"
-                value={formData.certification?.labName}
-                placeholder="IGI"
-                onChange={(value) =>
-                  updateNestedField("certification", "labName", value)
-                }
-              />
-
-              <InputField
-                label="Certificate Number"
-                value={formData.certification?.certificateNumber}
-                placeholder="IGI-RB-202600123"
-                onChange={(value) =>
-                  updateNestedField("certification", "certificateNumber", value)
-                }
-              />
-
-              <InputField
-                label="Certification Type"
-                value={formData.certification?.certificationType}
-                placeholder="Natural Gemstone"
-                onChange={(value) =>
-                  updateNestedField("certification", "certificationType", value)
-                }
-              />
-
-              <InputField
-                label="Issue Date"
-                type="date"
-                value={formData.certification?.issueDate}
-                onChange={(value) =>
-                  updateNestedField("certification", "issueDate", value)
-                }
-              />
-
-              {formData.productType === "rudraksha" && (
-                <ToggleField
-                  label="X-Ray Verified"
-                  checked={formData.certification?.xrayVerified || false}
-                  onChange={(checked) =>
-                    updateNestedField("certification", "xrayVerified", checked)
+        {formData.productType === "jewellery" && (
+          <Section
+            title="Hallmark & Jewellery Certificate"
+            className="xl:col-span-4"
+          >
+            <div className="grid grid-cols-1 gap-3">
+              <Field label="Hallmark">
+                <Input
+                  placeholder="e.g. BIS"
+                  value={formData.jewellery?.hallmark ?? ""}
+                  onChange={(e) =>
+                    updateNestedField("jewellery", "hallmark", e.target.value)
                   }
                 />
-              )}
+              </Field>
 
-              <InputField
-                label="Certificate PDF URL"
-                value={formData.certification?.certificatePdf}
-                placeholder="/certificates/product.pdf"
-                onChange={(value) =>
-                  updateNestedField("certification", "certificatePdf", value)
-                }
-              />
+              <Field label="Hallmark Number">
+                <Input
+                  placeholder="HUID123456"
+                  value={formData.jewellery?.hallmarkNumber ?? ""}
+                  onChange={(e) =>
+                    updateNestedField(
+                      "jewellery",
+                      "hallmarkNumber",
+                      e.target.value,
+                    )
+                  }
+                />
+              </Field>
 
-              <InputField
-                label="Certificate Image URL"
-                value={formData.certification?.certificateImage}
-                placeholder="/certificates/product.jpg"
-                onChange={(value) =>
-                  updateNestedField("certification", "certificateImage", value)
-                }
-              />
+              <div className="flex items-end">
+                <label className="mb-2 flex items-center gap-2 text-[9px] font-semibold">
+                  <input
+                    type="checkbox"
+                    checked={formData.jewellery?.hallmarkVerified ?? false}
+                    onChange={(e) =>
+                      updateNestedField(
+                        "jewellery",
+                        "hallmarkVerified",
+                        e.target.checked,
+                      )
+                    }
+                  />
+                  Hallmark Verified
+                </label>
+              </div>
+
+              <div />
             </div>
-          </div>
-        </AccordionDetails>
-      </Accordion>
-      {/* PRICING */}
-      <Accordion
-        expanded={expanded === "price"}
-        onChange={handleAccordion("price")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<FaIndianRupeeSign />}
-            title="Pricing"
-            description="Set product cost and selling price."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <div className=" pt-3">
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-              <InputField
-                label="Currency"
-                value={formData.pricing?.currency || "INR"}
-                onChange={(value) =>
-                  updateNestedField("pricing", "currency", value)
-                }
-              />
-
-              <NumberField
-                label="Cost Price"
-                value={formData.pricing?.costPrice ?? 0}
-                onChange={(value) =>
-                  updateNestedField("pricing", "costPrice", value)
-                }
-              />
-
-              <NumberField
-                label="Selling Price"
-                value={formData.pricing?.sellingPrice ?? 0}
-                onChange={(value) =>
-                  updateNestedField("pricing", "sellingPrice", value)
-                }
-              />
-
-              <NumberField
-                label="Sale Price"
-                value={formData.pricing?.salePrice ?? 0}
-                onChange={(value) =>
-                  updateNestedField("pricing", "salePrice", value)
-                }
-              />
-
-              <NumberField
-                label="Discount %"
-                value={formData.pricing?.discount ?? 0}
-                onChange={(value) =>
-                  updateNestedField("pricing", "discount", value)
-                }
-              />
-
-              <NumberField
-                label="GST %"
-                value={formData.pricing?.gst ?? 3}
-                onChange={(value) => updateNestedField("pricing", "gst", value)}
-              />
-
-              <InputField
-                label="Tax Class"
-                value={formData.pricing?.taxClass}
-                placeholder="GST-3"
-                onChange={(value) =>
-                  updateNestedField("pricing", "taxClass", value)
-                }
-              />
-            </div>
-          </div>
-        </AccordionDetails>
-      </Accordion>
-
-      {/* INVENTORY */}
-      <Accordion
-        expanded={expanded === "INVENTORY"}
-        onChange={handleAccordion("INVENTORY")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<MdOutlineInventory2 />}
-            title="Inventory"
-            description="Manage stock and low-stock alerts."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <div className=" pt-3">
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-              <NumberField
-                label="Stock"
-                value={formData.inventory?.stock ?? 0}
-                onChange={(value) =>
-                  updateNestedField("inventory", "stock", value)
-                }
-              />
-
-              <SelectField
-                label="Stock Status"
-                value={formData.inventory?.stockStatus || "In Stock"}
-                options={["In Stock", "Low Stock", "Out of Stock"]}
-                onChange={(value) =>
-                  updateNestedField("inventory", "stockStatus", value)
-                }
-              />
-
-              <NumberField
-                label="Low Stock Alert"
-                value={formData.inventory?.lowStockAlert ?? 5}
-                onChange={(value) =>
-                  updateNestedField("inventory", "lowStockAlert", value)
-                }
-              />
-            </div>
-          </div>
-        </AccordionDetails>
-      </Accordion>
-
-      {/* BENEFITS */}
-      <Accordion
-        expanded={expanded === "BENEFITS"}
-        onChange={handleAccordion("BENEFITS")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<FaHeart />}
-            title="Benefits"
-            description="Add product benefits."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <div className=" pt-3">
-            <TextAreaField
-              label="Benefits"
-              value={
-                Array.isArray(formData.benefits)
-                  ? formData.benefits.join("\n")
-                  : ""
-              }
-              rows={5}
-              helper="Enter one benefit per line."
-              placeholder={
-                formData.productType === "gemstone"
-                  ? "Boosts confidence\nEnhances leadership\nImproves career growth"
-                  : "Promotes peace\nImproves concentration\nSupports meditation"
-              }
-              onChange={(value) =>
-                updateField(
-                  "benefits",
-                  value
-                    .split("\n")
-                    .map((item) => item.trim())
-                    .filter(Boolean),
-                )
-              }
-            />
-          </div>
-        </AccordionDetails>
-      </Accordion>
-
-      {/* CARE */}
-      <Accordion
-        expanded={expanded === "CARE"}
-        onChange={handleAccordion("CARE")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<FaShieldHeart />}
-            title="Care Instructions"
-            description="Instructions for maintaining the product."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <div className=" pt-3 space-y-5">
-            <TextAreaField
-              label="Cleaning"
-              value={formData.careInstructions?.cleaning}
-              rows={3}
-              onChange={(value) =>
-                updateNestedField("careInstructions", "cleaning", value)
-              }
-            />
-
-            <TextAreaField
-              label="Storage"
-              value={formData.careInstructions?.storage}
-              rows={3}
-              onChange={(value) =>
-                updateNestedField("careInstructions", "storage", value)
-              }
-            />
-
-            <TextAreaField
-              label="Precautions"
-              value={formData.careInstructions?.precautions}
-              rows={3}
-              onChange={(value) =>
-                updateNestedField("careInstructions", "precautions", value)
-              }
-            />
-          </div>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion
-        expanded={expanded === "SEO"}
-        onChange={handleAccordion("SEO")}
-        elevation={0}
-        sx={{
-          border: "1px solid #e5e7eb",
-          borderRadius: "10px !important",
-          "&:before": {
-            display: "none",
-          },
-          marginBottom: "15px",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<MdExpandMore />}
-          sx={{
-            minHeight: "64px",
-            "& .MuiAccordionSummary-content": {
-              margin: "12px 0",
-            },
-          }}
-        >
-          <SectionHeader
-            icon={<FaMagnifyingGlass />}
-            title="SEO"
-            description="Search engine optimization information."
-          />
-        </AccordionSummary>
-
-        <AccordionDetails>
-          <div className="pt-3 space-y-5">
-            <InputField
-              label="Meta Title"
-              value={formData.seo?.metaTitle}
-              onChange={(value) => updateNestedField("seo", "metaTitle", value)}
-            />
-
-            <TextAreaField
-              label="Meta Description"
-              value={formData.seo?.metaDescription}
-              rows={4}
-              onChange={(value) =>
-                updateNestedField("seo", "metaDescription", value)
-              }
-            />
-          </div>
-        </AccordionDetails>
-      </Accordion>
-
-      <div className="flex flex-col-reverse justify-end gap-3 py-6 sm:flex-row">
-        <button
-          type="button"
-          disabled={loading}
-          onClick={() => window.history.back()}
-          className="inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <FaArrowLeft />
-          Cancel
-        </button>
-
-        <button
-          type="button"
-          disabled={loading}
-          onClick={handleSubmit}
-          className="inline-flex items-center cursor-pointer justify-center gap-2 rounded-lg bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <FaFloppyDisk />
-
-          {loading ? "Saving..." : "Save Product"}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function SectionHeader({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description?: string;
-}) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-800">
-        {icon}
-      </div>
-
-      <div>
-        <h3 className="text-md font-bold text-gray-900">{title}</h3>
-
-        {description && (
-          <p className="mt-0.5 text-sm text-gray-500">{description}</p>
+          </Section>
         )}
       </div>
-    </div>
-  );
-}
 
-function ProductTypeButton({
-  active,
-  icon,
-  title,
-  description,
-  onClick,
-}: {
-  active: boolean;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex items-center gap-4 rounded-xl border p-5 text-left transition ${
-        active
-          ? "border-black bg-gray-50 ring-1 ring-black"
-          : "border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50"
-      }`}
-    >
-      <div
-        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
-          active ? "bg-black text-white" : "bg-gray-100 text-gray-600"
-        }`}
-      >
-        {icon}
+      <div className="mt-2.5 grid grid-cols-1 gap-2.5 xl:grid-cols-12">
+        {/* ASTROLOGY */}
+
+        {(formData.productType === "gemstone" ||
+          formData.productType === "rudraksha") && (
+          <Section title="Astrology Details" className="xl:col-span-5">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Planet">
+                <Input
+                  placeholder="e.g. Jupiter"
+                  value={formData.astrology?.planet ?? ""}
+                  onChange={(e) =>
+                    updateNestedField("astrology", "planet", e.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Zodiac Sign">
+                <Select
+                  value={formData.astrology?.zodiacSigns?.[0] ?? ""}
+                  onChange={(e) =>
+                    updateNestedField(
+                      "astrology",
+                      "zodiacSigns",
+                      e.target.value ? [e.target.value] : [],
+                    )
+                  }
+                  options={[
+                    "Aries",
+                    "Taurus",
+                    "Gemini",
+                    "Cancer",
+                    "Leo",
+                    "Virgo",
+                    "Libra",
+                    "Scorpio",
+                    "Sagittarius",
+                    "Capricorn",
+                    "Aquarius",
+                    "Pisces",
+                  ].map((item) => ({
+                    label: item,
+                    value: item,
+                  }))}
+                />
+              </Field>
+
+              <Field label="Wear Day">
+                <Input
+                  placeholder="e.g. Sunday"
+                  value={formData.astrology?.wearDay ?? ""}
+                  onChange={(e) =>
+                    updateNestedField("astrology", "wearDay", e.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Wear Method">
+                <Input
+                  placeholder="After Sunrise"
+                  value={formData.astrology?.wearMethod ?? ""}
+                  onChange={(e) =>
+                    updateNestedField("astrology", "wearMethod", e.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Finger">
+                <Input
+                  placeholder="Ring Finger"
+                  value={formData.astrology?.finger ?? ""}
+                  onChange={(e) =>
+                    updateNestedField("astrology", "finger", e.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Metal">
+                <Input
+                  placeholder="Gold"
+                  value={formData.astrology?.metal ?? ""}
+                  onChange={(e) =>
+                    updateNestedField("astrology", "metal", e.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Thread Color">
+                <Input
+                  placeholder="Yellow"
+                  value={formData.astrology?.threadColor ?? ""}
+                  onChange={(e) =>
+                    updateNestedField(
+                      "astrology",
+                      "threadColor",
+                      e.target.value,
+                    )
+                  }
+                />
+              </Field>
+
+              <Field label="Purification">
+                <Input
+                  placeholder="Milk, Ganga Jal"
+                  value={formData.astrology?.purificationMethod ?? ""}
+                  onChange={(e) =>
+                    updateNestedField(
+                      "astrology",
+                      "purificationMethod",
+                      e.target.value,
+                    )
+                  }
+                />
+              </Field>
+            </div>
+          </Section>
+        )}
+
+        {/* BENEFITS */}
+
+        {(formData.productType === "gemstone" ||
+          formData.productType === "rudraksha") && (
+          <Section title="Benefits" className="xl:col-span-3">
+            <div className="mb-3 flex justify-end">
+              {!showBenefitForm && (
+                <button
+                  type="button"
+                  onClick={() => setShowBenefitForm(true)}
+                  className="flex items-center gap-1 rounded border border-slate-200 px-2.5 py-1.5 text-[9px] font-semibold"
+                >
+                  <FaPlus />
+                  Add Benefit
+                </button>
+              )}
+            </div>
+
+            {showBenefitForm && (
+              <>
+                <Input
+                  type="text"
+                  value={benefitInput}
+                  onChange={(e) => setBenefitInput(e.target.value)}
+                  placeholder="Enter benefit"
+                />
+
+                <div className="my-3 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBenefitInput("");
+                      setShowBenefitForm(false);
+                    }}
+                    className="rounded-md border border-[#d9dde2] px-3 py-1.5 text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addBenefit}
+                    disabled={!benefitInput.trim()}
+                    className="rounded-md bg-[#111923] px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+                  >
+                    Add
+                  </button>
+                </div>
+              </>
+            )}
+
+            {formData.benefits.length === 0 ? (
+              <EmptyState
+                icon={<FaRegCircleCheck />}
+                title="No benefits added"
+                description="Add product benefits"
+              />
+            ) : (
+              <div className="space-y-2">
+                {formData.benefits.map((benefit, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between rounded bg-slate-50 px-3 py-2 text-[10px]"
+                  >
+                    <span>{benefit}</span>
+
+                    <button type="button" onClick={() => removeBenefit(index)}>
+                      <FaTrash className="text-red-600 cursor-pointer" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Section>
+        )}
+
+        {/* CARE */}
+        {(formData.productType === "gemstone" ||
+          formData.productType === "rudraksha") && (
+          <Section title="Care Instructions" className="xl:col-span-4">
+            <div className="grid grid-cols-1 gap-3">
+              <Field label="Cleaning">
+                <textarea
+                  rows={3}
+                  value={formData.careInstructions?.cleaning ?? ""}
+                  onChange={(e) =>
+                    updateNestedField(
+                      "careInstructions",
+                      "cleaning",
+                      e.target.value,
+                    )
+                  }
+                  placeholder="Clean with soft cloth"
+                  className={textareaClass}
+                />
+              </Field>
+
+              <Field label="Storage">
+                <textarea
+                  rows={3}
+                  value={formData.careInstructions?.storage ?? ""}
+                  onChange={(e) =>
+                    updateNestedField(
+                      "careInstructions",
+                      "storage",
+                      e.target.value,
+                    )
+                  }
+                  placeholder="Store in dry place"
+                  className={textareaClass}
+                />
+              </Field>
+
+              <Field label="Precautions">
+                <textarea
+                  rows={3}
+                  value={formData.careInstructions?.precautions ?? ""}
+                  onChange={(e) =>
+                    updateNestedField(
+                      "careInstructions",
+                      "precautions",
+                      e.target.value,
+                    )
+                  }
+                  placeholder="Avoid chemical exposure"
+                  className={textareaClass}
+                />
+              </Field>
+            </div>
+          </Section>
+        )}
       </div>
-
-      <div>
-        <div className="font-semibold text-gray-900">{title}</div>
-
-        <div className="mt-1 text-sm text-gray-500">{description}</div>
-      </div>
-    </button>
-  );
-}
-
-function InputField({
-  label,
-  value,
-  placeholder,
-  helper,
-  required = false,
-  type = "text",
-  onChange,
-}: {
-  label: string;
-  value?: string | number;
-  placeholder?: string;
-  helper?: string;
-  required?: boolean;
-  type?: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-
-        {required && <span className="ml-1 text-red-500">*</span>}
-      </label>
-
-      <input
-        type={type}
-        value={value ?? ""}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
-      />
-
-      {helper && <p className="mt-1 text-xs text-gray-500">{helper}</p>}
-    </div>
-  );
-}
-
-function NumberField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value?: number;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <InputField
-      label={label}
-      type="number"
-      value={value ?? 0}
-      onChange={(value) => onChange(value === "" ? 0 : Number(value))}
-    />
-  );
-}
-
-function TextAreaField({
-  label,
-  value,
-  placeholder,
-  helper,
-  rows = 4,
-  onChange,
-}: {
-  label: string;
-  value?: string;
-  placeholder?: string;
-  helper?: string;
-  rows?: number;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-
-      <textarea
-        value={value ?? ""}
-        placeholder={placeholder}
-        rows={rows}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full resize-y rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
-      />
-
-      {helper && <p className="mt-1 text-xs text-gray-500">{helper}</p>}
-    </div>
-  );
-}
-
-function SelectField({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  options: string[];
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-1 focus:ring-black"
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-function ToggleField({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <label className="flex cursor-pointer items-center gap-3">
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 rounded-full transition ${
-          checked ? "bg-black" : "bg-gray-300"
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
-            checked ? "left-5.5" : "left-0.5"
-          }`}
-        />
-      </button>
-
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-    </label>
+    </>
   );
 }

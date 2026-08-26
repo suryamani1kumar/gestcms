@@ -22,7 +22,7 @@ export const generateSKU = (
     .randomBytes(3)
     .toString("hex")
     .toUpperCase()
-    .slice(0, 3);
+    .slice(0, 2);
 
   return `${prefix}${random}${date}${categoryKey}`;
 };

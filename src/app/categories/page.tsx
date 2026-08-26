@@ -5,12 +5,12 @@ import PageHeader from "@/components/pageheader/PageHeader";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FaSearch,
-  FaSlidersH,
   FaPencilAlt,
   FaTrash,
   FaChevronDown,
   FaChevronLeft,
   FaChevronRight,
+  FaImage,
 } from "react-icons/fa";
 
 export interface CategoryImage {
@@ -458,7 +458,7 @@ export default function CategoriesPage() {
                                 />
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center text-[9px] text-[#999]">
-                                  No Image
+                                  <FaImage className="h-6 w-6" />
                                 </div>
                               )}
                             </div>

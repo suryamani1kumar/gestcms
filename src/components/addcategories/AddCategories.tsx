@@ -106,8 +106,8 @@ export default function AddCategories({
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Image size must be less than 2MB.");
+    if (file.size > 0.5 * 1024 * 1024) {
+      alert("Image size must be less than 500KB.");
       e.target.value = "";
       return;
     }
@@ -135,7 +135,7 @@ export default function AddCategories({
         url: result.data.secure_url,
         publicId: result.data.public_id,
       };
-      console.log("uploadedImage", uploadedImage);
+
       setForm((prev) => ({
         ...prev,
         image: uploadedImage,
@@ -315,7 +315,7 @@ export default function AddCategories({
                     </span>
 
                     <span className="mt-1 text-[9px] text-[#999]">
-                      JPG, PNG, WEBP · Max 2MB
+                      JPG, PNG, WEBP · Max 500KB
                     </span>
                   </>
                 )}

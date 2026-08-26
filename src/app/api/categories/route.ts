@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import connectDB from "@/lib/db";
 import Category from "@/models/Category";
+import Product from "@/models/Product";
 
 interface CategoryImagePayload {
   url: string;
@@ -40,7 +41,6 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search")?.trim() || "";
     const status = searchParams.get("status") || "";
     const parentCategory = searchParams.get("parentCategory") || "";
-
     const parentOnly = searchParams.get("parentOnly") === "true";
 
     const query: Record<string, unknown> = {};
@@ -61,21 +61,47 @@ export async function GET(request: NextRequest) {
     } else if (parentCategory === "none") {
       query.parentCategory = null;
     } else if (parentCategory) {
-      if (!isValidObjectId(parentCategory)) {
+      if (!mongoose.isValidObjectId(parentCategory)) {
         return NextResponse.json(
           {
             success: false,
             message: "Invalid parent category ID.",
           },
-          {
-            status: 400,
-          },
+          { status: 400 },
         );
       }
 
       query.parentCategory = new mongoose.Types.ObjectId(parentCategory);
     }
 
+    // Get all product counts grouped by category
+    const productCounts = await Product.aggregate([
+      {
+        $match: {
+          category: {
+            $exists: true,
+            $ne: null,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+    ]);
+
+    // Map category ID -> product count
+    const countMap = new Map<string, number>();
+
+    for (const item of productCounts) {
+      countMap.set(item._id.toString(), item.count);
+    }
+
+    // Get categories
     const categories = await Category.find(query)
       .populate("parentCategory", "name slug")
       .sort({
@@ -83,10 +109,38 @@ export async function GET(request: NextRequest) {
       })
       .lean();
 
+    // Update productCount in Category collection
+    const bulkOperations = categories.map((category) => {
+      const count = countMap.get(category._id.toString()) || 0;
+
+      return {
+        updateOne: {
+          filter: {
+            _id: category._id,
+          },
+          update: {
+            $set: {
+              productCount: count,
+            },
+          },
+        },
+      };
+    });
+
+    if (bulkOperations.length > 0) {
+      await Category.bulkWrite(bulkOperations);
+    }
+
+    // Return updated count
+    const categoriesWithCount = categories.map((category) => ({
+      ...category,
+      productCount: countMap.get(category._id.toString()) || 0,
+    }));
+
     return NextResponse.json(
       {
         success: true,
-        data: categories,
+        data: categoriesWithCount,
       },
       {
         status: 200,

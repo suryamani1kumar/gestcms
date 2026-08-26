@@ -1,820 +1,52 @@
-// import mongoose, { Schema, Document, Model } from "mongoose";
-
-// export interface IGalleryImage {
-//   url: string;
-//   publicId: string;
-// }
-
-// export interface IAstrology {
-//   planet?: string;
-//   zodiacSigns?: string[];
-//   wearDay?: string;
-//   wearMethod?: string;
-//   finger?: string;
-//   metal?: string;
-//   threadColor?: string;
-//   purificationMethod?: string;
-// }
-
-// export interface ICertification {
-//   certified?: boolean;
-//   certificationType?: string;
-//   labName?: string;
-//   certificateNumber?: string;
-//   issueDate?: string;
-//   xrayVerified?: boolean;
-//   certificatePdf?: string;
-//   certificateImage?: string;
-// }
-
-// export interface IPricing {
-//   currency?: string;
-//   costPrice?: number;
-//   sellingPrice?: number;
-//   salePrice?: number;
-//   discount?: number;
-//   gst?: number;
-//   taxClass?: string;
-// }
-
-// export interface IInventory {
-//   stock?: number;
-//   stockStatus?: "In Stock" | "Out of Stock" | "Low Stock";
-//   lowStockAlert?: number;
-// }
-
-// export interface ISeo {
-//   metaTitle?: string;
-//   metaDescription?: string;
-// }
-
-// export interface ICareInstructions {
-//   cleaning?: string;
-//   storage?: string;
-//   precautions?: string;
-// }
-
-// export interface IProduct extends Document {
-//   productType: "gemstone" | "rudraksha";
-
-//   sku: string;
-//   name: string;
-//   indianName?: string;
-//   slug: string;
-//   description?: string;
-
-//   gallery: IGalleryImage[];
-
-//   category?: string;
-//   subCategory?: string;
-
-//   specifications: Record<string, any>;
-
-//   astrology?: IAstrology;
-
-//   certification?: ICertification;
-
-//   pricing?: IPricing;
-
-//   inventory?: IInventory;
-
-//   benefits?: string[];
-
-//   seo?: ISeo;
-
-//   careInstructions?: ICareInstructions;
-
-//   status?: "Draft" | "Published" | "Archived";
-
-//   createdBy?: string;
-//   updatedBy?: string;
-// }
-
-// const AstrologySchema = new Schema<IAstrology>(
-//   {
-//     planet: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     zodiacSigns: {
-//       type: [String],
-//       default: [],
-//     },
-
-//     wearDay: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     wearMethod: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     finger: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     metal: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     threadColor: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     purificationMethod: {
-//       type: String,
-//       trim: true,
-//     },
-//   },
-//   {
-//     _id: false,
-//   },
-// );
-
-// const CertificationSchema = new Schema<ICertification>(
-//   {
-//     certified: {
-//       type: Boolean,
-//       default: false,
-//     },
-
-//     certificationType: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     labName: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     certificateNumber: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     issueDate: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     xrayVerified: {
-//       type: Boolean,
-//       default: false,
-//     },
-
-//     certificatePdf: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     certificateImage: {
-//       type: String,
-//       trim: true,
-//     },
-//   },
-//   {
-//     _id: false,
-//   },
-// );
-
-// const PricingSchema = new Schema<IPricing>(
-//   {
-//     currency: {
-//       type: String,
-//       default: "INR",
-//       trim: true,
-//     },
-
-//     costPrice: {
-//       type: Number,
-//       min: 0,
-//     },
-
-//     sellingPrice: {
-//       type: Number,
-//       min: 0,
-//     },
-
-//     salePrice: {
-//       type: Number,
-//       min: 0,
-//     },
-
-//     discount: {
-//       type: Number,
-//       min: 0,
-//     },
-
-//     gst: {
-//       type: Number,
-//       default: 3,
-//       min: 0,
-//     },
-
-//     taxClass: {
-//       type: String,
-//       trim: true,
-//     },
-//   },
-//   {
-//     _id: false,
-//   },
-// );
-
-// const InventorySchema = new Schema<IInventory>(
-//   {
-//     stock: {
-//       type: Number,
-//       default: 0,
-//       min: 0,
-//     },
-
-//     stockStatus: {
-//       type: String,
-//       enum: ["In Stock", "Out of Stock", "Low Stock"],
-//       default: "In Stock",
-//     },
-
-//     lowStockAlert: {
-//       type: Number,
-//       default: 5,
-//       min: 0,
-//     },
-//   },
-//   {
-//     _id: false,
-//   },
-// );
-
-// const SeoSchema = new Schema<ISeo>(
-//   {
-//     metaTitle: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     metaDescription: {
-//       type: String,
-//       trim: true,
-//     },
-//   },
-//   {
-//     _id: false,
-//   },
-// );
-
-// const GallerySchema = new Schema<IGalleryImage>(
-//   {
-//     url: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-
-//     publicId: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-//   },
-//   {
-//     _id: false,
-//   },
-// );
-
-// const CareInstructionsSchema = new Schema<ICareInstructions>(
-//   {
-//     cleaning: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     storage: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     precautions: {
-//       type: String,
-//       trim: true,
-//     },
-//   },
-//   {
-//     _id: false,
-//   },
-// );
-
-// const ProductSchema = new Schema<IProduct>(
-//   {
-//     productType: {
-//       type: String,
-//       enum: ["gemstone", "rudraksha"],
-//       required: true,
-//     },
-
-//     sku: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       trim: true,
-//     },
-
-//     name: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-
-//     indianName: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     slug: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       lowercase: true,
-//       trim: true,
-//     },
-
-//     description: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     gallery: {
-//       type: [GallerySchema],
-//       default: [],
-//     },
-
-//     category: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     subCategory: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     specifications: {
-//       type: Schema.Types.Mixed,
-//       default: {},
-//     },
-
-//     astrology: {
-//       type: AstrologySchema,
-//       default: undefined,
-//     },
-
-//     certification: {
-//       type: CertificationSchema,
-//       default: undefined,
-//     },
-
-//     pricing: {
-//       type: PricingSchema,
-//       default: undefined,
-//     },
-
-//     inventory: {
-//       type: InventorySchema,
-//       default: undefined,
-//     },
-
-//     benefits: {
-//       type: [String],
-//       default: [],
-//     },
-
-//     seo: {
-//       type: SeoSchema,
-//       default: undefined,
-//     },
-
-//     careInstructions: {
-//       type: CareInstructionsSchema,
-//       default: undefined,
-//     },
-
-//     status: {
-//       type: String,
-//       enum: ["Draft", "Published", "Archived"],
-//       default: "Draft",
-//     },
-
-//     createdBy: {
-//       type: String,
-//       trim: true,
-//     },
-
-//     updatedBy: {
-//       type: String,
-//       trim: true,
-//     },
-//   },
-
-//   {
-//     timestamps: true,
-//   },
-// );
-
-// const Product: Model<IProduct> =
-//   mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema);
-
-// export default Product;
-
-import mongoose, { Schema, Document, Model } from "mongoose";
-
-export type ProductType = "gemstone" | "rudraksha" | "jewellery";
-
-export type ProductStatus = "Draft" | "Published" | "Archived";
-
-export type StockStatus = "In Stock" | "Out of Stock" | "Low Stock";
-
-export interface IGalleryImage {
-  url: string;
-  publicId: string;
-}
-
-export interface IAstrology {
-  planet?: string;
-  zodiacSigns?: string[];
-  wearDay?: string;
-  wearMethod?: string;
-  finger?: string;
-  metal?: string;
-  threadColor?: string;
-  purificationMethod?: string;
-}
-
-export interface ICertification {
-  certified?: boolean;
-  certificationType?: string;
-  labName?: string;
-  certificateNumber?: string;
-  issueDate?: string;
-  xrayVerified?: boolean;
-  certificatePdf?: string;
-  certificateImage?: string;
-}
-
-export interface IPricing {
-  currency?: string;
-
-  costPrice?: number;
-
-  sellingPrice?: number;
-
-  salePrice?: number;
-
-  discount?: number;
-
-  gst?: number;
-}
-
-export interface IInventory {
-  stock?: number;
-
-  stockStatus?: StockStatus;
-
-  lowStockAlert?: number;
-
-  reservedStock?: number;
-}
-
-export interface IJewellery {
-  metalType?: string;
-
-  purity?: string;
-
-  metalColor?: string;
-
-  metalWeight?: number;
-
-  metalWeightUnit?: "gram" | "kg";
-
-  makingCharges?: number;
-
-  makingChargesType?: "fixed" | "percentage";
-
-  makingChargesPercentage?: number;
-
-  hasDiamond?: boolean;
-
-  diamondType?: string;
-
-  diamondCount?: number;
-
-  diamondWeight?: number;
-
-  diamondWeightUnit?: "carat" | "gram";
-
-  diamondColor?: string;
-
-  diamondClarity?: string;
-
-  diamondCut?: string;
-
-  diamondShape?: string;
-
-  hasGemstone?: boolean;
-
-  gemstoneType?: string;
-
-  gemstoneCount?: number;
-
-  gemstoneWeight?: number;
-
-  gemstoneWeightUnit?: "carat" | "gram";
-
-  grossWeight?: number;
-
-  netWeight?: number;
-
-  length?: number;
-
-  width?: number;
-
-  size?: string;
-
-  dimensions?: string;
-
-  settingType?: string;
-
-  hallmark?: string;
-
-  hallmarkNumber?: string;
-
-  hallmarkVerified?: boolean;
-
-  certificateIncluded?: boolean;
-
-  certificateNumber?: string;
-
-  certificateType?: string;
-
-  certificateLab?: string;
-
-  collection?: string;
-
-  occasion?: string;
-
-  gender?: "Men" | "Women" | "Unisex";
-
-  availableSizes?: string[];
-
-  customizable?: boolean;
-}
-
-export interface ISeo {
-  metaTitle?: string;
-
-  metaDescription?: string;
-}
-
-export interface ICareInstructions {
-  cleaning?: string;
-
-  storage?: string;
-
-  precautions?: string;
-}
-
-export interface IProduct extends Document {
-  productType: ProductType;
-
-  sku: string;
-
-  name: string;
-
-  indianName?: string;
-
-  slug: string;
-
-  description?: string;
-
-  gallery: IGalleryImage[];
-
-  category?: string;
-
-  subCategory?: string;
-
-  specifications: Record<string, any>;
-
-  jewellery?: IJewellery;
-
-  astrology?: IAstrology;
-
-  certification?: ICertification;
-
-  pricing?: IPricing;
-
-  inventory?: IInventory;
-
-  benefits?: string[];
-
-  seo?: ISeo;
-
-  careInstructions?: ICareInstructions;
-
-  status?: ProductStatus;
-
-  createdBy?: string;
-
-  updatedBy?: string;
-}
-
-const AstrologySchema = new Schema<IAstrology>(
-  {
-    planet: {
-      type: String,
-      trim: true,
-    },
-
-    zodiacSigns: {
-      type: [String],
-      default: [],
-    },
-
-    wearDay: {
-      type: String,
-      trim: true,
-    },
-
-    wearMethod: {
-      type: String,
-      trim: true,
-    },
-
-    finger: {
-      type: String,
-      trim: true,
-    },
-
-    metal: {
-      type: String,
-      trim: true,
-    },
-
-    threadColor: {
-      type: String,
-      trim: true,
-    },
-
-    purificationMethod: {
-      type: String,
-      trim: true,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const CertificationSchema = new Schema<ICertification>(
-  {
-    certified: {
-      type: Boolean,
-      default: false,
-    },
-
-    certificationType: {
-      type: String,
-      trim: true,
-    },
-
-    labName: {
-      type: String,
-      trim: true,
-    },
-
-    certificateNumber: {
-      type: String,
-      trim: true,
-    },
-
-    issueDate: {
-      type: String,
-      trim: true,
-    },
-
-    xrayVerified: {
-      type: Boolean,
-      default: false,
-    },
-
-    certificatePdf: {
-      type: String,
-      trim: true,
-    },
-
-    certificateImage: {
-      type: String,
-      trim: true,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const PricingSchema = new Schema<IPricing>(
-  {
-    currency: {
-      type: String,
-      default: "INR",
-      trim: true,
-    },
-
-    costPrice: {
-      type: Number,
-      min: 0,
-    },
-
-    sellingPrice: {
-      type: Number,
-      min: 0,
-    },
-
-    salePrice: {
-      type: Number,
-      min: 0,
-    },
-
-    discount: {
-      type: Number,
-      min: 0,
-    },
-
-    gst: {
-      type: Number,
-      default: 3,
-      min: 0,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const InventorySchema = new Schema<IInventory>(
-  {
-    stock: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-
-    stockStatus: {
-      type: String,
-      enum: ["In Stock", "Out of Stock", "Low Stock"],
-      default: "In Stock",
-    },
-
-    lowStockAlert: {
-      type: Number,
-      default: 5,
-      min: 0,
-    },
-
-    reservedStock: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const SeoSchema = new Schema<ISeo>(
-  {
-    metaTitle: {
-      type: String,
-      trim: true,
-    },
-
-    metaDescription: {
-      type: String,
-      trim: true,
-    },
-  },
-  {
-    _id: false,
-  },
-);
-
-const GallerySchema = new Schema<IGalleryImage>(
+import mongoose, { Document, Model, Schema, Types } from "mongoose";
+
+import type {
+  ProductType,
+  ProductStatus,
+  StockStatus,
+  WeightUnit,
+  GemstoneWeightUnit,
+  MakingChargesType,
+  GalleryImage,
+  GemstoneData,
+  RudrakshaData,
+  JewelleryData,
+  AstrologyData,
+  CertificationData,
+  PricingData,
+  InventoryData,
+  SeoData,
+  CareInstructionsData,
+} from "@/lib/type";
+
+export const PRODUCT_TYPES: ProductType[] = [
+  "gemstone",
+  "rudraksha",
+  "jewellery",
+];
+
+export const PRODUCT_STATUSES: ProductStatus[] = [
+  "Draft",
+  "Published",
+  "Archived",
+];
+
+export const STOCK_STATUSES: StockStatus[] = [
+  "In Stock",
+  "Out of Stock",
+  "Low Stock",
+];
+
+export const WEIGHT_UNITS: WeightUnit[] = ["gram", "kg"];
+
+export const GEMSTONE_WEIGHT_UNITS: GemstoneWeightUnit[] = ["carat", "gram"];
+
+export const MAKING_CHARGES_TYPES: MakingChargesType[] = [
+  "fixed",
+  "percentage",
+];
+
+const GallerySchema = new Schema<GalleryImage>(
   {
     url: {
       type: String,
@@ -833,19 +65,133 @@ const GallerySchema = new Schema<IGalleryImage>(
   },
 );
 
-const CareInstructionsSchema = new Schema<ICareInstructions>(
+const GemstoneSchema = new Schema<GemstoneData>(
   {
-    cleaning: {
+    gemstoneType: {
+      type: String,
+      trim: true,
+    },
+    indianName: {
+      type: String,
+      trim: true,
+    },
+    variety: {
       type: String,
       trim: true,
     },
 
-    storage: {
+    color: {
       type: String,
       trim: true,
     },
 
-    precautions: {
+    shape: {
+      type: String,
+      trim: true,
+    },
+
+    cut: {
+      type: String,
+      trim: true,
+    },
+
+    transparency: {
+      type: String,
+      trim: true,
+    },
+
+    origin: {
+      type: String,
+      trim: true,
+    },
+
+    treatment: {
+      type: String,
+      trim: true,
+    },
+
+    weight: {
+      type: Number,
+      min: 0,
+    },
+
+    weightUnit: {
+      type: String,
+      enum: WEIGHT_UNITS,
+      default: "gram",
+    },
+
+    length: {
+      type: Number,
+      min: 0,
+    },
+
+    width: {
+      type: Number,
+      min: 0,
+    },
+
+    height: {
+      type: Number,
+      min: 0,
+    },
+
+    dimensionUnit: {
+      type: String,
+      trim: true,
+    },
+
+    hardness: {
+      type: String,
+      trim: true,
+    },
+
+    refractiveIndex: {
+      type: String,
+      trim: true,
+    },
+
+    specificGravity: {
+      type: String,
+      trim: true,
+    },
+
+    luster: {
+      type: String,
+      trim: true,
+    },
+
+    qualityGrade: {
+      type: String,
+      trim: true,
+    },
+
+    clarity: {
+      type: String,
+      trim: true,
+    },
+
+    colorGrade: {
+      type: String,
+      trim: true,
+    },
+
+    natural: {
+      type: Boolean,
+      default: false,
+    },
+
+    synthetic: {
+      type: Boolean,
+      default: false,
+    },
+
+    heated: {
+      type: Boolean,
+      default: false,
+    },
+
+    enhancement: {
       type: String,
       trim: true,
     },
@@ -855,7 +201,75 @@ const CareInstructionsSchema = new Schema<ICareInstructions>(
   },
 );
 
-const JewellerySchema = new Schema<IJewellery>(
+const RudrakshaSchema = new Schema<RudrakshaData>(
+  {
+    mukhi: {
+      type: Number,
+      min: 1,
+    },
+
+    beadType: {
+      type: String,
+      trim: true,
+    },
+
+    origin: {
+      type: String,
+      trim: true,
+    },
+
+    size: {
+      type: Number,
+      min: 0,
+    },
+
+    sizeUnit: {
+      type: String,
+      trim: true,
+    },
+
+    color: {
+      type: String,
+      trim: true,
+    },
+
+    shape: {
+      type: String,
+      trim: true,
+    },
+
+    weight: {
+      type: Number,
+      min: 0,
+    },
+
+    weightUnit: {
+      type: String,
+      enum: WEIGHT_UNITS,
+      default: "gram",
+    },
+
+    quality: {
+      type: String,
+      trim: true,
+    },
+
+    energized: {
+      type: Boolean,
+      default: false,
+    },
+
+    labCertified: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const JewellerySchema = new Schema<JewelleryData>(
   {
     metalType: {
       type: String,
@@ -879,7 +293,7 @@ const JewellerySchema = new Schema<IJewellery>(
 
     metalWeightUnit: {
       type: String,
-      enum: ["gram", "kg"],
+      enum: WEIGHT_UNITS,
       default: "gram",
     },
 
@@ -890,13 +304,14 @@ const JewellerySchema = new Schema<IJewellery>(
 
     makingChargesType: {
       type: String,
-      enum: ["fixed", "percentage"],
+      enum: MAKING_CHARGES_TYPES,
       default: "fixed",
     },
 
     makingChargesPercentage: {
       type: Number,
       min: 0,
+      max: 100,
     },
 
     hasDiamond: {
@@ -921,7 +336,7 @@ const JewellerySchema = new Schema<IJewellery>(
 
     diamondWeightUnit: {
       type: String,
-      enum: ["carat", "gram"],
+      enum: GEMSTONE_WEIGHT_UNITS,
       default: "carat",
     },
 
@@ -967,7 +382,7 @@ const JewellerySchema = new Schema<IJewellery>(
 
     gemstoneWeightUnit: {
       type: String,
-      enum: ["carat", "gram"],
+      enum: GEMSTONE_WEIGHT_UNITS,
       default: "carat",
     },
 
@@ -1051,11 +466,262 @@ const JewellerySchema = new Schema<IJewellery>(
   },
 );
 
+const AstrologySchema = new Schema<AstrologyData>(
+  {
+    planet: {
+      type: String,
+      trim: true,
+    },
+
+    zodiacSigns: {
+      type: [String],
+      default: [],
+    },
+
+    wearDay: {
+      type: String,
+      trim: true,
+    },
+
+    wearMethod: {
+      type: String,
+      trim: true,
+    },
+
+    finger: {
+      type: String,
+      trim: true,
+    },
+
+    metal: {
+      type: String,
+      trim: true,
+    },
+
+    threadColor: {
+      type: String,
+      trim: true,
+    },
+
+    purificationMethod: {
+      type: String,
+      trim: true,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const CertificationSchema = new Schema<CertificationData>(
+  {
+    certified: {
+      type: Boolean,
+      default: false,
+    },
+
+    certificationType: {
+      type: String,
+      trim: true,
+    },
+
+    labName: {
+      type: String,
+      trim: true,
+    },
+
+    certificateNumber: {
+      type: String,
+      trim: true,
+    },
+
+    issueDate: {
+      type: String,
+      trim: true,
+    },
+
+    xrayVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    certificatePdf: {
+      type: String,
+      trim: true,
+    },
+
+    certificateImage: {
+      type: String,
+      trim: true,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const PricingSchema = new Schema<PricingData>(
+  {
+    currency: {
+      type: String,
+      default: "INR",
+      trim: true,
+      uppercase: true,
+    },
+
+    costPrice: {
+      type: Number,
+      min: 0,
+    },
+
+    sellingPrice: {
+      type: Number,
+      min: 0,
+    },
+
+    salePrice: {
+      type: Number,
+      min: 0,
+    },
+
+    discount: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+
+    gst: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 3,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const InventorySchema = new Schema<InventoryData>(
+  {
+    stock: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    stockStatus: {
+      type: String,
+      enum: STOCK_STATUSES,
+      default: "In Stock",
+    },
+
+    lowStockAlert: {
+      type: Number,
+      default: 5,
+      min: 0,
+    },
+
+    reservedStock: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const SeoSchema = new Schema<SeoData>(
+  {
+    metaTitle: {
+      type: String,
+      trim: true,
+    },
+
+    metaDescription: {
+      type: String,
+      trim: true,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const CareInstructionsSchema = new Schema<CareInstructionsData>(
+  {
+    cleaning: {
+      type: String,
+      trim: true,
+    },
+
+    storage: {
+      type: String,
+      trim: true,
+    },
+
+    precautions: {
+      type: String,
+      trim: true,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+export interface ICategory {
+  _id: Types.ObjectId;
+  name: string;
+}
+
+export interface IProduct extends Document {
+  productType: ProductType;
+
+  sku: string;
+  name: string;
+
+  slug: string;
+  description?: string;
+
+  category: Types.ObjectId | ICategory;
+
+  gallery: GalleryImage[];
+
+  gemstone?: GemstoneData;
+  rudraksha?: RudrakshaData;
+  jewellery?: JewelleryData;
+
+  astrology?: AstrologyData;
+
+  certification?: CertificationData;
+
+  pricing?: PricingData;
+
+  inventory?: InventoryData;
+
+  benefits?: string[];
+
+  seo?: SeoData;
+
+  careInstructions?: CareInstructionsData;
+
+  status?: ProductStatus;
+
+  createdBy?: string;
+  updatedBy?: string;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const ProductSchema = new Schema<IProduct>(
   {
     productType: {
       type: String,
-      enum: ["gemstone", "rudraksha", "jewellery"],
+      enum: PRODUCT_TYPES,
       required: true,
       index: true,
     },
@@ -1066,16 +732,12 @@ const ProductSchema = new Schema<IProduct>(
       unique: true,
       trim: true,
       uppercase: true,
+      index: true,
     },
 
     name: {
       type: String,
       required: true,
-      trim: true,
-    },
-
-    indianName: {
-      type: String,
       trim: true,
     },
 
@@ -1085,6 +747,7 @@ const ProductSchema = new Schema<IProduct>(
       unique: true,
       lowercase: true,
       trim: true,
+      index: true,
     },
 
     description: {
@@ -1092,25 +755,25 @@ const ProductSchema = new Schema<IProduct>(
       trim: true,
     },
 
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+
     gallery: {
       type: [GallerySchema],
       default: [],
     },
 
-    category: {
-      type: String,
-      trim: true,
-      index: true,
+    gemstone: {
+      type: GemstoneSchema,
+      default: undefined,
     },
 
-    subCategory: {
-      type: String,
-      trim: true,
-    },
-
-    specifications: {
-      type: Schema.Types.Mixed,
-      default: {},
+    rudraksha: {
+      type: RudrakshaSchema,
+      default: undefined,
     },
 
     jewellery: {
@@ -1155,7 +818,7 @@ const ProductSchema = new Schema<IProduct>(
 
     status: {
       type: String,
-      enum: ["Draft", "Published", "Archived"],
+      enum: PRODUCT_STATUSES,
       default: "Draft",
       index: true,
     },
