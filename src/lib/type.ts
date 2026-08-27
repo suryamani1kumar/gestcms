@@ -18,7 +18,6 @@ export interface GalleryImage {
 }
 
 export interface GemstoneData {
-  gemstoneType?: string;
   indianName?: string;
   variety?: string;
   color?: string;
@@ -31,10 +30,7 @@ export interface GemstoneData {
   weight?: number;
   weightUnit?: WeightUnit;
 
-  length?: number;
-  width?: number;
-  height?: number;
-  dimensionUnit?: string;
+  dimension?: string;
 
   hardness?: string;
   refractiveIndex?: string;
@@ -156,11 +152,12 @@ export interface CertificationData {
 
 export interface PricingData {
   currency?: string;
-
   costPrice?: number;
   sellingPrice?: number;
   salePrice?: number;
-
+  buyUnitPrice?: number;
+  sellUnitPrice?: number;
+  WeightUnit?: string;
   discount?: number;
   gst?: number;
 }
@@ -170,7 +167,7 @@ export interface InventoryData {
   stockStatus?: StockStatus;
 
   lowStockAlert?: number;
-  reservedStock?: number;    // why reserved stock
+  reservedStock?: number; // why reserved stock
 }
 
 export interface SeoData {
