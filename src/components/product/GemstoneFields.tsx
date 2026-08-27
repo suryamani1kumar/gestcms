@@ -1,420 +1,299 @@
 "use client";
 
+import { ProductFormData } from "@/lib/type";
 import React from "react";
 import {
-  FaGem,
-  FaWeightHanging,
-  FaRulerCombined,
-  FaStar,
-} from "react-icons/fa6";
+  EmptyState,
+  Field,
+  Input,
+  Section,
+  Select,
+  textareaClass,
+} from "./Form";
 
 interface GemstoneFieldsProps {
-  formData: any;
-  setFormData: React.Dispatch<React.SetStateAction<any>>;
+  formData: ProductFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
 }
+
+const numberValue = (value: string): number | undefined => {
+  if (value === "") return undefined;
+
+  const number = Number(value);
+
+  return Number.isNaN(number) ? undefined : number;
+};
 
 export default function GemstoneFields({
   formData,
   setFormData,
 }: GemstoneFieldsProps) {
-  const specifications = formData.specifications || {};
-
-  const updateSpecification = (field: string, value: any) => {
-    setFormData((prev: any) => ({
+  const updateNestedField = (
+    section:
+      | "gemstone"
+      | "rudraksha"
+      | "jewellery"
+      | "astrology"
+      | "certification"
+      | "pricing"
+      | "inventory"
+      | "seo"
+      | "careInstructions",
+    field: string,
+    value: any,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      specifications: {
-        ...prev.specifications,
+
+      [section]: {
+        ...(prev[section] || {}),
         [field]: value,
       },
     }));
   };
 
-  const updateWeight = (field: "value" | "unit", value: any) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      specifications: {
-        ...prev.specifications,
-
-        weight: {
-          ...prev.specifications?.weight,
-          [field]: value,
-        },
-      },
-    }));
-  };
-
-  const updateDimension = (
-    field: "length" | "width" | "height" | "unit",
-    value: any,
-  ) => {
-    setFormData((prev: any) => ({
-      ...prev,
-
-      specifications: {
-        ...prev.specifications,
-
-        dimensions: {
-          ...prev.specifications?.dimensions,
-          [field]: value,
-        },
-      },
-    }));
-  };
-
-  const updateQuality = (field: string, value: any) => {
-    setFormData((prev: any) => ({
-      ...prev,
-
-      specifications: {
-        ...prev.specifications,
-
-        quality: {
-          ...prev.specifications?.quality,
-          [field]: value,
-        },
-      },
-    }));
-  };
-
   return (
-    <div className="space-y-8">
-      <div>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <InputField
-            label="Color"
-            value={specifications.color}
-            placeholder="Pigeon Blood Red"
-            onChange={(value) => updateSpecification("color", value)}
-          />
-
-          <InputField
-            label="Shape"
-            value={specifications.shape}
-            placeholder="Oval"
-            onChange={(value) => updateSpecification("shape", value)}
-          />
-
-          <InputField
-            label="Cut"
-            value={specifications.cut}
-            placeholder="Mixed Cut"
-            onChange={(value) => updateSpecification("cut", value)}
-          />
-
-          <InputField
-            label="Transparency"
-            value={specifications.transparency}
-            placeholder="Transparent"
-            onChange={(value) => updateSpecification("transparency", value)}
-          />
-
-          <InputField
-            label="Origin"
-            value={specifications.origin}
-            placeholder="Burma (Myanmar)"
-            onChange={(value) => updateSpecification("origin", value)}
-          />
-
-          <InputField
-            label="Treatment"
-            value={specifications.treatment}
-            placeholder="Unheated"
-            onChange={(value) => updateSpecification("treatment", value)}
-          />
-
-          <InputField
-            label="Certification Type"
-            value={specifications.certificationType}
-            placeholder="Natural Gemstone"
-            onChange={(value) =>
-              updateSpecification("certificationType", value)
+    <Section title="Gemstone Details" className="mt-2.5">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+        <Field label="Indian Name">
+          <Input
+            placeholder="Enter Indian name"
+            value={formData.gemstone?.indianName ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "indianName", e.target.value)
             }
           />
+        </Field>
 
-          <InputField
-            label="Luster"
-            value={specifications.luster}
-            placeholder="Vitreous"
-            onChange={(value) => updateSpecification("luster", value)}
+        <Field label="Variety">
+          <Input
+            placeholder="e.g. Natural Ruby"
+            value={formData.gemstone?.variety ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "variety", e.target.value)
+            }
           />
+        </Field>
 
-          <InputField
-            label="Hardness"
-            value={specifications.hardness}
-            placeholder="9 Mohs"
-            onChange={(value) => updateSpecification("hardness", value)}
+        <Field label="Color">
+          <Input
+            placeholder="e.g. Pigeon Blood Red"
+            value={formData.gemstone?.color ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "color", e.target.value)
+            }
           />
+        </Field>
 
-          <InputField
-            label="Refractive Index"
-            value={specifications.refractiveIndex}
-            placeholder="1.762 - 1.770"
-            onChange={(value) => updateSpecification("refractiveIndex", value)}
+        <Field label="Shape">
+          <Input
+            placeholder="e.g. Oval"
+            value={formData.gemstone?.shape ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "shape", e.target.value)
+            }
           />
+        </Field>
 
-          <InputField
-            label="Specific Gravity"
-            value={specifications.specificGravity}
-            placeholder="4.00"
-            onChange={(value) => updateSpecification("specificGravity", value)}
+        <Field label="Cut">
+          <Input
+            placeholder="e.g. Mixed Cut"
+            value={formData.gemstone?.cut ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "cut", e.target.value)
+            }
           />
-        </div>
+        </Field>
+
+        <Field label="Transparency">
+          <Input
+            placeholder="e.g. Transparent"
+            value={formData.gemstone?.transparency ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "transparency", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Origin">
+          <Input
+            placeholder="e.g. Burma"
+            value={formData.gemstone?.origin ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "origin", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Treatment">
+          <Input
+            placeholder="e.g. Unheated"
+            value={formData.gemstone?.treatment ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "treatment", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Weight">
+          <Input
+            type="number"
+            placeholder="0.00"
+            value={formData.gemstone?.weight ?? ""}
+            onChange={(e) =>
+              updateNestedField(
+                "gemstone",
+                "weight",
+                numberValue(e.target.value),
+              )
+            }
+          />
+        </Field>
+
+        <Field label="Weight Unit">
+          <Select
+            value={formData.gemstone?.weightUnit ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "weightUnit", e.target.value)
+            }
+            options={[
+              {
+                label: "Carat",
+                value: "carat",
+              },
+              {
+                label: "Gram",
+                value: "gram",
+              },
+            ]}
+          />
+        </Field>
+
+        <Field label="Dimension">
+          <Input
+            placeholder="e.g. 80MM x 60MM"
+            value={formData.gemstone?.dimension ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "dimension", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Hardness">
+          <Input
+            placeholder="e.g. 9 Mohs"
+            value={formData.gemstone?.hardness ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "hardness", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Refractive Index">
+          <Input
+            placeholder="e.g. 1.762 - 1.770"
+            value={formData.gemstone?.refractiveIndex ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "refractiveIndex", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Specific Gravity">
+          <Input
+            placeholder="e.g. 4.00"
+            value={formData.gemstone?.specificGravity ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "specificGravity", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Luster">
+          <Input
+            placeholder="e.g. Vitreous"
+            value={formData.gemstone?.luster ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "luster", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Quality Grade">
+          <Input
+            placeholder="e.g. AAA"
+            value={formData.gemstone?.qualityGrade ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "qualityGrade", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Clarity">
+          <Input
+            placeholder="e.g. VVS"
+            value={formData.gemstone?.clarity ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "clarity", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Color Grade">
+          <Input
+            placeholder="e.g. Excellent"
+            value={formData.gemstone?.colorGrade ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "colorGrade", e.target.value)
+            }
+          />
+        </Field>
+
+        <Field label="Enhancement">
+          <Input
+            placeholder="e.g. None"
+            value={formData.gemstone?.enhancement ?? ""}
+            onChange={(e) =>
+              updateNestedField("gemstone", "enhancement", e.target.value)
+            }
+          />
+        </Field>
       </div>
 
-      <div className="border-t border-gray-100 pt-7">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
-            <FaWeightHanging />
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-gray-900">Weight</h3>
-
-            <p className="text-sm text-gray-500">Enter the gemstone weight.</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <NumberField
-            label="Weight"
-            value={specifications.weight?.value}
-            onChange={(value) => updateWeight("value", value)}
+      <div className="mt-4 flex flex-wrap gap-5">
+        <label className="flex items-center gap-2 text-[9px]">
+          <input
+            type="checkbox"
+            checked={formData.gemstone?.natural ?? false}
+            onChange={(e) =>
+              updateNestedField("gemstone", "natural", e.target.checked)
+            }
           />
+          Natural
+        </label>
 
-          <SelectField
-            label="Weight Unit"
-            value={specifications.weight?.unit || "Carat"}
-            options={["Carat", "Gram", "Ratti"]}
-            onChange={(value) => updateWeight("unit", value)}
+        <label className="flex items-center gap-2 text-[9px]">
+          <input
+            type="checkbox"
+            checked={formData.gemstone?.synthetic ?? false}
+            onChange={(e) =>
+              updateNestedField("gemstone", "synthetic", e.target.checked)
+            }
           />
-        </div>
+          Synthetic
+        </label>
+
+        <label className="flex items-center gap-2 text-[9px]">
+          <input
+            type="checkbox"
+            checked={formData.gemstone?.heated ?? false}
+            onChange={(e) =>
+              updateNestedField("gemstone", "heated", e.target.checked)
+            }
+          />
+          Heated
+        </label>
       </div>
-
-      <div className="border-t border-gray-100 pt-7">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-green-700">
-            <FaRulerCombined />
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-gray-900">Dimensions</h3>
-
-            <p className="text-sm text-gray-500">Enter gemstone dimensions.</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
-          <NumberField
-            label="Length"
-            value={specifications.dimensions?.length}
-            onChange={(value) => updateDimension("length", value)}
-          />
-
-          <NumberField
-            label="Width"
-            value={specifications.dimensions?.width}
-            onChange={(value) => updateDimension("width", value)}
-          />
-
-          <NumberField
-            label="Height"
-            value={specifications.dimensions?.height}
-            onChange={(value) => updateDimension("height", value)}
-          />
-
-          <SelectField
-            label="Unit"
-            value={specifications.dimensions?.unit || "mm"}
-            options={["mm", "cm", "inch"]}
-            onChange={(value) => updateDimension("unit", value)}
-          />
-        </div>
-      </div>
-
-      <div className="border-t border-gray-100 pt-7">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-100 text-yellow-700">
-            <FaStar />
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-gray-900">Quality</h3>
-
-            <p className="text-sm text-gray-500">
-              Quality and authenticity information.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <InputField
-            label="Grade"
-            value={specifications.quality?.grade}
-            placeholder="AAA"
-            onChange={(value) => updateQuality("grade", value)}
-          />
-
-          <InputField
-            label="Clarity"
-            value={specifications.quality?.clarity}
-            placeholder="VVS"
-            onChange={(value) => updateQuality("clarity", value)}
-          />
-
-          <InputField
-            label="Color Grade"
-            value={specifications.quality?.colorGrade}
-            placeholder="Excellent"
-            onChange={(value) => updateQuality("colorGrade", value)}
-          />
-
-          <InputField
-            label="Enhancement"
-            value={specifications.quality?.enhancement}
-            placeholder="None"
-            onChange={(value) => updateQuality("enhancement", value)}
-          />
-
-          <ToggleField
-            label="Natural"
-            checked={specifications.quality?.natural ?? true}
-            onChange={(value) => updateQuality("natural", value)}
-          />
-
-          <ToggleField
-            label="Synthetic"
-            checked={specifications.quality?.synthetic ?? false}
-            onChange={(value) => updateQuality("synthetic", value)}
-          />
-
-          <ToggleField
-            label="Heated"
-            checked={specifications.quality?.heated ?? false}
-            onChange={(value) => updateQuality("heated", value)}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function InputField({
-  label,
-  value,
-  placeholder,
-  onChange,
-}: {
-  label: string;
-  value?: string | number;
-  placeholder?: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-
-      <input
-        type="text"
-        value={value ?? ""}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
-      />
-    </div>
-  );
-}
-
-function NumberField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value?: number;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-
-      <input
-        type="number"
-        min="0"
-        step="any"
-        value={value ?? ""}
-        onChange={(e) =>
-          onChange(e.target.value === "" ? 0 : Number(e.target.value))
-        }
-        className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-1 focus:ring-black"
-      />
-    </div>
-  );
-}
-
-function SelectField({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  options: string[];
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-1 focus:ring-black"
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-function ToggleField({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 rounded-full transition ${
-          checked ? "bg-black" : "bg-gray-300"
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-            checked ? "left-5.5" : "left-0.5"
-          }`}
-        />
-      </button>
-    </div>
+    </Section>
   );
 }

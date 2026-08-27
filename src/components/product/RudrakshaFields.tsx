@@ -1,389 +1,210 @@
 "use client";
 
+import { ProductFormData } from "@/lib/type";
 import React from "react";
-import {
-  FaCircle,
-  FaLeaf,
-  FaCircleNodes,
-  FaShieldHeart,
-} from "react-icons/fa6";
+import { Field, Input, Section, Select } from "./Form";
 
-interface RudrakshaFieldsProps {
-  formData: any;
-  setFormData: React.Dispatch<React.SetStateAction<any>>;
+interface RudrakashFieldsProps {
+  formData: ProductFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
 }
 
-export default function RudrakshaFields({
+const numberValue = (value: string): number | undefined => {
+  if (value === "") return undefined;
+
+  const number = Number(value);
+
+  return Number.isNaN(number) ? undefined : number;
+};
+
+export default function RudrakashFields({
   formData,
   setFormData,
-}: RudrakshaFieldsProps) {
-  const specifications = formData.specifications || {};
-
-  // ============================================================
-  // UPDATE SPECIFICATION
-  // ============================================================
-
-  const updateSpecification = (field: string, value: any) => {
-    setFormData((prev: any) => ({
+}: RudrakashFieldsProps) {
+  const updateNestedField = (
+    section:
+      | "gemstone"
+      | "rudraksha"
+      | "jewellery"
+      | "astrology"
+      | "certification"
+      | "pricing"
+      | "inventory"
+      | "seo"
+      | "careInstructions",
+    field: string,
+    value: any,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
 
-      specifications: {
-        ...prev.specifications,
+      [section]: {
+        ...(prev[section] || {}),
         [field]: value,
       },
     }));
   };
 
   return (
-    <div className="space-y-8">
-      {/* ====================================================== */}
-      {/* BASIC RUDRAKSHA DETAILS */}
-      {/* ====================================================== */}
-
-      <div>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <NumberField
-            label="Mukhi"
-            value={specifications.mukhi}
-            onChange={(value) => updateSpecification("mukhi", value)}
+    <Section title="Rudraksha Details" className="mt-2.5">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+        <Field label="Mukhi" required>
+          <Input
+            type="number"
+            placeholder="e.g. 5"
+            value={formData.rudraksha?.mukhi ?? ""}
+            onChange={(e) =>
+              updateNestedField(
+                "rudraksha",
+                "mukhi",
+                numberValue(e.target.value),
+              )
+            }
           />
+        </Field>
 
-          <InputField
-            label="Type"
-            value={specifications.type}
-            placeholder="Nepal Rudraksha"
-            onChange={(value) => updateSpecification("type", value)}
+        <Field label="Bead Type">
+          <Input
+            placeholder="e.g. Natural"
+            value={formData.rudraksha?.beadType ?? ""}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "beadType", e.target.value)
+            }
           />
+        </Field>
 
-          <InputField
-            label="Species"
-            value={specifications.species}
-            placeholder="Elaeocarpus Ganitrus"
-            onChange={(value) => updateSpecification("species", value)}
+        <Field label="Origin">
+          <Input
+            placeholder="e.g. Nepal"
+            value={formData.rudraksha?.origin ?? ""}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "origin", e.target.value)
+            }
           />
+        </Field>
 
-          <InputField
-            label="Origin"
-            value={specifications.origin}
-            placeholder="Nepal"
-            onChange={(value) => updateSpecification("origin", value)}
+        <Field label="Color">
+          <Input
+            placeholder="e.g. Brown"
+            value={formData.rudraksha?.color ?? ""}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "color", e.target.value)
+            }
           />
+        </Field>
 
-          <InputField
-            label="Shape"
-            value={specifications.shape}
-            placeholder="Round"
-            onChange={(value) => updateSpecification("shape", value)}
+        <Field label="Shape">
+          <Input
+            placeholder="e.g. Round"
+            value={formData.rudraksha?.shape ?? ""}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "shape", e.target.value)
+            }
           />
+        </Field>
 
-          <InputField
-            label="Color"
-            value={specifications.color}
-            placeholder="Brown"
-            onChange={(value) => updateSpecification("color", value)}
+        <Field label="Size">
+          <Input
+            type="number"
+            placeholder="0"
+            value={formData.rudraksha?.size ?? ""}
+            onChange={(e) =>
+              updateNestedField(
+                "rudraksha",
+                "size",
+                numberValue(e.target.value),
+              )
+            }
           />
+        </Field>
 
-          <InputField
-            label="Surface"
-            value={specifications.surface}
-            placeholder="Natural"
-            onChange={(value) => updateSpecification("surface", value)}
+        <Field label="Size Unit">
+          <Select
+            value={formData.rudraksha?.sizeUnit ?? ""}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "sizeUnit", e.target.value)
+            }
+            options={[
+              {
+                label: "mm",
+                value: "mm",
+              },
+              {
+                label: "cm",
+                value: "cm",
+              },
+            ]}
           />
+        </Field>
 
-          <InputField
-            label="Treatment"
-            value={specifications.treatment}
-            placeholder="Untreated"
-            onChange={(value) => updateSpecification("treatment", value)}
+        <Field label="Weight">
+          <Input
+            type="number"
+            placeholder="0"
+            value={formData.rudraksha?.weight ?? ""}
+            onChange={(e) =>
+              updateNestedField(
+                "rudraksha",
+                "weight",
+                numberValue(e.target.value),
+              )
+            }
           />
-        </div>
+        </Field>
+
+        <Field label="Weight Unit">
+          <Select
+            value={formData.rudraksha?.weightUnit ?? ""}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "weightUnit", e.target.value)
+            }
+            options={[
+              {
+                label: "Gram",
+                value: "gram",
+              },
+              {
+                label: "Kg",
+                value: "kg",
+              },
+            ]}
+          />
+        </Field>
+
+        <Field label="Quality">
+          <Input
+            placeholder="e.g. Premium"
+            value={formData.rudraksha?.quality ?? ""}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "quality", e.target.value)
+            }
+          />
+        </Field>
       </div>
 
-      {/* ====================================================== */}
-      {/* MUKHI & HOLES */}
-      {/* ====================================================== */}
-
-      <div className="border-t border-gray-100 pt-7">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
-            <FaCircleNodes />
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-gray-900">Structure</h3>
-
-            <p className="text-sm text-gray-500">
-              Rudraksha mukhi and hole information.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <NumberField
-            label="Number of Holes"
-            value={specifications.holes ?? 1}
-            onChange={(value) => updateSpecification("holes", value)}
+      <div className="mt-4 flex gap-6">
+        <label className="flex items-center gap-2 text-[9px]">
+          <input
+            type="checkbox"
+            checked={formData.rudraksha?.energized ?? false}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "energized", e.target.checked)
+            }
           />
+          Energized
+        </label>
 
-          <ToggleField
-            label="Natural Hole"
-            checked={specifications.naturalHole ?? true}
-            onChange={(value) => updateSpecification("naturalHole", value)}
+        <label className="flex items-center gap-2 text-[9px]">
+          <input
+            type="checkbox"
+            checked={formData.rudraksha?.labCertified ?? false}
+            onChange={(e) =>
+              updateNestedField("rudraksha", "labCertified", e.target.checked)
+            }
           />
-
-          <ToggleField
-            label="Natural"
-            checked={specifications.natural ?? true}
-            onChange={(value) => updateSpecification("natural", value)}
-          />
-
-          <ToggleField
-            label="Original"
-            checked={specifications.original ?? true}
-            onChange={(value) => updateSpecification("original", value)}
-          />
-        </div>
+          Lab Certified
+        </label>
       </div>
-
-      {/* ====================================================== */}
-      {/* ASTROLOGICAL INFO */}
-      {/* ====================================================== */}
-
-      <div className="border-t border-gray-100 pt-7">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
-            <FaLeaf />
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-gray-900">
-              Rudraksha Information
-            </h3>
-
-            <p className="text-sm text-gray-500">
-              Additional information about this Rudraksha.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <InputField
-            label="Ruling Planet"
-            value={formData.astrology?.planet}
-            placeholder="Jupiter"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-                  planet: value,
-                },
-              }))
-            }
-          />
-
-          <InputField
-            label="Zodiac Signs"
-            value={formData.astrology?.zodiacSigns?.join(", ") || ""}
-            placeholder="Aries, Leo"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-
-                  zodiacSigns: value
-                    .split(",")
-                    .map((item: string) => item.trim())
-                    .filter(Boolean),
-                },
-              }))
-            }
-          />
-
-          <InputField
-            label="Wear Day"
-            value={formData.astrology?.wearDay}
-            placeholder="Thursday"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-                  wearDay: value,
-                },
-              }))
-            }
-          />
-
-          <InputField
-            label="Wear Method"
-            value={formData.astrology?.wearMethod}
-            placeholder="Wear around neck"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-                  wearMethod: value,
-                },
-              }))
-            }
-          />
-
-          <InputField
-            label="Metal"
-            value={formData.astrology?.metal}
-            placeholder="Gold"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-                  metal: value,
-                },
-              }))
-            }
-          />
-
-          <InputField
-            label="Thread Color"
-            value={formData.astrology?.threadColor}
-            placeholder="Red"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-                  threadColor: value,
-                },
-              }))
-            }
-          />
-
-          <InputField
-            label="Purification Method"
-            value={formData.astrology?.purificationMethod}
-            placeholder="Gangajal"
-            onChange={(value) =>
-              setFormData((prev: any) => ({
-                ...prev,
-
-                astrology: {
-                  ...prev.astrology,
-                  purificationMethod: value,
-                },
-              }))
-            }
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ================================================================ */
-/* INPUT FIELD                                                       */
-/* ================================================================ */
-
-function InputField({
-  label,
-  value,
-  placeholder,
-  onChange,
-}: {
-  label: string;
-  value?: string | number;
-  placeholder?: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-
-      <input
-        type="text"
-        value={value ?? ""}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
-      />
-    </div>
-  );
-}
-
-/* ================================================================ */
-/* NUMBER FIELD                                                      */
-/* ================================================================ */
-
-function NumberField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value?: number;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        {label}
-      </label>
-
-      <input
-        type="number"
-        min="0"
-        value={value ?? ""}
-        onChange={(e) =>
-          onChange(e.target.value === "" ? 0 : Number(e.target.value))
-        }
-        className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-1 focus:ring-black"
-      />
-    </div>
-  );
-}
-
-/* ================================================================ */
-/* TOGGLE FIELD                                                      */
-/* ================================================================ */
-
-function ToggleField({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 rounded-full transition ${
-          checked ? "bg-black" : "bg-gray-300"
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-            checked ? "left-5.5" : "left-0.5"
-          }`}
-        />
-      </button>
-    </div>
+    </Section>
   );
 }
