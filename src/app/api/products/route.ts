@@ -133,16 +133,13 @@ export async function GET(request: NextRequest) {
      * FORMAT PRODUCTS FOR FRONTEND
      */
     const formattedProducts = products.map((product: any) => {
-      const quantity = Number(product.inventory?.quantity || 0);
+      const quantity = Number(product.inventory?.stock || 0);
+      const lowStockAlert = Number(product.inventory?.lowStockAlert);
 
       /*
        * PRICE
        */
-      const price =
-        Number(product.pricing?.sellingPrice) ||
-        Number(product.pricing?.price) ||
-        Number(product.price) ||
-        0;
+      const price = Number(product.pricing?.salePrice) || 0;
 
       /*
        * IMAGE
@@ -172,15 +169,12 @@ export async function GET(request: NextRequest) {
         type = "Rudraksha";
       }
 
-      /*
-       * STOCK STATUS
-       */
       let calculatedStockStatus: "In Stock" | "Low Stock" | "Out of Stock" =
         "Out of Stock";
 
-      if (quantity > 0 && quantity <= 5) {
+      if (quantity > 0 && quantity <= lowStockAlert) {
         calculatedStockStatus = "Low Stock";
-      } else if (quantity > 5) {
+      } else if (quantity > lowStockAlert) {
         calculatedStockStatus = "In Stock";
       }
 
@@ -250,18 +244,14 @@ export async function GET(request: NextRequest) {
      * TOTAL INVENTORY VALUE
      */
     const inventoryProducts = await Product.find({})
-      .select("pricing inventory price")
+      .select("pricing inventory")
       .lean();
 
     const totalValue = inventoryProducts.reduce(
       (total: number, product: any) => {
-        const price =
-          Number(product.pricing?.sellingPrice) ||
-          Number(product.pricing?.price) ||
-          Number(product.price) ||
-          0;
+        const price = Number(product.pricing?.costPrice) || 0;
 
-        const quantity = Number(product.inventory?.quantity) || 0;
+        const quantity = Number(product.inventory?.stock) || 0;
 
         return total + price * quantity;
       },
