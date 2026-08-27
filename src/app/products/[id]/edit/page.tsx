@@ -6,10 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import PageHeader from "@/components/pageheader/PageHeader";
 import ProductForm from "@/components/product/ProductForm";
 
-import {
-  ProductFormData,
-  ProductStatus,
-} from "@/lib/type";
+import { ProductFormData, ProductStatus } from "@/lib/type";
 
 const emptyProduct: ProductFormData = {
   productType: "gemstone",
@@ -22,7 +19,6 @@ const emptyProduct: ProductFormData = {
   gallery: [],
 
   gemstone: {
-    gemstoneType: "",
     indianName: "",
     variety: "",
     color: "",
@@ -35,10 +31,7 @@ const emptyProduct: ProductFormData = {
     weight: undefined,
     weightUnit: "gram",
 
-    length: undefined,
-    width: undefined,
-    height: undefined,
-    dimensionUnit: "mm",
+    dimension: "mm",
 
     hardness: "",
     refractiveIndex: "",
@@ -87,12 +80,15 @@ const emptyProduct: ProductFormData = {
     salePrice: undefined,
     discount: 0,
     gst: 3,
+    buyUnitPrice: undefined,
+    sellUnitPrice: undefined,
+    WeightUnit: "",
   },
 
   inventory: {
-    stock: 0,
+    stock: 3,
     stockStatus: "In Stock",
-    lowStockAlert: 5,
+    lowStockAlert: 2,
     reservedStock: 0,
   },
 
@@ -123,8 +119,7 @@ export default function EditProductPage() {
    * formData itself is never null.
    * This fixes the setFormData type error.
    */
-  const [formData, setFormData] =
-    useState<ProductFormData>(emptyProduct);
+  const [formData, setFormData] = useState<ProductFormData>(emptyProduct);
 
   const [fetching, setFetching] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -144,9 +139,7 @@ export default function EditProductPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            data?.message || "Failed to fetch product",
-          );
+          throw new Error(data?.message || "Failed to fetch product");
         }
 
         if (!data?.data) {
@@ -167,13 +160,9 @@ export default function EditProductPage() {
           createdAt: undefined,
           updatedAt: undefined,
 
-          gallery: Array.isArray(item.gallery)
-            ? item.gallery
-            : [],
+          gallery: Array.isArray(item.gallery) ? item.gallery : [],
 
-          benefits: Array.isArray(item.benefits)
-            ? item.benefits
-            : [],
+          benefits: Array.isArray(item.benefits) ? item.benefits : [],
 
           gemstone:
             item.productType === "gemstone"
@@ -181,14 +170,10 @@ export default function EditProductPage() {
               : undefined,
 
           rudraksha:
-            item.productType === "rudraksha"
-              ? item.rudraksha || {}
-              : undefined,
+            item.productType === "rudraksha" ? item.rudraksha || {} : undefined,
 
           jewellery:
-            item.productType === "jewellery"
-              ? item.jewellery || {}
-              : undefined,
+            item.productType === "jewellery" ? item.jewellery || {} : undefined,
 
           astrology: {
             ...emptyProduct.astrology,
@@ -226,9 +211,7 @@ export default function EditProductPage() {
         console.error("Fetch product error:", error);
 
         alert(
-          error instanceof Error
-            ? error.message
-            : "Failed to load product",
+          error instanceof Error ? error.message : "Failed to load product",
         );
 
         router.push("/products");
@@ -240,11 +223,8 @@ export default function EditProductPage() {
     fetchProduct();
   }, [id, router]);
 
-  const handleSubmit = async (
-    status?: ProductStatus,
-  ) => {
-    const submitStatus =
-      status ?? formData.status;
+  const handleSubmit = async (status?: ProductStatus) => {
+    const submitStatus = status ?? formData.status;
 
     /*
      * BASIC VALIDATION
@@ -305,16 +285,6 @@ export default function EditProductPage() {
       return;
     }
 
-    /*
-     * PRODUCT TYPE VALIDATION
-     */
-
-    if (formData.productType === "gemstone") {
-      if (!formData.gemstone?.gemstoneType?.trim()) {
-        alert("Gemstone type is required.");
-        return;
-      }
-    }
 
     if (formData.productType === "rudraksha") {
       if (!formData.rudraksha?.mukhi) {
@@ -346,19 +316,13 @@ export default function EditProductPage() {
         gallery: formData.gallery ?? [],
 
         gemstone:
-          formData.productType === "gemstone"
-            ? formData.gemstone
-            : undefined,
+          formData.productType === "gemstone" ? formData.gemstone : undefined,
 
         rudraksha:
-          formData.productType === "rudraksha"
-            ? formData.rudraksha
-            : undefined,
+          formData.productType === "rudraksha" ? formData.rudraksha : undefined,
 
         jewellery:
-          formData.productType === "jewellery"
-            ? formData.jewellery
-            : undefined,
+          formData.productType === "jewellery" ? formData.jewellery : undefined,
 
         astrology:
           formData.productType === "gemstone" ||
@@ -373,32 +337,24 @@ export default function EditProductPage() {
             : undefined,
       };
 
-      const response = await fetch(
-        `/api/products/${id}`,
-        {
-          method: "PUT",
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+
+        body: JSON.stringify(payload),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
         if (Array.isArray(data?.errors)) {
-          throw new Error(
-            data.errors.join("\n"),
-          );
+          throw new Error(data.errors.join("\n"));
         }
 
-        throw new Error(
-          data?.message ||
-            "Failed to update product",
-        );
+        throw new Error(data?.message || "Failed to update product");
       }
 
       alert(
@@ -410,16 +366,9 @@ export default function EditProductPage() {
       router.push("/products");
       router.refresh();
     } catch (error) {
-      console.error(
-        "Update product error:",
-        error,
-      );
+      console.error("Update product error:", error);
 
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong.",
-      );
+      alert(error instanceof Error ? error.message : "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -428,9 +377,7 @@ export default function EditProductPage() {
   if (fetching) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#fafafa]">
-        <div className="text-[12px] text-slate-500">
-          Loading product...
-        </div>
+        <div className="text-[12px] text-slate-500">Loading product...</div>
       </div>
     );
   }
@@ -438,25 +385,20 @@ export default function EditProductPage() {
   return (
     <div className="min-h-screen bg-[#fafafa] p-3 font-sans text-[#292d32]">
       <main className="mx-auto max-w-[1500px]">
-
         <PageHeader
           title="Edit Product"
           description="Update your Gemstone, Rudraksha or Jewellery product"
           showButton={false}
         />
 
-        <ProductForm
-          formData={formData}
-          setFormData={setFormData}
-        />
+        <ProductForm formData={formData} setFormData={setFormData} />
 
         <div className="mt-3 flex justify-end gap-2 border-t border-slate-200 py-4">
-
           <button
             type="button"
             onClick={() => router.push("/products")}
             disabled={loading}
-            className="h-9 rounded-md border border-slate-200 bg-white px-5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="h-9 cursor-pointer rounded-md border border-slate-200 bg-white px-5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -465,26 +407,19 @@ export default function EditProductPage() {
             type="button"
             disabled={loading}
             onClick={() => handleSubmit("Draft")}
-            className="h-9 rounded-md border border-[#ead9c8] bg-[#f8eee6] px-5 text-[11px] font-semibold text-slate-800 hover:bg-[#f5e8dd] disabled:opacity-50"
+            className="h-9 cursor-pointer rounded-md border border-[#ead9c8] bg-[#f8eee6] px-5 text-[11px] font-semibold text-slate-800 hover:bg-[#f5e8dd] disabled:opacity-50"
           >
-            {loading
-              ? "Saving..."
-              : "Save as Draft"}
+            {loading ? "Saving..." : "Save as Draft"}
           </button>
 
           <button
             type="button"
             disabled={loading}
-            onClick={() =>
-              handleSubmit("Published")
-            }
-            className="h-9 rounded-md bg-slate-900 px-5 text-[11px] font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+            onClick={() => handleSubmit("Published")}
+            className="h-9 cursor-pointer rounded-md bg-slate-900 px-5 text-[11px] font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
           >
-            {loading
-              ? "Publishing..."
-              : "Publish Product"}
+            {loading ? "Publishing..." : "Publish Product"}
           </button>
-
         </div>
       </main>
     </div>

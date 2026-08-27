@@ -19,7 +19,6 @@ const initialFormData: ProductFormData = {
   gallery: [],
 
   gemstone: {
-    gemstoneType: "",
     indianName: "",
     variety: "",
     color: "",
@@ -32,10 +31,7 @@ const initialFormData: ProductFormData = {
     weight: undefined,
     weightUnit: "gram",
 
-    length: undefined,
-    width: undefined,
-    height: undefined,
-    dimensionUnit: "mm",
+    dimension: "",
 
     hardness: "",
     refractiveIndex: "",
@@ -83,14 +79,17 @@ const initialFormData: ProductFormData = {
     costPrice: undefined,
     sellingPrice: undefined,
     salePrice: undefined,
-    discount: 0,
+    discount: 5,
     gst: 3,
+    buyUnitPrice: undefined,
+    sellUnitPrice: undefined,
+    WeightUnit: "",
   },
 
   inventory: {
-    stock: 0,
+    stock: 5,
     stockStatus: "In Stock",
-    lowStockAlert: 5,
+    lowStockAlert: 2,
     reservedStock: 0,
   },
 
@@ -165,13 +164,6 @@ export default function CreateProductPage() {
     ) {
       alert("Stock cannot be negative.");
       return;
-    }
-
-    if (formData.productType === "gemstone") {
-      if (!formData.gemstone?.gemstoneType?.trim()) {
-        alert("Gemstone type is required.");
-        return;
-      }
     }
 
     if (formData.productType === "rudraksha") {
@@ -282,7 +274,7 @@ export default function CreateProductPage() {
             type="button"
             onClick={() => router.push("/products")}
             disabled={loading}
-            className="h-9 rounded-md border border-slate-200 bg-white px-5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="h-9 cursor-pointer rounded-md border border-slate-200 bg-white px-5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -291,7 +283,7 @@ export default function CreateProductPage() {
             type="button"
             disabled={loading}
             onClick={() => handleSubmit("Draft")}
-            className="h-9 rounded-md border border-[#ead9c8] bg-[#f8eee6] px-5 text-[11px] font-semibold text-slate-800 hover:bg-[#f5e8dd] disabled:opacity-50"
+            className="h-9 cursor-pointer rounded-md border border-[#ead9c8] bg-[#f8eee6] px-5 text-[11px] font-semibold text-slate-800 hover:bg-[#f5e8dd] disabled:opacity-50"
           >
             {loading ? "Saving..." : "Save as Draft"}
           </button>
@@ -300,7 +292,7 @@ export default function CreateProductPage() {
             type="button"
             disabled={loading}
             onClick={() => handleSubmit("Published")}
-            className="h-9 rounded-md bg-slate-900 px-5 text-[11px] font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+            className="h-9 cursor-pointer rounded-md bg-slate-900 px-5 text-[11px] font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
           >
             {loading ? "Publishing..." : "Publish Product"}
           </button>

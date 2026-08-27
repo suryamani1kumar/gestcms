@@ -329,7 +329,7 @@ export default function ProductsPage() {
     try {
       setLoading(true);
 
-      const response = await fetch(`/api/products?id=${id}`, {
+      const response = await fetch(`/api/products/${id}`, {
         method: "DELETE",
       });
 
@@ -834,68 +834,14 @@ export default function ProductsPage() {
                           <FaPencilAlt className="text-[12px]" />
                         </button>
 
-                        {/* MORE */}
-
                         <button
                           type="button"
-                          title="More"
-                          onClick={() =>
-                            setOpenMenu(
-                              openMenu === product.id ? null : product.id,
-                            )
-                          }
-                          className="flex h-8 w-8 items-center justify-center rounded text-[#777] transition hover:bg-[#f5f5f5]"
+                          onClick={() => handleDelete(product.id)}
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded border border-[#f0cccc] text-[#d95353] transition hover:bg-[#fff2f2] disabled:opacity-50"
                         >
-                          <FaEllipsisV className="text-[12px]" />
+                          <FaTrash className="text-[12px]" />
                         </button>
                       </div>
-
-                      {/* DROPDOWN */}
-
-                      {openMenu === product.id && (
-                        <div className="absolute right-4 top-12 z-30 w-32 rounded-md border border-[#e4e4e4] bg-white py-1 shadow-lg">
-                          {/* VIEW */}
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setOpenMenu(null);
-
-                              router.push(`/products/${product.id}`);
-                            }}
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] text-[#555] hover:bg-[#faf8f4]"
-                          >
-                            <FaEye className="text-[10px]" />
-                            View Product
-                          </button>
-
-                          {/* EDIT */}
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setOpenMenu(null);
-
-                              router.push(`/products/${product.id}/edit`);
-                            }}
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] text-[#555] hover:bg-[#faf8f4]"
-                          >
-                            <FaPencilAlt className="text-[10px]" />
-                            Edit Product
-                          </button>
-
-                          {/* DELETE */}
-
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(product.id)}
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] text-red-500 hover:bg-red-50"
-                          >
-                            <FaTrash className="text-[10px]" />
-                            Delete
-                          </button>
-                        </div>
-                      )}
                     </td>
                   </tr>
                 ))}
