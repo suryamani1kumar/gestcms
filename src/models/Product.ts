@@ -67,10 +67,6 @@ const GallerySchema = new Schema<GalleryImage>(
 
 const GemstoneSchema = new Schema<GemstoneData>(
   {
-    gemstoneType: {
-      type: String,
-      trim: true,
-    },
     indianName: {
       type: String,
       trim: true,
@@ -117,26 +113,11 @@ const GemstoneSchema = new Schema<GemstoneData>(
 
     weightUnit: {
       type: String,
-      enum: WEIGHT_UNITS,
+      enum: GEMSTONE_WEIGHT_UNITS,
       default: "gram",
     },
 
-    length: {
-      type: Number,
-      min: 0,
-    },
-
-    width: {
-      type: Number,
-      min: 0,
-    },
-
-    height: {
-      type: Number,
-      min: 0,
-    },
-
-    dimensionUnit: {
+    dimension: {
       type: String,
       trim: true,
     },
@@ -579,6 +560,20 @@ const PricingSchema = new Schema<PricingData>(
       min: 0,
     },
 
+    buyUnitPrice: {
+      type: Number,
+      min: 0,
+    },
+
+    sellUnitPrice: {
+      type: Number,
+      min: 0,
+    },
+
+    WeightUnit: {
+      type: String,
+    },
+    
     salePrice: {
       type: Number,
       min: 0,
