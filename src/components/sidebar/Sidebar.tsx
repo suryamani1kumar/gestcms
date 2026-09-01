@@ -281,47 +281,6 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
             />
           </SidebarGroup>
 
-          {/* Inventory */}
-
-          <SidebarItem
-            href="/inventory"
-            icon={<MdInventory2 />}
-            label="Inventory"
-            active={isActive("/inventory")}
-            isOpen={isOpen}
-            hasArrow
-            onNavigate={onClose}
-          />
-
-          <SidebarGroup
-            label="Gemstone Management"
-            icon={<MdDiamond />}
-            isOpen={isOpen}
-            expanded={gemstoneOpen}
-            onClick={() => setGemstoneOpen(!gemstoneOpen)}
-          >
-            <SidebarSubItem
-              href="/gemstone-management/loose-stones"
-              label="Loose Stones"
-              active={isActive("/gemstone-management/loose-stones")}
-              onNavigate={onClose}
-            />
-
-            <SidebarSubItem
-              href="/gemstone-management/certificates"
-              label="Certificates"
-              active={isActive("/gemstone-management/certificates")}
-              onNavigate={onClose}
-            />
-
-            <SidebarSubItem
-              href="/gemstone-management/inventory"
-              label="Stone Inventory"
-              active={isActive("/gemstone-management/inventory")}
-              onNavigate={onClose}
-            />
-          </SidebarGroup>
-
           {/* Sales */}
 
           <SidebarItem
