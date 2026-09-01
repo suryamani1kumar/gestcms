@@ -1,5 +1,6 @@
 "use client";
 
+import PageHeader from "@/components/pageheader/PageHeader";
 import React, { useMemo, useState } from "react";
 import {
   FiPlus,
@@ -21,10 +22,6 @@ import {
   FiEdit3,
 } from "react-icons/fi";
 
-/* =========================================================
-   TYPES
-========================================================= */
-
 type PermissionKey =
   | "view"
   | "create"
@@ -44,28 +41,7 @@ type Role = {
   icon: React.ElementType;
 };
 
-/*
- * Permission keys are stored like:
- *
- * Dashboard:view
- * Dashboard:create
- * Customers:view
- * Customers:edit
- *
- * Therefore the inner Record must use string keys,
- * not PermissionKey.
- */
 type Permissions = Record<string, Record<string, boolean>>;
-
-/* =========================================================
-   CONSTANTS
-========================================================= */
-
-const GOLD = "#c58620";
-
-/* =========================================================
-   ROLES
-========================================================= */
 
 const initialRoles: Role[] = [
   {
@@ -118,10 +94,6 @@ const initialRoles: Role[] = [
   },
 ];
 
-/* =========================================================
-   MODULES
-========================================================= */
-
 const modules = [
   {
     name: "Dashboard",
@@ -165,10 +137,6 @@ const modules = [
   },
 ];
 
-/* =========================================================
-   PERMISSION COLUMNS
-========================================================= */
-
 const permissionColumns: {
   key: PermissionKey;
   label: string;
@@ -199,10 +167,6 @@ const permissionColumns: {
   },
 ];
 
-/* =========================================================
-   INITIAL PERMISSIONS
-========================================================= */
-
 const createInitialPermissions = (
   roleList: Role[] = initialRoles,
 ): Permissions => {
@@ -223,10 +187,6 @@ const createInitialPermissions = (
   return result;
 };
 
-/* =========================================================
-   CARD
-========================================================= */
-
 const Card = ({
   children,
   className = "",
@@ -242,10 +202,6 @@ const Card = ({
     </div>
   );
 };
-
-/* =========================================================
-   ROLE ICON
-========================================================= */
 
 const RoleIcon = ({ role }: { role: Role }) => {
   const colors: Record<RoleColor, string> = {
@@ -266,10 +222,6 @@ const RoleIcon = ({ role }: { role: Role }) => {
     </div>
   );
 };
-
-/* =========================================================
-   PERMISSION CHECKBOX
-========================================================= */
 
 const PermissionCheckbox = ({
   checked,
@@ -293,10 +245,6 @@ const PermissionCheckbox = ({
     </button>
   );
 };
-
-/* =========================================================
-   PERMISSION LEVEL
-========================================================= */
 
 const PermissionLevel = ({
   type,
@@ -332,17 +280,17 @@ const PermissionLevel = ({
   return (
     <div className="flex items-start gap-[8px]">
       <div
-        className={`mt-[1px] flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-full ${style.wrapper}`}
+        className={`mt-[1px] flex h-[25px] w-[25px] shrink-0 items-center justify-center rounded-full ${style.wrapper}`}
       >
-        <Icon className="text-[8px]" />
+        <Icon className="text-[14px]" />
       </div>
 
       <div>
-        <p className="text-[7px] font-semibold leading-none text-[#344054]">
+        <p className="text-[10px] font-semibold leading-none text-[#344054]">
           {title}
         </p>
 
-        <p className="mt-[4px] text-[6px] leading-none text-[#667085]">
+        <p className="mt-[4px] text-[9px] leading-none text-[#667085]">
           {description}
         </p>
       </div>
@@ -350,25 +298,17 @@ const PermissionLevel = ({
   );
 };
 
-/* =========================================================
-   INFO ROW
-========================================================= */
-
 const InfoRow = ({ label, value }: { label: string; value: string }) => {
   return (
     <div className="grid grid-cols-[82px_1fr] gap-[8px]">
-      <span className="text-[6px] font-medium text-[#667085]">{label}</span>
+      <span className="text-[10px] font-medium text-[#667085]">{label}</span>
 
-      <span className="text-[6px] font-medium leading-[1.3] text-[#344054]">
+      <span className="text-[10px] font-medium leading-[1.3] text-[#344054]">
         {value}
       </span>
     </div>
   );
 };
-
-/* =========================================================
-   MAIN COMPONENT
-========================================================= */
 
 const RolePermissions = () => {
   const [selectedRole, setSelectedRole] = useState<string>("administrator");
@@ -379,17 +319,9 @@ const RolePermissions = () => {
     createInitialPermissions(initialRoles),
   );
 
-  /* =======================================================
-     SELECTED ROLE
-  ======================================================= */
-
   const selectedRoleData = useMemo(() => {
     return rolesList.find((role) => role.id === selectedRole) ?? rolesList[0];
   }, [rolesList, selectedRole]);
-
-  /* =======================================================
-     TOGGLE PERMISSION
-  ======================================================= */
 
   const togglePermission = (moduleName: string, permission: PermissionKey) => {
     if (!selectedRoleData) return;
@@ -404,10 +336,6 @@ const RolePermissions = () => {
       },
     }));
   };
-
-  /* =======================================================
-     ADD ROLE
-  ======================================================= */
 
   const handleAddRole = () => {
     const newRole: Role = {
@@ -440,10 +368,6 @@ const RolePermissions = () => {
     setSelectedRole(newRole.id);
   };
 
-  /* =======================================================
-     CLONE ROLE
-  ======================================================= */
-
   const handleCloneRole = () => {
     if (!selectedRoleData) return;
 
@@ -466,10 +390,6 @@ const RolePermissions = () => {
     setSelectedRole(clonedRole.id);
   };
 
-  /* =======================================================
-     EMPTY STATE
-  ======================================================= */
-
   if (!selectedRoleData) {
     return (
       <div className="min-h-screen bg-[#fafafa] p-[20px] text-[#344054]">
@@ -478,255 +398,218 @@ const RolePermissions = () => {
     );
   }
 
-  /* =======================================================
-     RENDER
-  ======================================================= */
-
   return (
-    <div className="min-h-screen bg-[#fafafa] text-[#344054]">
-      {/* ===================================================
-          PAGE HEADER
-      ==================================================== */}
+    <div className="min-h-screen  p-6 bg-[#fafafa] text-[#344054]">
+      <div className="space-y-3">
+        <PageHeader
+          title="Role Based Access & Permissions"
+          description="Manage roles and configure permissions for system modules."
+          showButton={false}
+        />
 
-      <div className="px-[13px] pt-[9px]">
-        <h1 className="text-[13px] font-bold leading-none text-[#202832]">
-          Role Based Access & Permissions
-        </h1>
+        <div className="grid grid-cols-1 gap-3 pb-3 pt-1 xl:grid-cols-[360px_minmax(0,1fr)]">
+          <Card className="min-w-0">
+            <div className="flex h-10 items-center justify-between border-b border-[#edf0f2] px-3">
+              <h2 className="text-sm font-semibold text-[#344054]">Roles</h2>
 
-        <p className="mt-[5px] text-[7px] leading-none text-[#667085]">
-          Manage roles and configure permissions for system modules.
-        </p>
-      </div>
-
-      {/* ===================================================
-          MAIN GRID
-      ==================================================== */}
-
-      <div className="grid grid-cols-1 gap-[8px] px-[6px] pb-[7px] pt-[8px] xl:grid-cols-[260px_minmax(0,1fr)_360px]">
-        {/* =================================================
-            LEFT - ROLES
-        ================================================== */}
-
-        <Card className="min-w-0">
-          <div className="flex h-[34px] items-center justify-between border-b border-[#edf0f2] px-[9px]">
-            <h2 className="text-[9px] font-semibold text-[#344054]">Roles</h2>
-
-            <button
-              type="button"
-              onClick={handleAddRole}
-              className="flex h-[21px] items-center gap-[4px] rounded-[4px] border border-[#e0e3e7] px-[7px] text-[6px] font-medium text-[#667085] hover:bg-[#fafafa]"
-            >
-              <FiPlus className="text-[8px]" />
-              Add Role
-            </button>
-          </div>
-
-          <div className="space-y-[3px] p-[6px]">
-            {rolesList.map((role) => {
-              const active = selectedRole === role.id;
-
-              return (
-                <button
-                  key={role.id}
-                  type="button"
-                  onClick={() => setSelectedRole(role.id)}
-                  className={`flex w-full items-center gap-[8px] rounded-[5px] border px-[7px] py-[6px] text-left transition ${
-                    active
-                      ? "border-[#edc984] bg-[#fffaf1]"
-                      : "border-transparent hover:border-[#edf0f2] hover:bg-[#fafafa]"
-                  }`}
-                >
-                  <RoleIcon role={role} />
-
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-[7px] font-semibold leading-none text-[#344054]">
-                        {role.name}
-                      </p>
-
-                      <span className="shrink-0 text-[6px] font-medium text-[#667085]">
-                        {role.users} users
-                      </span>
-                    </div>
-
-                    <p className="mt-[4px] truncate text-[6px] leading-none text-[#667085]">
-                      {role.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* =================================================
-            CENTER - PERMISSIONS
-        ================================================== */}
-
-        <Card className="min-w-0 overflow-hidden">
-          <div className="flex h-[34px] items-center justify-between border-b border-[#edf0f2] px-[10px]">
-            <div className="flex min-w-0 items-center gap-[8px]">
-              <h2 className="truncate text-[9px] font-semibold text-[#344054]">
-                Permissions for {selectedRoleData.name}
-              </h2>
-
-              <span className="shrink-0 rounded-[3px] bg-[#f1eaff] px-[6px] py-[3px] text-[5.5px] font-medium text-[#7956c9]">
-                {selectedRoleData.name}
-              </span>
+              <button
+                type="button"
+                onClick={handleAddRole}
+                className="flex h-7 items-center gap-1.5 rounded-md border border-[#e0e3e7] px-2.5 text-xs font-medium text-[#667085] hover:bg-[#fafafa]"
+              >
+                <FiPlus className="text-sm" />
+                Add Role
+              </button>
             </div>
 
-            <button
-              type="button"
-              onClick={handleCloneRole}
-              className="ml-[8px] flex h-[21px] shrink-0 items-center gap-[5px] rounded-[4px] border border-[#e0e3e7] px-[7px] text-[6px] font-medium text-[#667085] hover:bg-[#fafafa]"
-            >
-              <FiCopy className="text-[8px]" />
-              Clone Role
-            </button>
-          </div>
+            <div className="space-y-1.5 p-2">
+              {rolesList.map((role) => {
+                const active = selectedRole === role.id;
 
-          {/* TABLE */}
-
-          <div className="overflow-x-auto">
-            <div className="min-w-[530px]">
-              {/* TABLE HEADER */}
-
-              <div className="grid grid-cols-[minmax(150px,1fr)_72px_72px_72px_72px_72px_72px] border-b border-[#edf0f2] bg-[#fcfcfd] px-[10px]">
-                <div className="flex h-[31px] items-center text-[6px] font-semibold text-[#667085]">
-                  Module
-                </div>
-
-                {permissionColumns.map((permission) => (
-                  <div
-                    key={permission.key}
-                    className="flex h-[31px] items-center justify-center text-[6px] font-semibold text-[#667085]"
+                return (
+                  <button
+                    key={role.id}
+                    type="button"
+                    onClick={() => setSelectedRole(role.id)}
+                    className={`flex w-full items-center gap-2 rounded-md border px-2.5 py-2 text-left transition ${
+                      active
+                        ? "border-[#edc984] bg-[#fffaf1]"
+                        : "border-transparent hover:border-[#edf0f2] hover:bg-[#fafafa]"
+                    }`}
                   >
-                    {permission.label}
-                  </div>
-                ))}
-              </div>
+                    <RoleIcon role={role} />
 
-              {/* TABLE ROWS */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-xs font-semibold leading-none text-[#344054]">
+                          {role.name}
+                        </p>
 
-              <div>
-                {modules.map((module) => {
-                  const Icon = module.icon;
-
-                  return (
-                    <div
-                      key={module.name}
-                      className="grid min-h-[24px] grid-cols-[minmax(150px,1fr)_72px_72px_72px_72px_72px_72px] border-b border-[#f1f2f4] px-[10px] last:border-b-0"
-                    >
-                      <div className="flex items-center gap-[8px]">
-                        <Icon className="text-[9px] text-[#667085]" />
-
-                        <span className="text-[6.5px] font-medium text-[#475467]">
-                          {module.name}
+                        <span className="shrink-0 text-[11px] font-medium text-[#667085]">
+                          {role.users} users
                         </span>
                       </div>
 
-                      {permissionColumns.map((permission) => {
-                        const key = `${module.name}:${permission.key}`;
-
-                        const checked =
-                          permissions[selectedRoleData.id]?.[key] ?? false;
-
-                        return (
-                          <div
-                            key={permission.key}
-                            className="flex items-center justify-center"
-                          >
-                            <PermissionCheckbox
-                              checked={checked}
-                              onChange={() =>
-                                togglePermission(module.name, permission.key)
-                              }
-                            />
-                          </div>
-                        );
-                      })}
+                      <p className="mt-1.5 truncate text-[11px] leading-none text-[#667085]">
+                        {role.description}
+                      </p>
                     </div>
-                  );
-                })}
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
+
+          <Card className="min-w-0 overflow-hidden">
+            <div className="flex h-10 items-center justify-between border-b border-[#edf0f2] px-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <h2 className="truncate text-sm font-semibold text-[#344054]">
+                  Permissions for {selectedRoleData.name}
+                </h2>
+
+                <span className="shrink-0 rounded-md bg-[#f1eaff] px-2 py-1 text-[10px] font-medium text-[#7956c9]">
+                  {selectedRoleData.name}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCloneRole}
+                className="ml-2 flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-[#e0e3e7] px-2.5 text-xs font-medium text-[#667085] hover:bg-[#fafafa]"
+              >
+                <FiCopy className="text-sm" />
+                Clone Role
+              </button>
+            </div>
+
+            {/* TABLE */}
+            <div className="overflow-x-auto">
+              <div className="min-w-[650px]">
+                {/* TABLE HEADER */}
+                <div className="grid grid-cols-[minmax(180px,1fr)_80px_80px_80px_80px_80px_80px] border-b border-[#edf0f2] bg-[#fcfcfd] px-3">
+                  <div className="flex h-9 items-center text-xs font-semibold text-[#667085]">
+                    Module
+                  </div>
+
+                  {permissionColumns.map((permission) => (
+                    <div
+                      key={permission.key}
+                      className="flex h-9 items-center justify-center text-xs font-semibold text-[#667085]"
+                    >
+                      {permission.label}
+                    </div>
+                  ))}
+                </div>
+
+                {/* TABLE ROWS */}
+                <div>
+                  {modules.map((module) => {
+                    const Icon = module.icon;
+
+                    return (
+                      <div
+                        key={module.name}
+                        className="grid min-h-9 grid-cols-[minmax(180px,1fr)_80px_80px_80px_80px_80px_80px] border-b border-[#f1f2f4] px-3 last:border-b-0"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Icon className="text-sm text-[#667085]" />
+
+                          <span className="text-xs font-medium text-[#475467]">
+                            {module.name}
+                          </span>
+                        </div>
+
+                        {permissionColumns.map((permission) => {
+                          const key = `${module.name}:${permission.key}`;
+
+                          const checked =
+                            permissions[selectedRoleData.id]?.[key] ?? false;
+
+                          return (
+                            <div
+                              key={permission.key}
+                              className="flex items-center justify-center"
+                            >
+                              <PermissionCheckbox
+                                checked={checked}
+                                onChange={() =>
+                                  togglePermission(module.name, permission.key)
+                                }
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
+          </Card>
+
+          <div className="grid min-w-0 grid-cols-1 gap-3 xl:col-span-2 xl:grid-cols-2">
+            <Card className="min-w-0 p-4">
+              <h2 className="mb-4 text-sm font-semibold text-[#344054]">
+                Role Information
+              </h2>
+
+              <div className="space-y-3">
+                <InfoRow label="Role Name" value={selectedRoleData.name} />
+
+                <InfoRow
+                  label="Description"
+                  value={
+                    selectedRoleData.name === "Administrator"
+                      ? "Full system access with all permissions"
+                      : selectedRoleData.description
+                  }
+                />
+
+                <InfoRow
+                  label="Total Users"
+                  value={selectedRoleData.users.toString()}
+                />
+
+                <InfoRow label="Created By" value="Neha Kapoor" />
+
+                <InfoRow label="Created Date" value="15 Jan 2025, 11:20 AM" />
+
+                <InfoRow label="Last Updated" value="17 May 2025, 09:30 AM" />
+              </div>
+            </Card>
+
+            <Card className="min-w-0 p-4">
+              <h2 className="mb-4 text-sm font-semibold text-[#344054]">
+                Permission Levels
+              </h2>
+
+              <div className="space-y-4">
+                <PermissionLevel
+                  type="full"
+                  title="Full Access"
+                  description="View, Create, Edit, Delete, Export, Import"
+                />
+
+                <PermissionLevel
+                  type="read"
+                  title="Read Only"
+                  description="View and Export only"
+                />
+
+                <PermissionLevel
+                  type="limited"
+                  title="Limited Access"
+                  description="View, Create and Edit only"
+                />
+
+                <PermissionLevel
+                  type="none"
+                  title="No Access"
+                  description="No permissions"
+                />
+              </div>
+            </Card>
           </div>
-        </Card>
-
-        {/* =================================================
-            RIGHT COLUMN
-        ================================================== */}
-
-        <div className="min-w-0 space-y-[8px]">
-          {/* =================================================
-              ROLE INFORMATION
-          ================================================== */}
-
-          <Card className="p-[10px]">
-            <h2 className="mb-[10px] text-[9px] font-semibold text-[#344054]">
-              Role Information
-            </h2>
-
-            <div className="space-y-[8px]">
-              <InfoRow label="Role Name" value={selectedRoleData.name} />
-
-              <InfoRow
-                label="Description"
-                value={
-                  selectedRoleData.name === "Administrator"
-                    ? "Full system access with all permissions"
-                    : selectedRoleData.description
-                }
-              />
-
-              <InfoRow
-                label="Total Users"
-                value={selectedRoleData.users.toString()}
-              />
-
-              <InfoRow label="Created By" value="Neha Kapoor" />
-
-              <InfoRow label="Created Date" value="15 Jan 2025, 11:20 AM" />
-
-              <InfoRow label="Last Updated" value="17 May 2025, 09:30 AM" />
-            </div>
-          </Card>
-
-          {/* =================================================
-              PERMISSION LEVELS
-          ================================================== */}
-
-          <Card className="p-[10px]">
-            <h2 className="mb-[11px] text-[9px] font-semibold text-[#344054]">
-              Permission Levels
-            </h2>
-
-            <div className="space-y-[10px]">
-              <PermissionLevel
-                type="full"
-                title="Full Access"
-                description="View, Create, Edit, Delete, Export, Import"
-              />
-
-              <PermissionLevel
-                type="read"
-                title="Read Only"
-                description="View and Export only"
-              />
-
-              <PermissionLevel
-                type="limited"
-                title="Limited Access"
-                description="View, Create and Edit only"
-              />
-
-              <PermissionLevel
-                type="none"
-                title="No Access"
-                description="No permissions"
-              />
-            </div>
-          </Card>
         </div>
       </div>
     </div>
