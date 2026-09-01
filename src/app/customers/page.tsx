@@ -1,8 +1,9 @@
 "use client";
 
 import PageHeader from "@/components/pageheader/PageHeader";
+import StatCard from "@/components/statcard/StatCard";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   FiChevronDown,
@@ -11,153 +12,165 @@ import {
   FiFilter,
   FiMoreVertical,
   FiSearch,
-  FiUsers,
   FiUserPlus,
   FiUserCheck,
-  FiAward,
-  FiUserX,
+  FiEdit2,
+  FiEye,
+  FiShoppingBag,
+  FiTrash2,
+  FiCreditCard,
+  FiLock,
+  FiUnlock,
 } from "react-icons/fi";
 
-import { HiOutlineUserGroup, HiOutlineSparkles } from "react-icons/hi2";
+import { HiOutlineSparkles, HiOutlineUserGroup } from "react-icons/hi2";
 
-/* =========================================================
-   TYPES
-========================================================= */
+type CustomerType = "VIP" | "Regular" | "New";
+
+type CustomerStatus = "pending" | "active" | "inactive" | "blocked";
 
 type Customer = {
-  id: string;
+  _id: string;
+
+  customerId: string;
+
+  firstName?: string;
+  lastName?: string;
+
   name: string;
+
   email: string;
-  phone: string;
-  location: string;
-  orders: number;
-  spent: string;
-  type: "VIP" | "Regular" | "New";
-  status: "Active" | "Inactive";
-  avatar: string;
+  phone?: string;
+
+  profileImage?: string;
+
+  status: CustomerStatus;
+
+  emailVerified: boolean;
+
+  provider: "email" | "google";
+
+  createdAt: string;
+  updatedAt: string;
+  lastLogin?: string;
+
+  orders: {
+    count: number;
+    totalAmount: number;
+
+    completed: number;
+    pending: number;
+    cancelled: number;
+  };
+
+  customerType: CustomerType;
 };
 
-/* =========================================================
-   DATA
-========================================================= */
+type CustomerStats = {
+  totalCustomers: number;
+  newCustomers: number;
+  vipCustomers: number;
+  activeCustomers: number;
+};
 
-const customers: Customer[] = [
-  {
-    id: "CUST00125",
-    name: "Rahul Verma",
-    email: "rahul.verma@gmail.com",
-    phone: "+91 98765 43210",
-    location: "Mumbai, Maharashtra",
-    orders: 18,
-    spent: "₹4,25,600",
-    type: "VIP",
-    status: "Active",
-    avatar: "https://i.pravatar.cc/100?img=12",
-  },
-  {
-    id: "CUST00126",
-    name: "Priya Sharma",
-    email: "priya.sharma@gmail.com",
-    phone: "+91 91234 56789",
-    location: "Delhi, Delhi",
-    orders: 12,
-    spent: "₹2,85,400",
-    type: "Regular",
-    status: "Active",
-    avatar: "https://i.pravatar.cc/100?img=47",
-  },
-  {
-    id: "CUST00127",
-    name: "Amit Singh",
-    email: "amit.singh@gmail.com",
-    phone: "+91 99887 66554",
-    location: "Jaipur, Rajasthan",
-    orders: 9,
-    spent: "₹1,95,200",
-    type: "VIP",
-    status: "Active",
-    avatar: "https://i.pravatar.cc/100?img=11",
-  },
-  {
-    id: "CUST00128",
-    name: "Neha Kapoor",
-    email: "neha.kapoor@gmail.com",
-    phone: "+91 90123 45678",
-    location: "Bangalore, Karnataka",
-    orders: 7,
-    spent: "₹1,45,300",
-    type: "Regular",
-    status: "Active",
-    avatar: "https://i.pravatar.cc/100?img=44",
-  },
-  {
-    id: "CUST00129",
-    name: "Vikram Joshi",
-    email: "vikram.joshi@gmail.com",
-    phone: "+91 93456 78901",
-    location: "Ahmedabad, Gujarat",
-    orders: 5,
-    spent: "₹98,600",
-    type: "Regular",
-    status: "Inactive",
-    avatar: "https://i.pravatar.cc/100?img=68",
-  },
-  {
-    id: "CUST00130",
-    name: "Kavya Patel",
-    email: "kavya.patel@gmail.com",
-    phone: "+91 90999 11223",
-    location: "Surat, Gujarat",
-    orders: 4,
-    spent: "₹76,400",
-    type: "New",
-    status: "Active",
-    avatar: "https://i.pravatar.cc/100?img=32",
-  },
-];
+type Pagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 
-/* =========================================================
-   STATS
-========================================================= */
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
 
-const stats = [
-  {
-    title: "Total Customers",
-    value: "8,542",
-    change: "15.3%",
-    icon: <HiOutlineUserGroup />,
-    iconBg: "bg-orange-50",
-    iconColor: "text-orange-500",
-  },
-  {
-    title: "New Customers",
-    value: "842",
-    change: "12.5%",
-    icon: <FiUserPlus />,
-    iconBg: "bg-cyan-50",
-    iconColor: "text-cyan-500",
-  },
-  {
-    title: "VIP Customers",
-    value: "521",
-    change: "8.7%",
-    icon: <HiOutlineSparkles />,
-    iconBg: "bg-orange-50",
-    iconColor: "text-orange-500",
-  },
-  {
-    title: "Active Customers",
-    value: "6,219",
-    change: "16.2%",
-    icon: <FiUserCheck />,
-    iconBg: "bg-emerald-50",
-    iconColor: "text-emerald-500",
-  },
-];
+type CustomersResponse = {
+  success: boolean;
 
-/* =========================================================
-   CARD
-========================================================= */
+  data: Customer[];
+
+  stats: CustomerStats;
+
+  pagination: Pagination;
+
+  message?: string;
+};
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(amount || 0);
+};
+
+const getCustomerName = (customer: Customer) => {
+  if (customer.name) {
+    return customer.name;
+  }
+
+  return (
+    [customer.firstName, customer.lastName].filter(Boolean).join(" ") ||
+    "Unknown Customer"
+  );
+};
+
+const CustomerTypeBadge = ({ type }: { type: CustomerType }) => {
+  const styles: Record<CustomerType, string> = {
+    VIP: "bg-red-50 text-red-500",
+
+    Regular: "border border-slate-200 bg-slate-50 text-slate-500",
+
+    New: "bg-blue-50 text-blue-500",
+  };
+
+  return (
+    <span
+      className={`inline-flex rounded px-1.5 py-[2px] text-[12px] font-medium ${styles[type]}`}
+    >
+      {type}
+    </span>
+  );
+};
+
+const StatusBadge = ({ status }: { status: CustomerStatus }) => {
+  const statusConfig: Record<
+    CustomerStatus,
+    {
+      label: string;
+      className: string;
+    }
+  > = {
+    active: {
+      label: "Active",
+      className: "bg-emerald-50 text-emerald-500",
+    },
+
+    inactive: {
+      label: "Inactive",
+      className: "bg-slate-50 text-slate-500",
+    },
+
+    pending: {
+      label: "Pending",
+      className: "bg-yellow-50 text-yellow-600",
+    },
+
+    blocked: {
+      label: "Blocked",
+      className: "bg-red-50 text-red-500",
+    },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <span
+      className={`inline-flex rounded px-1.5 py-[2px] text-[12px] font-medium ${config.className}`}
+    >
+      {config.label}
+    </span>
+  );
+};
 
 const Card = ({
   children,
@@ -174,253 +187,487 @@ const Card = ({
 };
 
 /* =========================================================
-   STAT CARD
-========================================================= */
-
-const StatCard = ({
-  title,
-  value,
-  change,
-  icon,
-  iconBg,
-  iconColor,
-}: {
-  title: string;
-  value: string;
-  change: string;
-  icon: React.ReactNode;
-  iconBg: string;
-  iconColor: string;
-}) => {
-  return (
-    <Card className="h-[62px] px-3 py-2">
-      <div className="flex h-full items-center gap-2.5">
-        <div
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[15px] ${iconBg} ${iconColor}`}
-        >
-          {icon}
-        </div>
-
-        <div className="min-w-0">
-          <p className="text-[7px] font-medium text-slate-600">{title}</p>
-
-          <p className="mt-0.5 text-[14px] font-bold leading-none text-slate-800">
-            {value}
-          </p>
-
-          <p className="mt-1 text-[6px] text-slate-400">
-            <span className="font-semibold text-emerald-500">↑ {change}</span>{" "}
-            vs last month
-          </p>
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-/* =========================================================
-   CUSTOMER TYPE BADGE
-========================================================= */
-
-const CustomerType = ({ type }: { type: Customer["type"] }) => {
-  const styles = {
-    VIP: "bg-red-50 text-red-500",
-    Regular: "bg-slate-50 text-slate-500 border border-slate-200",
-    New: "bg-blue-50 text-blue-500",
-  };
-
-  return (
-    <span
-      className={`inline-flex rounded px-1.5 py-[2px] text-[6px] font-medium ${styles[type]}`}
-    >
-      {type}
-    </span>
-  );
-};
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-const StatusBadge = ({ status }: { status: Customer["status"] }) => {
-  if (status === "Active") {
-    return (
-      <span className="inline-flex rounded bg-emerald-50 px-1.5 py-[2px] text-[6px] font-medium text-emerald-500">
-        Active
-      </span>
-    );
-  }
-
-  return (
-    <span className="inline-flex rounded bg-red-50 px-1.5 py-[2px] text-[6px] font-medium text-red-500">
-      Inactive
-    </span>
-  );
-};
-
-/* =========================================================
    CUSTOMER TABLE
 ========================================================= */
 
-const CustomerTable = ({ data }: { data: Customer[] }) => {
+const CustomerTable = ({
+  data,
+  loading,
+  onView,
+  onEdit,
+  onDelete,
+  onOrders,
+  onPayments,
+  onToggleStatus,
+}: {
+  data: Customer[];
+  loading: boolean;
+
+  onView: (customer: Customer) => void;
+  onEdit: (customer: Customer) => void;
+  onDelete: (customer: Customer) => void;
+  onOrders: (customer: Customer) => void;
+  onPayments: (customer: Customer) => void;
+  onToggleStatus: (customer: Customer) => void;
+}) => {
+  /* =====================================================
+     ACTION MENU STATE
+  ===================================================== */
+
+  const [openActionId, setOpenActionId] = useState<string | null>(null);
+
+  /* =====================================================
+     CLOSE ACTION MENU
+  ===================================================== */
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenActionId(null);
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[850px]">
-        {/* TABLE HEADER */}
-        <thead>
-          <tr className="border-y border-slate-100 bg-[#fcfcfc]">
-            <th className="w-8 px-3 py-2 text-center text-[6px] font-medium text-slate-500">
-              #
-            </th>
+    <div className="relative w-full">
+      {/* IMPORTANT:
+          overflow-x-auto can clip absolute dropdowns.
+          Keep horizontal scrolling on a wrapper and
+          make the action menu fixed-position if needed.
+      */}
 
-            <th className="px-2 py-2 text-left text-[6px] font-medium text-slate-500">
-              Customer
-            </th>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[1100px]">
+          {/* =================================================
+              TABLE HEADER
+          ================================================= */}
 
-            <th className="px-2 py-2 text-left text-[6px] font-medium text-slate-500">
-              Contact
-            </th>
+          <thead>
+            <tr className="border-y border-slate-100 bg-[#fcfcfc]">
+              <th className="w-8 px-3 py-2 text-center text-[12px] font-semibold text-[#666]">
+                #
+              </th>
 
-            <th className="px-2 py-2 text-left text-[6px] font-medium text-slate-500">
-              Location
-            </th>
+              <th className="px-2 py-2 text-left text-[12px] font-semibold text-[#666]">
+                Customer
+              </th>
 
-            <th className="px-2 py-2 text-center text-[6px] font-medium text-slate-500">
-              Total Orders
-            </th>
+              <th className="px-2 py-2 text-left text-[12px] font-semibold text-[#666]">
+                Contact
+              </th>
 
-            <th className="px-2 py-2 text-right text-[6px] font-medium text-slate-500">
-              Total Spent
-            </th>
+              <th className="px-2 py-2 text-left text-[12px] font-semibold text-[#666]">
+                LOCATION
+              </th>
 
-            <th className="px-2 py-2 text-center text-[6px] font-medium text-slate-500">
-              Customer Type
-            </th>
+              <th className="px-2 py-2 text-left text-[12px] font-semibold text-[#666]">
+                Orders
+              </th>
 
-            <th className="px-2 py-2 text-center text-[6px] font-medium text-slate-500">
-              Status
-            </th>
+              <th className="px-2 py-2 text-right text-[12px] font-semibold text-[#666]">
+                Total Spent
+              </th>
 
-            <th className="px-3 py-2 text-center text-[6px] font-medium text-slate-500">
-              Action
-            </th>
-          </tr>
-        </thead>
+              <th className="px-2 py-2 text-center text-[12px] font-semibold text-[#666]">
+                Customer Type
+              </th>
 
-        {/* TABLE BODY */}
-        <tbody>
-          {data.map((customer, index) => (
-            <tr
-              key={customer.id}
-              className="border-b border-slate-50 transition hover:bg-slate-50/50"
-            >
-              {/* NUMBER */}
-              <td className="px-3 py-2 text-center text-[7px] text-slate-500">
-                {index + 1}
-              </td>
+              <th className="px-2 py-2 text-center text-[12px] font-semibold text-[#666]">
+                Status
+              </th>
 
-              {/* CUSTOMER */}
-              <td className="px-2 py-2">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={customer.avatar}
-                    alt={customer.name}
-                    className="h-6 w-6 rounded-full object-cover"
-                  />
-
-                  <div className="min-w-0">
-                    <p className="truncate text-[7px] font-semibold text-slate-700">
-                      {customer.name}
-                    </p>
-
-                    <p className="mt-0.5 text-[6px] text-slate-400">
-                      {customer.id}
-                    </p>
-                  </div>
-                </div>
-              </td>
-
-              {/* CONTACT */}
-              <td className="px-2 py-2">
-                <div>
-                  <p className="text-[6px] text-slate-600">{customer.phone}</p>
-
-                  <p className="mt-0.5 max-w-[130px] truncate text-[6px] text-slate-400">
-                    {customer.email}
-                  </p>
-                </div>
-              </td>
-
-              {/* LOCATION */}
-              <td className="px-2 py-2">
-                <p className="max-w-[110px] text-[6px] leading-3 text-slate-600">
-                  {customer.location}
-                </p>
-
-                <p className="text-[6px] text-slate-400">India</p>
-              </td>
-
-              {/* ORDERS */}
-              <td className="px-2 py-2 text-center text-[7px] text-slate-700">
-                {customer.orders}
-              </td>
-
-              {/* SPENT */}
-              <td className="px-2 py-2 text-right text-[7px] font-medium text-slate-700">
-                {customer.spent}
-              </td>
-
-              {/* TYPE */}
-              <td className="px-2 py-2 text-center">
-                <CustomerType type={customer.type} />
-              </td>
-
-              {/* STATUS */}
-              <td className="px-2 py-2 text-center">
-                <StatusBadge status={customer.status} />
-              </td>
-
-              {/* ACTION */}
-              <td className="px-3 py-2 text-center">
-                <button className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
-                  <FiMoreVertical className="text-[11px]" />
-                </button>
-              </td>
+              <th className="px-3 py-2 text-center text-[12px] font-semibold text-[#666]">
+                Action
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          {/* =================================================
+              TABLE BODY
+          ================================================= */}
+
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={9} className="py-12 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#e5e5e5] border-t-[#bd7f1d]" />
+
+                    <span className="text-[11px] text-[#777]">
+                      Loading Customers...
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="px-4 py-12 text-center">
+                  <div className="text-sm font-medium text-slate-500">
+                    No customers found
+                  </div>
+
+                  <p className="mt-1 text-xs text-slate-400">
+                    Try changing your search or filter.
+                  </p>
+                </td>
+              </tr>
+            ) : (
+              data.map((customer, index) => {
+                const customerName = getCustomerName(customer);
+
+                /*
+                 * Check whether THIS customer's
+                 * action menu is open.
+                 */
+                const actionOpen = openActionId === customer._id;
+
+                return (
+                  <tr
+                    key={customer._id}
+                    className="border-b border-[#eeeeee] transition hover:bg-[#fffdf9]"
+                  >
+                    {/* =================================================
+                        NUMBER
+                    ================================================= */}
+
+                    <td className="px-3 py-2 text-center text-[10px] text-slate-500">
+                      {index + 1}
+                    </td>
+
+                    {/* =================================================
+                        CUSTOMER
+                    ================================================= */}
+
+                    <td className="px-2 py-2">
+                      <div className="flex items-center gap-2">
+                        {customer.profileImage ? (
+                          <img
+                            src={customer.profileImage}
+                            alt={customerName}
+                            className="h-7 w-7 shrink-0 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#fff7ed] text-[12px] font-semibold text-[#ff6900]">
+                            {customerName.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+
+                        <div className="min-w-0">
+                          <p className="truncate text-[12px] font-semibold text-slate-700">
+                            {customerName}
+                          </p>
+
+                          <p className="mt-0.5 text-[10px] text-slate-400">
+                            {customer.customerId}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* =================================================
+                        CONTACT
+                    ================================================= */}
+
+                    <td className="px-2 py-2">
+                      <div>
+                        <p className="text-[12px] text-slate-600">
+                          {customer.phone || "-"}
+                        </p>
+
+                        <p className="mt-0.5 max-w-[190px] truncate text-[12px] text-slate-400">
+                          {customer.email}
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* =================================================
+                        LOCATION
+                    ================================================= */}
+
+                    <td className="px-2 py-2 text-left">
+                      <div>
+                        <p className="text-[12px] font-semibold text-slate-700">
+                          khora , up
+                        </p>
+
+                        <p className="mt-0.5 max-w-[190px] truncate text-[12px] text-slate-400">
+                          India
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* =================================================
+                        ORDERS
+                    ================================================= */}
+
+                    <td className="px-2 py-2">
+                      <div>
+                        <p className="text-[12px] font-semibold text-slate-700">
+                          {customer.orders.count}
+                        </p>
+
+                        <p className="mt-0.5 text-[10px] text-slate-400">
+                          {formatCurrency(customer.orders.totalAmount)}
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* =================================================
+                        TOTAL SPENT
+                    ================================================= */}
+
+                    <td className="px-2 py-2 text-right">
+                      <p className="text-[12px] font-bold text-slate-700">
+                        {formatCurrency(customer.orders.totalAmount)}
+                      </p>
+                    </td>
+
+                    {/* =================================================
+                        TYPE
+                    ================================================= */}
+
+                    <td className="px-2 py-2 text-center">
+                      <CustomerTypeBadge type={customer.customerType} />
+                    </td>
+
+                    {/* =================================================
+                        STATUS
+                    ================================================= */}
+
+                    <td className="px-2 py-2 text-center">
+                      <StatusBadge status={customer.status} />
+                    </td>
+
+                    {/* =================================================
+                        ACTION
+                    ================================================= */}
+
+                    <td className="relative px-3 py-2 text-center">
+                      <button
+                        type="button"
+                        title="Actions"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          setOpenActionId(actionOpen ? null : customer._id);
+                        }}
+                        className={`rounded-md p-1.5 transition ${
+                          actionOpen
+                            ? "bg-[#fff7ed] text-[#bd7f1d]"
+                            : "text-slate-400 hover:bg-slate-100 hover:text-[#bd7f1d]"
+                        }`}
+                      >
+                        <FiMoreVertical className="text-[14px]" />
+                      </button>
+
+                      {/* =================================================
+                          ACTION MENU
+                      ================================================= */}
+
+                      {actionOpen && (
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute right-3 top-full z-[9999] mt-1 w-[160px] overflow-hidden rounded-lg border border-slate-200 bg-white py-1 text-left shadow-xl"
+                        >
+                          {/* VIEW */}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+
+                              onView(customer);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-[12px] text-slate-600 transition hover:bg-slate-50 hover:text-[#bd7f1d]"
+                          >
+                            <FiEye className="text-[14px]" />
+
+                            <span>View</span>
+                          </button>
+
+                          {/* EDIT */}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+
+                              onEdit(customer);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-[12px] text-slate-600 transition hover:bg-slate-50 hover:text-[#bd7f1d]"
+                          >
+                            <FiEdit2 className="text-[14px]" />
+
+                            <span>Edit</span>
+                          </button>
+
+                          {/* ORDERS */}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+
+                              onOrders(customer);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-[12px] text-slate-600 transition hover:bg-slate-50 hover:text-[#bd7f1d]"
+                          >
+                            <FiShoppingBag className="text-[14px]" />
+
+                            <span>Orders</span>
+                          </button>
+
+                          {/* PAYMENTS */}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+
+                              onPayments(customer);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-[12px] text-slate-600 transition hover:bg-slate-50 hover:text-[#bd7f1d]"
+                          >
+                            <FiCreditCard className="text-[14px]" />
+
+                            <span>Payments</span>
+                          </button>
+
+                          {/* DIVIDER */}
+
+                          <div className="my-1 border-t border-slate-100" />
+
+                          {/* BLOCK / ACTIVATE */}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+
+                              onToggleStatus(customer);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-[12px] text-slate-600 transition hover:bg-slate-50 hover:text-[#bd7f1d]"
+                          >
+                            <FiLock className="text-[14px]" />
+
+                            <span>
+                              {customer.status === "active"
+                                ? "Block"
+                                : "Activate"}
+                            </span>
+                          </button>
+
+                          {/* DELETE */}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+
+                              onDelete(customer);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-[12px] text-red-500 transition hover:bg-red-50"
+                          >
+                            <FiTrash2 className="text-[14px]" />
+
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
-
 /* =========================================================
    PAGINATION
 ========================================================= */
 
-const Pagination = () => {
-  const [page, setPage] = useState(1);
+const Pagination = ({
+  pagination,
+  onPageChange,
+  onLimitChange,
+}: {
+  pagination: Pagination;
+  onPageChange: (page: number) => void;
+  onLimitChange: (limit: number) => void;
+}) => {
+  const { page, limit, total, totalPages, hasNextPage, hasPreviousPage } =
+    pagination;
+
+  const visiblePages = useMemo(() => {
+    const pages: number[] = [];
+
+    const start = Math.max(1, page - 2);
+    const end = Math.min(totalPages, page + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }, [page, totalPages]);
+
+  const from = total === 0 ? 0 : (page - 1) * limit + 1;
+
+  const to = Math.min(page * limit, total);
 
   return (
     <div className="flex flex-col gap-2 border-t border-slate-100 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-[6px] text-slate-400">
-        Showing 1 to 10 of 8,542 results
+      {/* RESULT COUNT */}
+
+      <p className="text-[12px] text-slate-400">
+        Showing {from} to {to} of {total.toLocaleString("en-IN")} results
       </p>
 
+      {/* PAGINATION */}
+
       <div className="flex items-center gap-1">
+        {/* PREVIOUS */}
+
         <button
-          disabled={page === 1}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-[8px] text-slate-500 disabled:opacity-40"
+          type="button"
+          disabled={!hasPreviousPage}
+          onClick={() => onPageChange(page - 1)}
+          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-[12px] text-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <FiChevronLeft />
         </button>
 
-        {[1, 2, 3, 4, 5].map((number) => (
+        {/* FIRST PAGE */}
+
+        {page > 3 && (
+          <>
+            <button
+              type="button"
+              onClick={() => onPageChange(1)}
+              className="flex h-6 w-6 items-center justify-center rounded text-[12px] text-slate-500 hover:bg-slate-50"
+            >
+              1
+            </button>
+
+            <span className="px-1 text-[8px] text-slate-400">...</span>
+          </>
+        )}
+
+        {/* PAGES */}
+
+        {visiblePages.map((number) => (
           <button
             key={number}
-            onClick={() => setPage(number)}
-            className={`flex h-6 w-6 items-center justify-center rounded text-[7px] ${
+            type="button"
+            onClick={() => onPageChange(number)}
+            className={`flex h-6 w-6 items-center justify-center rounded text-[12px] ${
               page === number
                 ? "border border-[#d4a04b] bg-[#fffaf2] font-semibold text-[#b47a21]"
                 : "text-slate-500 hover:bg-slate-50"
@@ -430,30 +677,45 @@ const Pagination = () => {
           </button>
         ))}
 
-        <span className="px-1 text-[7px] text-slate-400">...</span>
+        {/* LAST PAGE */}
+
+        {page < totalPages - 2 && (
+          <>
+            <span className="px-1 text-[8px] text-slate-400">...</span>
+
+            <button
+              type="button"
+              onClick={() => onPageChange(totalPages)}
+              className="flex h-6 w-6 items-center justify-center rounded text-[12px] text-slate-500 hover:bg-slate-50"
+            >
+              {totalPages}
+            </button>
+          </>
+        )}
+
+        {/* NEXT */}
 
         <button
-          onClick={() => setPage(855)}
-          className={`flex h-6 w-6 items-center justify-center rounded text-[7px] ${
-            page === 855
-              ? "border border-[#d4a04b] bg-[#fffaf2]"
-              : "text-slate-500"
-          }`}
-        >
-          855
-        </button>
-
-        <button
-          onClick={() => setPage((p) => Math.min(855, p + 1))}
-          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-[8px] text-slate-500"
+          type="button"
+          disabled={!hasNextPage}
+          onClick={() => onPageChange(page + 1)}
+          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-[12px] text-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <FiChevronRight />
         </button>
 
-        <button className="ml-1 flex h-6 items-center gap-1 rounded border border-slate-200 px-2 text-[7px] text-slate-500">
-          10 / page
-          <FiChevronDown className="text-[8px]" />
-        </button>
+        {/* LIMIT */}
+
+        <select
+          value={limit}
+          onChange={(e) => onLimitChange(Number(e.target.value))}
+          className="ml-1 h-6 rounded border border-slate-200 bg-white px-1 text-[11px] text-slate-500 outline-none"
+        >
+          <option value={10}>10 / page</option>
+          <option value={20}>20 / page</option>
+          <option value={50}>50 / page</option>
+          <option value={100}>100 / page</option>
+        </select>
       </div>
     </div>
   );
@@ -464,36 +726,261 @@ const Pagination = () => {
 ========================================================= */
 
 const Customers = () => {
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("All");
   const router = useRouter();
-  const filteredCustomers = customers.filter((customer) => {
-    const matchesSearch =
-      customer.name.toLowerCase().includes(search.toLowerCase()) ||
-      customer.email.toLowerCase().includes(search.toLowerCase()) ||
-      customer.phone.toLowerCase().includes(search.toLowerCase());
 
-    const matchesFilter =
-      filter === "All" ||
-      customer.type === filter ||
-      customer.status === filter;
+  /* -----------------------------
+     STATE
+  ----------------------------- */
 
-    return matchesSearch && matchesFilter;
+  const [customers, setCustomers] = useState<Customer[]>([]);
+
+  const [statsData, setStatsData] = useState<CustomerStats>({
+    totalCustomers: 0,
+    newCustomers: 0,
+    vipCustomers: 0,
+    activeCustomers: 0,
   });
+
+  const [pagination, setPagination] = useState<Pagination>({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
+
+  const [search, setSearch] = useState("");
+
+  const [filter, setFilter] = useState("All");
+
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+  /* =========================================================
+     FETCH CUSTOMERS
+  ========================================================= */
+
+  const fetchCustomers = useCallback(
+    async (
+      currentPage = pagination.page,
+      currentLimit = pagination.limit,
+      currentSearch = search,
+      currentFilter = filter,
+    ) => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const params = new URLSearchParams();
+
+        params.set("page", String(currentPage));
+        params.set("limit", String(currentLimit));
+
+        if (currentSearch.trim()) {
+          params.set("search", currentSearch.trim());
+        }
+
+        if (currentFilter !== "All") {
+          params.set("filter", currentFilter);
+        }
+
+        const response = await fetch(`/api/customers?${params.toString()}`, {
+          method: "GET",
+          cache: "no-store",
+        });
+
+        const result: CustomersResponse = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || "Failed to fetch customers");
+        }
+
+        setCustomers(result.data);
+
+        setStatsData(result.stats);
+
+        setPagination(result.pagination);
+      } catch (error) {
+        console.error("CUSTOMERS FETCH ERROR:", error);
+
+        setError(
+          error instanceof Error ? error.message : "Failed to fetch customers",
+        );
+
+        setCustomers([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [pagination.page, pagination.limit, search, filter],
+  );
+
+  /* =========================================================
+     INITIAL LOAD
+  ========================================================= */
+
+  useEffect(() => {
+    fetchCustomers(1, 10, "", "All");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* =========================================================
+     SEARCH
+  ========================================================= */
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+
+    /*
+     * Search is sent to the API.
+     *
+     * Reset pagination whenever search changes.
+     */
+
+    if (!value.trim()) {
+      fetchCustomers(1, pagination.limit, "", filter);
+
+      return;
+    }
+
+    fetchCustomers(1, pagination.limit, value, filter);
+  };
+
+  /* =========================================================
+     FILTER
+  ========================================================= */
+
+  const handleFilter = (newFilter: string) => {
+    setFilter(newFilter);
+
+    fetchCustomers(1, pagination.limit, search, newFilter);
+  };
+
+  /* =========================================================
+     PAGE
+  ========================================================= */
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1) return;
+
+    if (pagination.totalPages && newPage > pagination.totalPages) {
+      return;
+    }
+
+    fetchCustomers(newPage, pagination.limit, search, filter);
+  };
+
+  /* =========================================================
+     LIMIT
+  ========================================================= */
+
+  const handleLimitChange = (newLimit: number) => {
+    fetchCustomers(1, newLimit, search, filter);
+  };
+
+  /* =========================================================
+     CUSTOMER ACTION
+  ========================================================= */
+
+  const handleCustomerAction = (customer: Customer) => {
+    /*
+     * Later you can open your action modal here:
+     *
+     * View
+     * Edit
+     * Orders
+     * Payments
+     * Delete
+     */
+
+    console.log("Customer action:", customer);
+  };
+
+  /* =========================================================
+     STATS
+  ========================================================= */
+
+  const stats = [
+    {
+      title: "Total Customers",
+
+      value: statsData.totalCustomers.toLocaleString("en-IN"),
+
+      change: "15.3%",
+
+      icon: <HiOutlineUserGroup />,
+
+      iconBg: "bg-orange-50",
+
+      iconColor: "text-orange-500",
+
+      positive: true,
+    },
+
+    {
+      title: "New Customers",
+
+      value: statsData.newCustomers.toLocaleString("en-IN"),
+
+      change: "12.5%",
+
+      icon: <FiUserPlus />,
+
+      iconBg: "bg-cyan-50",
+
+      iconColor: "text-cyan-500",
+
+      positive: true,
+    },
+
+    {
+      title: "VIP Customers",
+
+      value: statsData.vipCustomers.toLocaleString("en-IN"),
+
+      change: "8.7%",
+
+      icon: <HiOutlineSparkles />,
+
+      iconBg: "bg-orange-50",
+
+      iconColor: "text-orange-500",
+
+      positive: true,
+    },
+
+    {
+      title: "Active Customers",
+
+      value: statsData.activeCustomers.toLocaleString("en-IN"),
+
+      change: "16.2%",
+
+      icon: <FiUserCheck />,
+
+      iconBg: "bg-emerald-50",
+
+      iconColor: "text-emerald-500",
+
+      positive: true,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#fafafa] p-2.5 text-slate-800">
       <div className="mx-auto max-w-[1500px]">
+        {/* HEADER */}
+
         <PageHeader
           title="Customers"
-          description="Manage your customers and their information."
+          description="Manage your customers, orders and payments."
           buttonText="Add Customer"
           onButtonClick={() => router.push("/customers/create")}
         />
 
-        {/* =================================================
-            STAT CARDS
-        ================================================== */}
+        {/* STATS */}
 
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {stats.map((stat) => (
@@ -501,70 +988,103 @@ const Customers = () => {
           ))}
         </div>
 
-        {/* =================================================
-            CUSTOMER TABLE CARD
-        ================================================== */}
+        {/* MAIN CARD */}
 
         <Card className="mt-2.5 overflow-hidden">
-          {/* ===============================================
-              TOOLBAR
-          ================================================ */}
+          {/* TOOLBAR */}
 
           <div className="flex flex-col gap-2 border-b border-slate-100 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
             {/* SEARCH */}
 
-            <div className="relative w-full sm:w-[180px]">
-              <FiSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400" />
+            <div className="relative w-full sm:w-[300px]">
+              <FiSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-[14px] text-slate-400" />
 
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search customers..."
-                className="h-7 w-full rounded border border-slate-200 bg-white pl-7 pr-2 text-[7px] text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d4a04b]"
+                className="h-9 w-full rounded border border-slate-200 bg-white pl-7 pr-2 text-[12px] text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d4a04b]"
               />
             </div>
 
             {/* FILTER */}
 
             <div className="relative">
-              <button
-                onClick={() =>
-                  setFilter(
-                    filter === "All"
-                      ? "VIP"
-                      : filter === "VIP"
-                        ? "Regular"
-                        : filter === "Regular"
-                          ? "New"
-                          : "All",
-                  )
-                }
-                className="flex h-7 items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 text-[7px] text-slate-600 hover:bg-slate-50"
+              <select
+                value={filter}
+                onChange={(e) => handleFilter(e.target.value)}
+                className="flex h-9 appearance-none items-center rounded border border-slate-200 bg-white pl-8 pr-8 text-[12px] text-slate-600 outline-none hover:bg-slate-50 focus:border-[#d4a04b]"
               >
-                <FiFilter className="text-[9px]" />
-                Filter
-                {filter !== "All" && (
-                  <span className="font-semibold text-[#c58a2c]">
-                    ({filter})
-                  </span>
-                )}
-                <FiChevronDown className="ml-0.5 text-[8px]" />
-              </button>
+                <option value="All">All Customers</option>
+
+                <option value="VIP">VIP</option>
+
+                <option value="Regular">Regular</option>
+
+                <option value="New">New</option>
+
+                <option value="Active">Active</option>
+
+                <option value="Inactive">Inactive</option>
+
+                <option value="blocked">Blocked</option>
+
+                <option value="pending">Pending</option>
+              </select>
+
+              <FiFilter className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[14px] text-slate-500" />
+
+              <FiChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[14px] text-slate-500" />
             </div>
           </div>
 
-          {/* ===============================================
-              TABLE
-          ================================================ */}
+          {/* ERROR */}
 
-          <CustomerTable data={filteredCustomers} />
+          {error && (
+            <div className="border-b border-red-100 bg-red-50 px-3 py-2">
+              <p className="text-[12px] text-red-500">{error}</p>
+            </div>
+          )}
 
-          {/* ===============================================
-              PAGINATION
-          ================================================ */}
+          {/* TABLE */}
 
-          <Pagination />
+          <CustomerTable
+            data={customers}
+            loading={loading}
+            onView={(customer) => {
+              router.push(`/customers/${customer._id}`);
+            }}
+            onEdit={(customer) => {
+              router.push(`/customers/${customer._id}/edit`);
+            }}
+            onOrders={(customer) => {
+              router.push(`/customers/${customer._id}/orders`);
+            }}
+            onPayments={(customer) => {
+              router.push(`/customers/${customer._id}/payments`);
+            }}
+            onToggleStatus={(customer) => {
+              console.log("Toggle status:", customer);
+
+              // Later:
+              // PATCH /api/customers/:id
+            }}
+            onDelete={(customer) => {
+              console.log("Delete customer:", customer);
+
+              // Later:
+              // DELETE /api/customers/:id
+            }}
+          />
+
+          {/* PAGINATION */}
+
+          <Pagination
+            pagination={pagination}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+          />
         </Card>
       </div>
     </div>
