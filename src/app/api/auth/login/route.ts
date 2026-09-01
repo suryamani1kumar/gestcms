@@ -7,9 +7,9 @@ import { createJWT } from "@/lib/jwt";
 const SEED_USERS = [
   {
     name: "Suryamani Kumar",
-    userName: "superadmin",
-    email: "admin@gestcms.com",
-    password: "admin123",
+    userName: "suryamani",
+    email: "suryamani@gmail.com",
+    password: "suryamani@123",
     role: "superadmin" as const,
     isActive: true,
   },
