@@ -1,0 +1,117 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap");
+@import "tailwindcss";
+
+
+.sidebar-scroll {
+  scrollbar-width: none;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+}
+
+/* Show scrollbar only while scrolling */
+.sidebar-scroll.scrolling {
+  scrollbar-width: thin;
+  scrollbar-color: #3a4350 transparent;
+}
+
+.sidebar-scroll.scrolling::-webkit-scrollbar-thumb {
+  background: #3a4350;
+}
+
+.sidebar-scroll.scrolling::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* When the sidebar is collapsed we reduce the left margin for the main content */
+.sidebar-collapsed .content-wrapper {
+  margin-left: 5rem; /* matches w-20 */
+}
+
+/* Smooth transition when collapsing/expanding */
+.content-wrapper {
+  transition: margin-left 0.25s ease;
+}
+
+.sign-container {
+  min-height: 100vh;
+  background-color: #fcfcfc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+.sign-box {
+  width: 100%;
+  max-width: 600px;
+  padding: 40px;
+  background: white;
+}
+
+.greeting {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.greeting span {
+  color: rgb(110, 110, 235);
+  font-weight: bold;
+}
+
+.instruction {
+  color: #595959;
+  font-weight: 500;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.signature-preview {
+  border: 2px dashed #d1d5db;
+  padding: 10px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.signature-text {
+  font-family: "Dancing Script", cursive;
+  font-size: 42px;
+  color: #111;
+  user-select: none;
+}
+
+.confirm-btn {
+  background-color: #171717;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .sign-box {
+    padding: 20px;
+  }
+  .signature-text {
+    font-size: 32px;
+  }
+}
