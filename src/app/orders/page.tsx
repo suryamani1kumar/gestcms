@@ -1,6 +1,7 @@
 "use client";
 
 import PageHeader from "@/components/pageheader/PageHeader";
+import StatCard from "@/components/statcard/StatCard";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import {
@@ -192,49 +193,55 @@ const stats = [
   {
     title: "Total Orders",
     value: "1,284",
-    subtitle: "All Time",
-    icon: MdShoppingBag,
-    bg: "bg-[#f0edff]",
+    change: "All Time",
+    positive: true,
+    icon: <MdShoppingBag />,
+    iconBg: "bg-[#f0edff]",
     iconColor: "text-[#8169d5]",
   },
   {
     title: "Pending",
     value: "46",
-    subtitle: "3.6% of total",
-    icon: MdOutlineAccessTime,
-    bg: "bg-[#fff5df]",
+    change: "3.6% of total",
+    positive: true,
+    icon: <MdOutlineAccessTime />,
+    iconBg: "bg-[#fff5df]",
     iconColor: "text-[#e0a12c]",
   },
   {
     title: "Processing",
     value: "312",
-    subtitle: "24.3% of total",
-    icon: MdSettings,
-    bg: "bg-[#eaf3ff]",
+    change: "24.3% of total",
+    positive: true,
+    icon: <MdSettings />,
+    iconBg: "bg-[#eaf3ff]",
     iconColor: "text-[#5586d8]",
   },
   {
     title: "Shipped",
     value: "428",
-    subtitle: "33.3% of total",
-    icon: MdLocalShipping,
-    bg: "bg-[#f0eaff]",
+    change: "33.3% of total",
+    positive: true,
+    icon: <MdLocalShipping />,
+    iconBg: "bg-[#f0eaff]",
     iconColor: "text-[#8d6ad2]",
   },
   {
     title: "Delivered",
     value: "892",
-    subtitle: "69.5% of total",
-    icon: MdCheckCircle,
-    bg: "bg-[#e9f8eb]",
+    change: "69.5% of total",
+    positive: true,
+    icon: <MdCheckCircle />,
+    iconBg: "bg-[#e9f8eb]",
     iconColor: "text-[#42a761]",
   },
   {
     title: "Cancelled",
     value: "68",
-    subtitle: "5.3% of total",
-    icon: MdCancel,
-    bg: "bg-[#ffecef]",
+    change: "5.3% of total",
+    positive: true,
+    icon: <MdCancel />,
+    iconBg: "bg-[#ffecef]",
     iconColor: "text-[#df6178]",
   },
 ];
@@ -253,68 +260,13 @@ export default function OrdersPage() {
           onButtonClick={() => router.push("/orders/create")}
         />
 
-        {/* =====================================================
-            ORDER STATS
-        ====================================================== */}
-
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-
-            return (
-              <div
-                key={stat.title}
-                className="
-                  flex
-                  items-center
-                  gap-3
-                  rounded-[7px]
-                  border
-                  border-[#e9e5df]
-                  bg-white
-                  px-3
-                  py-2.5
-                "
-              >
-                <div
-                  className={`
-                    flex
-                    h-[36px]
-                    w-[36px]
-                    shrink-0
-                    items-center
-                    justify-center
-                    rounded-full
-                    ${stat.bg}
-                    ${stat.iconColor}
-                  `}
-                >
-                  <Icon className="text-[18px]" />
-                </div>
-
-                <div>
-                  <p className="text-[8px] font-medium text-[#65696e]">
-                    {stat.title}
-                  </p>
-
-                  <p className="mt-0.5 text-[16px] font-semibold leading-4 text-[#282c31]">
-                    {stat.value}
-                  </p>
-
-                  <p className="mt-1 text-[7px] text-[#96999d]">
-                    {stat.subtitle}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+          {stats.map((stat) => (
+            <StatCard key={stat.title} {...stat} />
+          ))}
         </div>
 
-        {/* =====================================================
-            MAIN ORDERS AREA
-        ====================================================== */}
-
-        <div className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1fr)_235px]">
+        <div className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1fr)_260px]">
           {/* LEFT */}
           <div
             className="
@@ -374,7 +326,7 @@ function OrderFilters() {
             type="text"
             placeholder="Search by Order ID, Customer, Phone, Email..."
             className="
-              h-[30px]
+              h-[32px]
               w-full
               rounded-[4px]
               border
@@ -382,7 +334,7 @@ function OrderFilters() {
               bg-white
               pl-8
               pr-2
-              text-[8px]
+              text-[12px]
               text-[#444]
               outline-none
               placeholder:text-[#9a9da1]
@@ -408,7 +360,7 @@ function OrderFilters() {
           type="button"
           className="
             flex
-            h-[30px]
+            h-[32px]
             shrink-0
             items-center
             justify-center
@@ -418,7 +370,7 @@ function OrderFilters() {
             border-[#e2c48f]
             bg-white
             px-3
-            text-[8px]
+            text-[12px]
             font-medium
             text-[#c08d35]
             hover:bg-[#fff9ee]
@@ -431,10 +383,10 @@ function OrderFilters() {
         <button
           type="button"
           className="
-            h-[30px]
+            h-[32px]
             shrink-0
             px-1
-            text-[8px]
+            text-[12px]
             text-[#c29343]
           "
         >
@@ -463,7 +415,7 @@ function FilterButton({
       type="button"
       className={`
         flex
-        h-[30px]
+        h-[32px]
         shrink-0
         items-center
         justify-between
@@ -473,7 +425,7 @@ function FilterButton({
         border-[#e4e1dc]
         bg-white
         px-2.5
-        text-[8px]
+        text-[12px]
         text-[#5f6368]
         hover:bg-[#faf9f6]
         ${wide ? "min-w-[145px]" : "min-w-[100px]"}
@@ -554,7 +506,7 @@ function OrdersTable({
                 </td>
 
                 <td className="px-1 py-2">
-                  <span className="text-[8px] font-medium text-[#444]">
+                  <span className="text-[12px] font-medium text-[#444]">
                     {order.id}
                   </span>
                 </td>
@@ -565,11 +517,11 @@ function OrdersTable({
                     <Avatar text={order.avatar} />
 
                     <div>
-                      <p className="whitespace-nowrap text-[8px] font-medium text-[#363a3f]">
+                      <p className="whitespace-nowrap text-[12px] font-medium text-[#363a3f]">
                         {order.customer}
                       </p>
 
-                      <p className="mt-0.5 whitespace-nowrap text-[7px] text-[#777c81]">
+                      <p className="mt-0.5 whitespace-nowrap text-[12px] text-[#777c81]">
                         {order.phone}
                       </p>
                     </div>
@@ -578,11 +530,11 @@ function OrdersTable({
 
                 {/* Amount */}
                 <td className="px-1 py-2">
-                  <p className="text-[8px] font-medium text-[#3d4146]">
+                  <p className="text-[12px] font-medium text-[#3d4146]">
                     {order.amount}
                   </p>
 
-                  <p className="mt-0.5 text-[7px] text-[#777]">{order.items}</p>
+                  <p className="mt-0.5 text-[12px] text-[#777]">{order.items}</p>
                 </td>
 
                 {/* Payment */}
@@ -590,7 +542,7 @@ function OrdersTable({
                   <PaymentBadge payment={order.payment} />
 
                   {order.paymentMethod && (
-                    <p className="mt-1 text-[7px] text-[#777]">
+                    <p className="mt-1 text-[12px] text-[#777]">
                       {order.paymentMethod}
                     </p>
                   )}
@@ -603,11 +555,11 @@ function OrdersTable({
 
                 {/* Date */}
                 <td className="px-1 py-2">
-                  <p className="whitespace-nowrap text-[7px] text-[#4d5156]">
+                  <p className="whitespace-nowrap text-[12px] text-[#4d5156]">
                     {order.date}
                   </p>
 
-                  <p className="mt-0.5 text-[7px] text-[#777]">{order.time}</p>
+                  <p className="mt-0.5 text-[12px] text-[#777]">{order.time}</p>
                 </td>
 
                 {/* Channel */}
@@ -617,7 +569,7 @@ function OrdersTable({
                       {order.channel === "Website" ? "◉" : "▯"}
                     </span>
 
-                    <span className="text-[7px] text-[#555]">
+                    <span className="text-[12px] text-[#555]">
                       {order.channel}
                     </span>
                   </div>
@@ -663,8 +615,8 @@ function TableHead({ text, right = false }: { text: string; right?: boolean }) {
       className={`
         px-1
         py-2
-        text-[7px]
-        font-semibold
+        text-[12px]
+        font-bold
         text-[#555a5f]
         ${right ? "text-right" : "text-left"}
       `}
@@ -692,7 +644,7 @@ function Avatar({ text }: { text: string }) {
         bg-gradient-to-br
         from-[#d6c8ae]
         to-[#756d61]
-        text-[7px]
+        text-[12px]
         font-semibold
         text-white
       "
@@ -714,7 +666,7 @@ function PaymentBadge({ payment }: { payment: "Paid" | "COD" }) {
         rounded-[3px]
         px-1.5
         py-0.5
-        text-[7px]
+        text-[12px]
         font-medium
         ${
           payment === "Paid"
@@ -748,7 +700,7 @@ function OrderStatusBadge({ status }: { status: Order["status"] }) {
         rounded-[3px]
         px-2
         py-1
-        text-[7px]
+        text-[12px]
         font-medium
         ${styles[status]}
       `}
@@ -765,7 +717,7 @@ function OrderStatusBadge({ status }: { status: Order["status"] }) {
 function Pagination() {
   return (
     <div className="flex items-center justify-between border-t border-[#eeeae4] px-3 py-2">
-      <p className="text-[7px] text-[#777c80]">
+      <p className="text-[12px] text-[#777c80]">
         Showing 1 to 10 of 1,284 orders
       </p>
 
@@ -780,7 +732,7 @@ function Pagination() {
         <PageButton>4</PageButton>
         <PageButton>5</PageButton>
 
-        <span className="px-1 text-[8px] text-[#888]">...</span>
+        <span className="px-1 text-[12px] text-[#888]">...</span>
 
         <PageButton>129</PageButton>
 
@@ -800,7 +752,7 @@ function Pagination() {
             border
             border-[#e5e2dd]
             px-2
-            text-[7px]
+            text-[12px]
             text-[#555]
           "
         >
@@ -830,7 +782,7 @@ function PageButton({
         justify-center
         rounded-[4px]
         border
-        text-[8px]
+        text-[12px]
         ${
           active
             ? "border-[#c29443] bg-[#c29443] text-white"
@@ -862,7 +814,7 @@ function OrderDetails({ order }: { order: Order }) {
       <div className="border-b border-[#eeeae4] px-3 py-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-[10px] font-semibold text-[#292d32]">
+            <h2 className="text-[12px] font-semibold text-[#292d32]">
               Order {order.id}
             </h2>
 
@@ -875,7 +827,7 @@ function OrderDetails({ order }: { order: Order }) {
         </div>
 
         <div className="mt-2 flex items-center justify-between">
-          <p className="text-[6.5px] text-[#85898d]">
+          <p className="text-[10px] text-[#85898d]">
             Order Placed on 18 May 2025, 10:30 AM
           </p>
 
@@ -898,16 +850,16 @@ function OrderDetails({ order }: { order: Order }) {
 
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <p className="text-[8px] font-semibold text-[#34383d]">
+              <p className="text-[12px] font-semibold text-[#34383d]">
                 {order.customer}
               </p>
 
               <MdOutlineCall className="text-[13px] text-[#c18e35]" />
             </div>
 
-            <p className="mt-1 text-[7px] text-[#777]">{order.phone}</p>
+            <p className="mt-1 text-[12px] text-[#777]">{order.phone}</p>
 
-            <p className="mt-1 text-[7px] text-[#777]">rahul.verma@email.com</p>
+            <p className="mt-1 text-[12px] text-[#777]">rahul.verma@email.com</p>
           </div>
         </div>
 
@@ -920,7 +872,7 @@ function OrderDetails({ order }: { order: Order }) {
             border-[#e2c48e]
             px-2
             py-1
-            text-[7px]
+            text-[12px]
             font-medium
             text-[#bf8e38]
           "
@@ -952,7 +904,7 @@ function OrderDetails({ order }: { order: Order }) {
         <SummaryRow label="Transaction ID" value="TXN512345678901" />
 
         <div className="flex justify-between py-1">
-          <span className="text-[7px] text-[#777]">Payment Status</span>
+          <span className="text-[12px] text-[#777]">Payment Status</span>
 
           <PaymentBadge payment="Paid" />
         </div>
@@ -962,9 +914,9 @@ function OrderDetails({ order }: { order: Order }) {
 
       {/* Shipping */}
       <DetailsSection title="Shipping Information">
-        <p className="text-[7px] font-medium text-[#444]">{order.customer}</p>
+        <p className="text-[12px] font-medium text-[#444]">{order.customer}</p>
 
-        <p className="mt-2 text-[7px] leading-3.5 text-[#777]">
+        <p className="mt-2 text-[12px] leading-3.5 text-[#777]">
           123, Park Street, Bandra West,
           <br />
           Mumbai, Maharashtra - 400050
@@ -981,7 +933,7 @@ function OrderDetails({ order }: { order: Order }) {
               border-[#e3c791]
               px-2
               py-1
-              text-[7px]
+              text-[12px]
               text-[#bf8e38]
             "
           >
@@ -1009,7 +961,7 @@ function OrderDetails({ order }: { order: Order }) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="text-[7px] font-medium text-[#444]">
+            <p className="text-[12px] font-medium text-[#444]">
               22K Gold Diamond Necklace
             </p>
 
@@ -1018,7 +970,7 @@ function OrderDetails({ order }: { order: Order }) {
             <p className="mt-1 text-[6px] text-[#888]">Qty: 1</p>
           </div>
 
-          <span className="self-end text-[8px] font-semibold text-[#444]">
+          <span className="self-end text-[12px] font-semibold text-[#444]">
             ₹45,000
           </span>
         </div>
@@ -1036,7 +988,7 @@ function OrderDetails({ order }: { order: Order }) {
             justify-center
             rounded-[4px]
             bg-[#c89943]
-            text-[8px]
+            text-[12px]
             font-medium
             text-white
             shadow-sm
@@ -1090,7 +1042,7 @@ function SummaryRow({
     <div className="flex items-center justify-between py-[3px]">
       <span
         className={`
-          text-[7px]
+          text-[12px]
           ${bold ? "font-semibold text-[#3a3e43]" : "text-[#777]"}
         `}
       >
@@ -1099,7 +1051,7 @@ function SummaryRow({
 
       <span
         className={`
-          text-[7px]
+          text-[12px]
           ${
             green
               ? "text-[#43a66a]"

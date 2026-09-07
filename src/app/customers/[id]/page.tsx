@@ -1,5 +1,6 @@
 "use client";
 
+import PageHeader from "@/components/pageheader/PageHeader";
 import React, { useState } from "react";
 
 import {
@@ -30,10 +31,7 @@ import {
   FiMoreHorizontal,
 } from "react-icons/fi";
 
-import {
-  HiOutlineSparkles,
-  HiOutlineUserCircle,
-} from "react-icons/hi2";
+import { HiOutlineSparkles, HiOutlineUserCircle } from "react-icons/hi2";
 
 /* =========================================================
    TYPES
@@ -242,9 +240,7 @@ const Card = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={`rounded-lg border border-slate-200 bg-white ${className}`}
-    >
+    <div className={`rounded-lg border border-slate-200 bg-white ${className}`}>
       {children}
     </div>
   );
@@ -273,7 +269,6 @@ const StatCard = ({
 }) => {
   return (
     <div className="flex h-[88px] items-center gap-3 px-3">
-
       <div
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] ${iconBg} ${iconColor}`}
       >
@@ -281,21 +276,14 @@ const StatCard = ({
       </div>
 
       <div className="min-w-0">
-
-        <p className="text-[7px] font-medium text-slate-500">
-          {title}
-        </p>
+        <p className="text-[12px] font-medium text-slate-500">{title}</p>
 
         <p className="mt-1 text-[14px] font-bold leading-none text-slate-800">
           {value}
         </p>
 
-        <p className={`mt-2 text-[6px] ${subtitleColor}`}>
-          {subtitle}
-        </p>
-
+        <p className={`mt-2 text-[11px] ${subtitleColor}`}>{subtitle}</p>
       </div>
-
     </div>
   );
 };
@@ -314,16 +302,12 @@ const InfoRow = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <div className="grid grid-cols-[105px_1fr] items-start gap-2">
+    <div className="grid grid-cols-[150px_1fr] items-start gap-5">
+      <span className="text-[12px] text-slate-500">{label}</span>
 
-      <span className="text-[7px] text-slate-500">
-        {label}
-      </span>
-
-      <span className="text-[7px] font-medium leading-3 text-slate-700">
+      <span className="text-[12px] font-medium leading-3 text-slate-700">
         {children || value || "—"}
       </span>
-
     </div>
   );
 };
@@ -332,15 +316,9 @@ const InfoRow = ({
    SECTION TITLE
 ========================================================= */
 
-const SectionTitle = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const SectionTitle = ({ children }: { children: React.ReactNode }) => {
   return (
-    <h3 className="mb-3 text-[9px] font-bold text-slate-800">
-      {children}
-    </h3>
+    <h3 className="mb-3 text-[13px] font-bold text-slate-800">{children}</h3>
   );
 };
 
@@ -366,7 +344,7 @@ const CustomerTag = ({
 
   return (
     <span
-      className={`inline-flex w-fit items-center gap-1 rounded px-2 py-1 text-[7px] ${colors[color]}`}
+      className={`inline-flex w-fit items-center gap-1 rounded px-2 py-1 text-[12px] ${colors[color]}`}
     >
       {icon}
       {children}
@@ -380,8 +358,7 @@ const CustomerTag = ({
 
 const SpendingChart = () => {
   return (
-    <div className="flex items-center gap-6">
-
+    <div className="flex items-center justify-between gap-6">
       <div
         className="relative flex h-[116px] w-[116px] shrink-0 items-center justify-center rounded-full"
         style={{
@@ -389,23 +366,16 @@ const SpendingChart = () => {
             "conic-gradient(#c8953d 0deg 257deg, #8055c8 257deg 333deg, #83c0e5 333deg 351deg, #f39ba7 351deg 360deg)",
         }}
       >
-
         <div className="flex h-[82px] w-[82px] flex-col items-center justify-center rounded-full bg-white">
-
-          <span className="text-[7px] text-slate-500">
-            Total Spent
-          </span>
+          <span className="text-[12px] text-slate-500">Total Spent</span>
 
           <span className="mt-1 text-[11px] font-bold text-slate-800">
             ₹8,75,400
           </span>
-
         </div>
-
       </div>
 
       <div className="space-y-3">
-
         <ChartLegend
           color="bg-[#c8953d]"
           title="Jewellery"
@@ -433,9 +403,7 @@ const SpendingChart = () => {
           value="₹20,000"
           percent="2.4%"
         />
-
       </div>
-
     </div>
   );
 };
@@ -457,26 +425,16 @@ const ChartLegend = ({
 }) => {
   return (
     <div className="flex items-start gap-2">
-
-      <span
-        className={`mt-1 h-2 w-2 shrink-0 rounded-full ${color}`}
-      />
+      <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${color}`} />
 
       <div>
+        <p className="text-[12px] text-slate-600">{title}</p>
 
-        <p className="text-[7px] text-slate-600">
-          {title}
-        </p>
-
-        <p className="mt-0.5 text-[7px] font-medium text-slate-700">
+        <p className="mt-0.5 text-[12px] font-medium text-slate-700">
           {value}
-          <span className="ml-1 text-slate-400">
-            ({percent})
-          </span>
+          <span className="ml-1 text-slate-400">({percent})</span>
         </p>
-
       </div>
-
     </div>
   );
 };
@@ -522,79 +480,27 @@ const CustomerDetails = () => {
   ];
 
   return (
-    <main className="min-h-screen bg-[#fafafa] p-1.5 text-slate-800">
-
+    <main className="min-h-screen bg-[#fafafa] p-3 text-slate-800">
       <div className="mx-auto max-w-[1500px]">
-
         {/* =================================================
             HEADER
         ================================================== */}
 
-        <div className="mb-2 flex items-start justify-between">
-
-          <div>
-
-            <h1 className="text-[16px] font-bold text-slate-900">
-              Customers
-            </h1>
-
-            <div className="mt-1 flex items-center gap-2 text-[7px] text-slate-500">
-
-              <span>Dashboard</span>
-
-              <span>›</span>
-
-              <span>Customers</span>
-
-              <span>›</span>
-
-              <span className="text-slate-700">
-                Customer Details
-              </span>
-
-            </div>
-
-          </div>
-
-          <div className="flex items-center gap-2">
-
-            <button
-              className="flex h-7 items-center gap-1.5 rounded border border-slate-200 bg-white px-3 text-[7px] font-medium text-slate-600 hover:bg-slate-50"
-            >
-              <FiArrowLeft />
-              Back
-            </button>
-
-            <button
-              className="flex h-7 items-center gap-1.5 rounded bg-[#b7832d] px-3 text-[7px] font-medium text-white shadow-sm hover:bg-[#a57525]"
-            >
-              <FiEdit2 />
-              Edit Customer
-            </button>
-
-            <button
-              className="flex h-7 items-center gap-1.5 rounded bg-slate-900 px-3 text-[7px] font-medium text-white shadow-sm hover:bg-slate-800"
-            >
-              <FiPlus />
-              Add Customer
-            </button>
-
-          </div>
-
-        </div>
+        <PageHeader
+          title="Customers"
+          description="Manage your customers, orders and payments."
+          showButton={false}
+        />
 
         {/* =================================================
             CUSTOMER PROFILE + STATS
         ================================================== */}
 
         <Card className="overflow-hidden">
-
           <div className="flex items-center gap-5 p-3">
-
             {/* PROFILE */}
 
             <div className="flex min-w-[275px] items-center gap-4">
-
               <img
                 src={customer.avatar}
                 alt={customer.name}
@@ -602,63 +508,53 @@ const CustomerDetails = () => {
               />
 
               <div>
-
                 <div className="flex items-center gap-2">
-
                   <h2 className="text-[14px] font-bold text-slate-800">
                     {customer.name}
                   </h2>
 
-                  <span className="rounded bg-violet-50 px-2 py-1 text-[7px] font-semibold text-violet-500">
+                  <span className="rounded bg-violet-50 px-2 py-1 text-[12px] font-semibold text-violet-500">
                     {customer.type}
                   </span>
-
                 </div>
 
-                <p className="mt-1 text-[7px] text-slate-600">
+                <p className="mt-1 text-[12px] text-slate-600">
                   Customer ID: {customer.id}
                 </p>
 
                 <div className="mt-2 space-y-1">
-
-                  <p className="flex items-center gap-1.5 text-[7px] text-slate-600">
+                  <p className="flex items-center gap-1.5 text-[12px] text-slate-600">
                     <FiPhone className="text-[8px]" />
                     {customer.phone}
                   </p>
 
-                  <p className="flex items-center gap-1.5 text-[7px] text-slate-600">
+                  <p className="flex items-center gap-1.5 text-[12px] text-slate-600">
                     <FiMail className="text-[8px]" />
                     {customer.email}
                   </p>
 
-                  <p className="flex items-center gap-1.5 text-[7px] text-slate-600">
+                  <p className="flex items-center gap-1.5 text-[12px] text-slate-600">
                     <FiMapPin className="text-[8px]" />
                     {customer.location}
                   </p>
 
-                  <p className="flex items-center gap-1.5 text-[7px] text-slate-600">
+                  <p className="flex items-center gap-1.5 text-[12px] text-slate-600">
                     <FiCalendar className="text-[8px]" />
                     Joined on {customer.joined}
                   </p>
-
                 </div>
-
               </div>
-
             </div>
 
             {/* STATS */}
 
             <div className="grid flex-1 grid-cols-5 gap-2">
-
               {stats.map((stat) => (
                 <Card key={stat.title}>
                   <StatCard {...stat} />
                 </Card>
               ))}
-
             </div>
-
           </div>
 
           {/* =================================================
@@ -666,34 +562,28 @@ const CustomerDetails = () => {
           ================================================== */}
 
           <div className="flex overflow-x-auto border-t border-slate-100 px-3">
-
             {tabs.map((tab) => {
-
               const isActive = activeTab === tab;
 
               return (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`relative whitespace-nowrap px-3 py-2.5 text-[7px] font-medium transition ${
+                  className={`relative whitespace-nowrap px-3 py-2.5 text-[12px] font-medium transition ${
                     isActive
                       ? "text-[#b7832d]"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-
                   {tab}
 
                   {isActive && (
                     <span className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full bg-[#c8953d]" />
                   )}
-
                 </button>
               );
             })}
-
           </div>
-
         </Card>
 
         {/* =================================================
@@ -701,378 +591,222 @@ const CustomerDetails = () => {
         ================================================== */}
 
         <div className="mt-2.5 grid grid-cols-12 gap-2.5">
-
           {/* ===============================================
               LEFT / MAIN
           ================================================ */}
 
           <div className="col-span-12 lg:col-span-8">
-
             <div className="grid grid-cols-12 gap-2.5">
-
               {/* CUSTOMER INFORMATION */}
 
-              <Card className="col-span-12 md:col-span-5 p-3">
-
-                <SectionTitle>
-                  Customer Information
-                </SectionTitle>
+              <Card className="col-span-12 md:col-span-6 p-3">
+                <SectionTitle>Customer Information</SectionTitle>
 
                 <div className="space-y-2.5">
+                  <InfoRow label="Full Name" value="Priya Sharma" />
 
-                  <InfoRow
-                    label="Full Name"
-                    value="Priya Sharma"
-                  />
+                  <InfoRow label="Date of Birth" value="12 Feb 1990" />
 
-                  <InfoRow
-                    label="Date of Birth"
-                    value="12 Feb 1990"
-                  />
+                  <InfoRow label="Anniversary" value="—" />
 
-                  <InfoRow
-                    label="Anniversary"
-                    value="—"
-                  />
+                  <InfoRow label="Phone" value="+91 98765 43210" />
 
-                  <InfoRow
-                    label="Phone"
-                    value="+91 98765 43210"
-                  />
+                  <InfoRow label="Email" value="priyasharma@email.com" />
 
-                  <InfoRow
-                    label="Email"
-                    value="priyasharma@email.com"
-                  />
+                  <InfoRow label="Gender" value="Female" />
 
-                  <InfoRow
-                    label="Gender"
-                    value="Female"
-                  />
-
-                  <InfoRow
-                    label="Preferred Language"
-                    value="English"
-                  />
+                  <InfoRow label="Preferred Language" value="English" />
 
                   <InfoRow label="Sales Person">
-
                     <span className="flex items-center gap-1.5">
-
                       <img
                         src="https://i.pravatar.cc/50?img=44"
                         alt="Sales Person"
                         className="h-4 w-4 rounded-full"
                       />
-
                       Neha Kapoor
-
                     </span>
-
                   </InfoRow>
 
                   <InfoRow label="Customer Group">
-
-                    <span className="rounded bg-violet-50 px-2 py-1 text-[6px] text-violet-500">
+                    <span className="rounded bg-violet-50 px-2 py-1 text-[11px] text-violet-500">
                       VIP Customers
                     </span>
-
                   </InfoRow>
 
-                  <InfoRow
-                    label="GST Number"
-                    value="—"
-                  />
+                  <InfoRow label="GST Number" value="—" />
 
-                  <InfoRow
-                    label="PAN Number"
-                    value="—"
-                  />
-
+                  <InfoRow label="PAN Number" value="—" />
                 </div>
-
               </Card>
 
               {/* PREFERENCES */}
 
-              <Card className="col-span-12 md:col-span-5 p-3">
-
-                <SectionTitle>
-                  Preferences
-                </SectionTitle>
+              <Card className="col-span-12 md:col-span-6 p-3">
+                <SectionTitle>Preferences</SectionTitle>
 
                 <div className="space-y-2.5">
-
                   <InfoRow label="Preferred Jewellery">
-
                     <span className="flex items-center gap-1.5">
                       <FiTag className="text-[8px]" />
                       Diamond, Gold
                     </span>
-
                   </InfoRow>
 
                   <InfoRow label="Preferred Gemstone">
-
                     <span className="flex items-center gap-1.5">
                       <HiOutlineSparkles className="text-[8px]" />
                       Ruby, Emerald
                     </span>
-
                   </InfoRow>
 
                   <InfoRow label="Metal Preference">
-
                     <span className="flex items-center gap-1.5">
                       <FiAward className="text-[8px]" />
                       18K Gold, Platinum
                     </span>
-
                   </InfoRow>
 
                   <InfoRow label="Budget Range">
-
-                    <span>
-                      ₹50,000 - ₹2,00,000
-                    </span>
-
+                    <span>₹50,000 - ₹2,00,000</span>
                   </InfoRow>
 
                   <InfoRow label="Favourite Collections">
-
-                    <span>
-                      Royal, Heritage, Classic
-                    </span>
-
+                    <span>Royal, Heritage, Classic</span>
                   </InfoRow>
 
                   <InfoRow label="Preferred Contact">
-
                     <span className="flex items-center gap-1.5">
                       <FiMessageCircle className="text-[8px]" />
                       WhatsApp, Email
                     </span>
-
                   </InfoRow>
 
                   <InfoRow label="Best Contact Time">
-
                     <span className="flex items-center gap-1.5">
                       <FiClock className="text-[8px]" />
                       Evening (6 PM - 9 PM)
                     </span>
-
                   </InfoRow>
 
                   <InfoRow label="Notes">
-
                     <span>
                       Loves traditional designs
                       <br />
                       for special occasions.
                     </span>
-
                   </InfoRow>
-
                 </div>
-
-              </Card>
-
-              {/* TAGS */}
-
-              <Card className="col-span-12 md:col-span-2 p-3">
-
-                <SectionTitle>
-                  Customer Tags
-                </SectionTitle>
-
-                <div className="flex flex-col gap-2">
-
-                  <CustomerTag
-                    icon={<FiAward />}
-                    color="orange"
-                  >
-                    VIP
-                  </CustomerTag>
-
-                  <CustomerTag
-                    icon={<HiOutlineSparkles />}
-                  >
-                    High Spender
-                  </CustomerTag>
-
-                  <CustomerTag
-                    icon={<FiUsers />}
-                    color="blue"
-                  >
-                    Loyal Customer
-                  </CustomerTag>
-
-                  <CustomerTag
-                    icon={<FiGift />}
-                  >
-                    Wedding Buyer
-                  </CustomerTag>
-
-                  <CustomerTag
-                    icon={<FiStar />}
-                  >
-                    Referral Customer
-                  </CustomerTag>
-
-                  <button className="mt-1 flex w-fit items-center gap-1 rounded border border-dashed border-slate-300 px-2 py-1.5 text-[7px] text-slate-600 hover:bg-slate-50">
-                    <FiPlus />
-                    Add Tag
-                  </button>
-
-                </div>
-
               </Card>
 
               {/* RECENT ORDERS */}
 
               <Card className="col-span-12 overflow-hidden">
-
                 <div className="flex items-center justify-between px-3 py-3">
-
-                  <SectionTitle>
+                  <h3 className="text-[13px] font-bold text-slate-800">
                     Recent Orders
-                  </SectionTitle>
-
+                  </h3>
                 </div>
 
                 <div className="overflow-x-auto">
-
                   <table className="w-full min-w-[650px]">
-
                     <thead>
-
                       <tr className="border-y border-slate-100 bg-[#fcfcfc]">
-
-                        <th className="px-3 py-2 text-left text-[6px] font-medium text-slate-500">
+                        <th className="px-3 py-2 text-left text-[11px] font-medium text-slate-500">
                           Order ID
                         </th>
 
-                        <th className="px-2 py-2 text-left text-[6px] font-medium text-slate-500">
+                        <th className="px-2 py-2 text-left text-[11px] font-medium text-slate-500">
                           Date
                         </th>
 
-                        <th className="px-2 py-2 text-left text-[6px] font-medium text-slate-500">
+                        <th className="px-2 py-2 text-left text-[11px] font-medium text-slate-500">
                           Products
                         </th>
 
-                        <th className="px-2 py-2 text-right text-[6px] font-medium text-slate-500">
+                        <th className="px-2 py-2 text-right text-[11px] font-medium text-slate-500">
                           Amount
                         </th>
 
-                        <th className="px-2 py-2 text-center text-[6px] font-medium text-slate-500">
+                        <th className="px-2 py-2 text-center text-[11px] font-medium text-slate-500">
                           Payment
                         </th>
 
-                        <th className="px-2 py-2 text-center text-[6px] font-medium text-slate-500">
+                        <th className="px-2 py-2 text-center text-[11px] font-medium text-slate-500">
                           Status
                         </th>
 
-                        <th className="px-3 py-2 text-center text-[6px] font-medium text-slate-500">
+                        <th className="px-3 py-2 text-center text-[11px] font-medium text-slate-500">
                           Action
                         </th>
-
                       </tr>
-
                     </thead>
 
                     <tbody>
-
                       {orders.map((order, index) => (
-
                         <tr
                           key={order.id}
                           className="border-b border-slate-50 hover:bg-slate-50/50"
                         >
-
-                          <td className="px-3 py-2 text-[7px] text-slate-600">
+                          <td className="px-3 py-2 text-[12px] text-slate-600">
                             {order.id}
                           </td>
 
-                          <td className="px-2 py-2 text-[7px] text-slate-600">
+                          <td className="px-2 py-2 text-[12px] text-slate-600">
                             {order.date}
                           </td>
 
                           <td className="px-2 py-2">
-
                             <div className="flex items-center gap-2">
-
                               <ProductImage index={index} />
 
                               <div>
-
-                                <p className="text-[7px] font-medium text-slate-700">
+                                <p className="text-[12px] font-medium text-slate-700">
                                   {order.product}
                                 </p>
 
-                                <p className="text-[6px] text-slate-400">
+                                <p className="text-[11px] text-slate-400">
                                   {order.material}
                                 </p>
-
                               </div>
-
                             </div>
-
                           </td>
 
-                          <td className="px-2 py-2 text-right text-[7px] font-medium text-slate-700">
+                          <td className="px-2 py-2 text-right text-[12px] font-medium text-slate-700">
                             {order.amount}
                           </td>
 
                           <td className="px-2 py-2 text-center">
-
-                            <span className="rounded bg-emerald-50 px-2 py-1 text-[6px] font-medium text-emerald-500">
+                            <span className="rounded bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-500">
                               {order.payment}
                             </span>
-
                           </td>
 
                           <td className="px-2 py-2 text-center">
-
-                            <span className="rounded bg-emerald-50 px-2 py-1 text-[6px] font-medium text-emerald-500">
+                            <span className="rounded bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-500">
                               {order.status}
                             </span>
-
                           </td>
 
                           <td className="px-3 py-2 text-center">
-
                             <button className="text-slate-400 hover:text-slate-700">
                               <FiEye className="text-[10px]" />
                             </button>
-
                           </td>
-
                         </tr>
-
                       ))}
-
                     </tbody>
-
                   </table>
-
                 </div>
 
                 <div className="flex justify-center border-t border-slate-100 py-2.5">
-
-                  <button className="flex items-center gap-2 text-[7px] font-medium text-[#b7832d] hover:text-[#966c26]">
-
+                  <button className="flex items-center gap-2 text-[12px] font-medium text-[#b7832d] hover:text-[#966c26]">
                     View All Orders
                     <FiArrowRight />
-
                   </button>
-
                 </div>
-
               </Card>
-
             </div>
-
           </div>
 
           {/* ===============================================
@@ -1080,46 +814,34 @@ const CustomerDetails = () => {
           ================================================ */}
 
           <div className="col-span-12 lg:col-span-4">
-
             <div className="grid gap-2.5">
-
               {/* RECENT ACTIVITY */}
 
               <Card className="overflow-hidden">
-
                 <div className="p-3">
-
-                  <SectionTitle>
-                    Recent Activity
-                  </SectionTitle>
+                  <SectionTitle>Recent Activity</SectionTitle>
 
                   <div className="relative">
-
                     {/* TIMELINE LINE */}
 
                     <div className="absolute bottom-2 left-[5px] top-2 w-px bg-slate-200" />
 
                     <div className="space-y-4">
-
                       {activities.map((activity) => (
-
                         <div
                           key={activity.title}
                           className="relative flex gap-3"
                         >
-
                           {/* DOT */}
 
                           <div className="relative z-10 mt-1 flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-white">
-
                             <span className="h-1.5 w-1.5 rounded-full bg-[#b7832d]" />
-
                           </div>
 
                           {/* ICON */}
 
                           <div
-                            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[9px] ${activity.iconBg} ${activity.iconColor}`}
+                            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[13px] ${activity.iconBg} ${activity.iconColor}`}
                           >
                             {activity.icon}
                           </div>
@@ -1127,73 +849,52 @@ const CustomerDetails = () => {
                           {/* CONTENT */}
 
                           <div className="min-w-0 flex-1">
-
                             <div className="flex items-start justify-between gap-2">
-
                               <div>
-
-                                <p className="text-[7px] font-semibold text-slate-700">
+                                <p className="text-[12px] font-semibold text-slate-700">
                                   {activity.title}
                                 </p>
 
-                                <p className="mt-1 text-[6px] text-slate-400">
+                                <p className="mt-1 text-[11px] text-slate-400">
                                   {activity.description}
                                 </p>
-
                               </div>
 
                               <div className="shrink-0 text-right">
-
-                                <p className="text-[6px] text-slate-600">
+                                <p className="text-[11px] text-slate-600">
                                   {activity.date}
                                 </p>
 
-                                <p className="mt-1 text-[6px] text-slate-400">
+                                <p className="mt-1 text-[11px] text-slate-400">
                                   {activity.time}
                                 </p>
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </div>
-
                       ))}
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div className="border-t border-slate-100 py-2.5 text-center">
-
-                  <button className="text-[7px] font-medium text-[#b7832d]">
+                  <button className="text-[12px] font-medium text-[#b7832d]">
                     View All Activity
                     <span className="ml-2">→</span>
                   </button>
-
                 </div>
-
               </Card>
 
               {/* SPENDING SUMMARY */}
 
               <Card className="p-3">
-
                 <div className="mb-4 flex items-center justify-between">
+                  <SectionTitle>Spending Summary</SectionTitle>
 
-                  <SectionTitle>
-                    Spending Summary
-                  </SectionTitle>
-
-                  <button className="flex items-center gap-1 rounded border border-slate-200 px-2 py-1.5 text-[6px] text-slate-600">
+                  <button className="flex items-center gap-1 rounded border border-slate-200 px-2 py-1.5 text-[11px] text-slate-600">
                     This Year
                     <FiChevronDown />
                   </button>
-
                 </div>
 
                 <SpendingChart />
@@ -1201,43 +902,27 @@ const CustomerDetails = () => {
                 {/* BOTTOM SUMMARY */}
 
                 <div className="mt-5 grid grid-cols-2 border-t border-slate-100 pt-4">
-
                   <div className="text-center">
-
-                    <p className="text-[7px] text-slate-600">
-                      Last Purchase
-                    </p>
+                    <p className="text-[12px] text-slate-600">Last Purchase</p>
 
                     <p className="mt-2 text-[10px] font-bold text-slate-800">
                       17 May 2025
                     </p>
-
                   </div>
 
                   <div className="border-l border-slate-100 text-center">
-
-                    <p className="text-[7px] text-slate-600">
-                      First Purchase
-                    </p>
+                    <p className="text-[12px] text-slate-600">First Purchase</p>
 
                     <p className="mt-2 text-[10px] font-bold text-slate-800">
                       15 Jan 2024
                     </p>
-
                   </div>
-
                 </div>
-
               </Card>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </main>
   );
 };

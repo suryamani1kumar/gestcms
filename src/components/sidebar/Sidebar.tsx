@@ -153,7 +153,7 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                   text-[#d6a847]
                 "
               >
-                LUXORA
+                 R.K 
               </h1>
 
               <p
@@ -165,7 +165,7 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                   text-[#d6a847]
                 "
               >
-                JEWELLERY CRM
+                JEWELLERS & GEMS CRM
               </p>
             </div>
           </div>

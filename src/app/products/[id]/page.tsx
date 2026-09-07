@@ -854,12 +854,11 @@
 //   );
 // }
 
-
 "use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import {
   FaArrowLeft,
@@ -892,15 +891,19 @@ interface Product {
   hsn?: string;
   brand?: string;
 
-  category?: string | {
-    _id: string;
-    name: string;
-  };
+  category?:
+    | string
+    | {
+        _id: string;
+        name: string;
+      };
 
-  subCategory?: string | {
-    _id: string;
-    name: string;
-  };
+  subCategory?:
+    | string
+    | {
+        _id: string;
+        name: string;
+      };
 
   productType?: string;
 
@@ -968,9 +971,7 @@ function InfoRow({ label, value }: InfoRowProps) {
     <div className="grid grid-cols-[48%_52%] items-center py-2">
       <span className="text-[9px] text-[#707680]">{label}</span>
 
-      <span className="text-[9px] font-medium text-[#525862]">
-        {value}
-      </span>
+      <span className="text-[9px] font-medium text-[#525862]">{value}</span>
     </div>
   );
 }
@@ -983,9 +984,7 @@ interface SideCardProps {
 function SideCard({ title, children }: SideCardProps) {
   return (
     <div className="rounded-lg border border-[#e5e5e5] bg-white p-3.5">
-      <h3 className="mb-3 text-[11px] font-semibold text-[#242934]">
-        {title}
-      </h3>
+      <h3 className="mb-3 text-[11px] font-semibold text-[#242934]">{title}</h3>
 
       <div>{children}</div>
     </div>
@@ -1017,9 +1016,7 @@ function formatCurrency(value?: number) {
   return `₹${value.toLocaleString("en-IN")}`;
 }
 
-function getName(
-  value?: string | { _id: string; name: string }
-) {
+function getName(value?: string | { _id: string; name: string }) {
   if (!value) return "-";
 
   if (typeof value === "string") {
@@ -1043,6 +1040,7 @@ function getImageUrl(product: Product) {
 
 export default function ProductDetailsPage() {
   const params = useParams();
+  const router = useRouter();
 
   const productId = params?.id as string;
 
@@ -1054,9 +1052,7 @@ export default function ProductDetailsPage() {
 
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const [activeTab, setActiveTab] = useState(
-    "Product Information"
-  );
+  const [activeTab, setActiveTab] = useState("Product Information");
 
   const [moreOpen, setMoreOpen] = useState(false);
 
@@ -1095,20 +1091,15 @@ export default function ProductDetailsPage() {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          `/api/products/${productId}`,
-          {
-            method: "GET",
-            cache: "no-store",
-          }
-        );
+        const response = await fetch(`/api/products/${productId}`, {
+          method: "GET",
+          cache: "no-store",
+        });
 
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            result.message || "Failed to fetch product"
-          );
+          throw new Error(result.message || "Failed to fetch product");
         }
 
         setProduct(result.data);
@@ -1116,9 +1107,7 @@ export default function ProductDetailsPage() {
         console.error(error);
 
         setError(
-          error instanceof Error
-            ? error.message
-            : "Something went wrong"
+          error instanceof Error ? error.message : "Something went wrong",
         );
       } finally {
         setLoading(false);
@@ -1134,9 +1123,7 @@ export default function ProductDetailsPage() {
         <div className="flex flex-col items-center gap-3">
           <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#e5e5e5] border-t-[#c88b28]" />
 
-          <p className="text-[11px] text-[#777d89]">
-            Loading product...
-          </p>
+          <p className="text-[11px] text-[#777d89]">Loading product...</p>
         </div>
       </div>
     );
@@ -1170,12 +1157,11 @@ export default function ProductDetailsPage() {
     );
   }
 
-  const images =
-    product.gallery?.length
-      ? product.gallery
-      : product.images?.length
-        ? product.images
-        : [];
+  const images = product.gallery?.length
+    ? product.gallery
+    : product.images?.length
+      ? product.images
+      : [];
 
   const currentImage = images[selectedImage]?.url;
 
@@ -1184,17 +1170,89 @@ export default function ProductDetailsPage() {
   const subCategory = getName(product.subCategory);
 
   const profit =
-    (product.sellingPrice ?? product.price ?? 0) -
-    (product.totalCost ?? 0);
+    (product.sellingPrice ?? product.price ?? 0) - (product.totalCost ?? 0);
 
   const profitMargin =
     (product.totalCost ?? 0) > 0
       ? ((profit / (product.totalCost ?? 0)) * 100).toFixed(2)
       : "0.00";
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${product.name}"?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Failed to delete product");
+      }
+    } catch (error) {
+      console.error("Delete product error:", error);
+
+      alert("Failed to delete product.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const duplicateProduct = async () => {
+    const submitStatus = "Draft";
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        ...product,
+        status: submitStatus,
+      };
+
+      const response = await fetch("/api/products", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (Array.isArray(data?.errors)) {
+          alert(data.errors.join("\n"));
+        } else {
+          alert(data?.message || "Failed to create product.");
+        }
+
+        return;
+      }
+
+      alert("Product Duplicated successfully.");
+
+      router.push("/products");
+    } catch (error) {
+      console.error("Create product error:", error);
+
+      alert(error instanceof Error ? error.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#fcfcfb] px-5 py-3">
-
       {/* PAGE HEADER */}
 
       <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -1212,9 +1270,7 @@ export default function ProductDetailsPage() {
 
             <FaChevronRight className="text-[8px] text-[#a5a8ae]" />
 
-            <span className="text-[#4d5360]">
-              {product.name}
-            </span>
+            <span className="text-[#4d5360]">{product.name}</span>
           </div>
         </div>
 
@@ -1313,18 +1369,14 @@ export default function ProductDetailsPage() {
       {/* MAIN */}
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_305px]">
-
         {/* LEFT */}
 
         <div className="min-w-0">
-
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
-
             {/* GALLERY */}
 
             <div>
               <div className="relative h-[280px] overflow-hidden rounded-lg border border-[#e7e7e7] bg-[#f8f7f5]">
-
                 {currentImage ? (
                   <img
                     src={currentImage}
@@ -1443,23 +1495,16 @@ export default function ProductDetailsPage() {
 
               <div className="rounded-md border border-[#e8e8e8] bg-white px-3 py-4">
                 <div className="grid grid-cols-3">
-
                   <div className="border-r border-[#e5e5e5] px-2">
-                    <p className="text-[9px] text-[#737985]">
-                      Selling Price
-                    </p>
+                    <p className="text-[9px] text-[#737985]">Selling Price</p>
 
                     <p className="mt-1 text-[17px] font-semibold text-[#222631]">
-                      {formatCurrency(
-                        product.sellingPrice ?? product.price
-                      )}
+                      {formatCurrency(product.sellingPrice ?? product.price)}
                     </p>
                   </div>
 
                   <div className="border-r border-[#e5e5e5] px-4">
-                    <p className="text-[9px] text-[#737985]">
-                      Making Charges
-                    </p>
+                    <p className="text-[9px] text-[#737985]">Making Charges</p>
 
                     <p className="mt-1 text-[14px] font-medium text-[#333844]">
                       {formatCurrency(product.makingCharges)}
@@ -1467,16 +1512,12 @@ export default function ProductDetailsPage() {
                   </div>
 
                   <div className="px-4">
-                    <p className="text-[9px] text-[#737985]">
-                      Weight
-                    </p>
+                    <p className="text-[9px] text-[#737985]">Weight</p>
 
                     <p className="mt-1 text-[14px] font-medium text-[#333844]">
-                      {product.weight || "-"}{" "}
-                      {product.weightUnit || "g"}
+                      {product.weight || "-"} {product.weightUnit || "g"}
                     </p>
                   </div>
-
                 </div>
 
                 {product.tags && product.tags.length > 0 && (
@@ -1515,7 +1556,6 @@ export default function ProductDetailsPage() {
           {/* TABS */}
 
           <div className="mt-5 overflow-hidden rounded-lg border border-[#e5e5e5] bg-white">
-
             <div className="flex overflow-x-auto border-b border-[#e7e7e7]">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -1559,23 +1599,15 @@ export default function ProductDetailsPage() {
             {activeTab === "Product Information" && (
               <div className="p-4">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-
                   <div>
                     <h3 className="mb-3 text-[11px] font-semibold text-[#20252f]">
                       General Information
                     </h3>
 
                     <div className="divide-y divide-[#eeeeee]">
+                      <InfoRow label="Category" value={category} />
 
-                      <InfoRow
-                        label="Category"
-                        value={category}
-                      />
-
-                      <InfoRow
-                        label="Sub Category"
-                        value={subCategory}
-                      />
+                      <InfoRow label="Sub Category" value={subCategory} />
 
                       <InfoRow
                         label="Product Type"
@@ -1587,10 +1619,7 @@ export default function ProductDetailsPage() {
                         value={product.metalType || "-"}
                       />
 
-                      <InfoRow
-                        label="Purity"
-                        value={product.purity || "-"}
-                      />
+                      <InfoRow label="Purity" value={product.purity || "-"} />
 
                       <InfoRow
                         label="Diamond Type"
@@ -1611,30 +1640,20 @@ export default function ProductDetailsPage() {
                         label="Collection"
                         value={product.collection || "-"}
                       />
-
                     </div>
                   </div>
 
                   <div className="border-l-0 md:border-l md:border-[#eeeeee] md:pl-6">
-
                     <h3 className="mb-3 text-[11px] font-semibold text-[#20252f]">
                       Additional Information
                     </h3>
 
                     <div className="divide-y divide-[#eeeeee]">
-
-                      <InfoRow
-                        label="HSN Code"
-                        value={product.hsn || "-"}
-                      />
+                      <InfoRow label="HSN Code" value={product.hsn || "-"} />
 
                       <InfoRow
                         label="GST Rate"
-                        value={
-                          product.gstRate
-                            ? `${product.gstRate}%`
-                            : "-"
-                        }
+                        value={product.gstRate ? `${product.gstRate}%` : "-"}
                       />
 
                       <InfoRow
@@ -1666,17 +1685,14 @@ export default function ProductDetailsPage() {
                         label="Return Policy"
                         value={product.returnPolicy || "-"}
                       />
-
                     </div>
                   </div>
-
                 </div>
               </div>
             )}
 
             {activeTab !== "Product Information" && (
               <div className="flex min-h-[230px] flex-col items-center justify-center p-8 text-center">
-
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#fff7e8] text-[#c88b28]">
                   <FaClipboardList className="text-sm" />
                 </div>
@@ -1688,25 +1704,19 @@ export default function ProductDetailsPage() {
                 <p className="mt-1 max-w-sm text-[10px] text-[#999]">
                   Product {activeTab.toLowerCase()} will appear here.
                 </p>
-
               </div>
             )}
-
           </div>
         </div>
 
         {/* RIGHT SIDEBAR */}
 
         <div className="space-y-4">
-
           <SideCard title="Stock Information">
-
             <SideRow
               label="Current Stock"
               value={
-                <span className="text-[#1a9a52]">
-                  {product.stock ?? 0} Pcs
-                </span>
+                <span className="text-[#1a9a52]">{product.stock ?? 0} Pcs</span>
               }
             />
 
@@ -1722,8 +1732,7 @@ export default function ProductDetailsPage() {
                   {product.availableStock ??
                     Math.max(
                       0,
-                      (product.stock ?? 0) -
-                        (product.reservedStock ?? 0)
+                      (product.stock ?? 0) - (product.reservedStock ?? 0),
                     )}{" "}
                   Pcs
                 </span>
@@ -1734,11 +1743,9 @@ export default function ProductDetailsPage() {
               label="Low Stock Alert"
               value={`${product.lowStockAlert ?? 0} Pcs`}
             />
-
           </SideCard>
 
           <SideCard title="Product Status">
-
             <SideRow
               label="Status"
               value={
@@ -1752,9 +1759,7 @@ export default function ProductDetailsPage() {
               label="Added On"
               value={
                 product.createdAt
-                  ? new Date(
-                      product.createdAt
-                    ).toLocaleDateString("en-IN")
+                  ? new Date(product.createdAt).toLocaleDateString("en-IN")
                   : "-"
               }
             />
@@ -1763,22 +1768,15 @@ export default function ProductDetailsPage() {
               label="Last Updated"
               value={
                 product.updatedAt
-                  ? new Date(
-                      product.updatedAt
-                    ).toLocaleString("en-IN")
+                  ? new Date(product.updatedAt).toLocaleString("en-IN")
                   : "-"
               }
             />
 
-            <SideRow
-              label="Added By"
-              value={product.addedBy || "-"}
-            />
-
+            <SideRow label="Added By" value={product.addedBy || "-"} />
           </SideCard>
 
           <SideCard title="Pricing Details">
-
             <SideRow
               label="Metal Value"
               value={formatCurrency(product.metalValue)}
@@ -1801,44 +1799,37 @@ export default function ProductDetailsPage() {
               value={formatCurrency(product.totalCost)}
             />
 
-            <SideRow
-              label="Profit Margin"
-              value={`${profitMargin}%`}
-            />
+            <SideRow label="Profit Margin" value={`${profitMargin}%`} />
 
             <SideRow
               label="Selling Price"
               value={
                 <span className="font-semibold text-[#c27e17]">
-                  {formatCurrency(
-                    product.sellingPrice ?? product.price
-                  )}
+                  {formatCurrency(product.sellingPrice ?? product.price)}
                 </span>
               }
             />
-
           </SideCard>
 
           <SideCard title="Quick Actions">
-
             <button
+              onClick={duplicateProduct}
               type="button"
-              className="mt-2 flex h-8 w-full items-center gap-3 rounded-md bg-[#fff7e8] px-3 text-left text-[10px] text-[#b67517] hover:bg-[#fff2d9]"
+              className="mt-2 cursor-pointer flex h-8 w-full items-center gap-3 rounded-md bg-[#fff7e8] px-3 text-left text-[10px] text-[#b67517] hover:bg-[#fff2d9]"
             >
               <FaCopy className="text-[11px]" />
               Duplicate Product
             </button>
 
             <button
+              onClick={handleDelete}
               type="button"
-              className="mt-2 flex h-8 w-full items-center gap-3 rounded-md border border-red-300 px-3 text-left text-[10px] text-red-500 hover:bg-red-50"
+              className="mt-2 flex cursor-pointer h-8 w-full items-center gap-3 rounded-md border border-red-300 px-3 text-left text-[10px] text-red-500 hover:bg-red-50"
             >
               <FaTrashAlt className="text-[11px]" />
               Delete Product
             </button>
-
           </SideCard>
-
         </div>
       </div>
     </div>

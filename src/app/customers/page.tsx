@@ -20,7 +20,6 @@ import {
   FiTrash2,
   FiCreditCard,
   FiLock,
-  FiUnlock,
 } from "react-icons/fi";
 
 import { HiOutlineSparkles, HiOutlineUserGroup } from "react-icons/hi2";
@@ -186,10 +185,6 @@ const Card = ({
   );
 };
 
-/* =========================================================
-   CUSTOMER TABLE
-========================================================= */
-
 const CustomerTable = ({
   data,
   loading,
@@ -210,15 +205,7 @@ const CustomerTable = ({
   onPayments: (customer: Customer) => void;
   onToggleStatus: (customer: Customer) => void;
 }) => {
-  /* =====================================================
-     ACTION MENU STATE
-  ===================================================== */
-
   const [openActionId, setOpenActionId] = useState<string | null>(null);
-
-  /* =====================================================
-     CLOSE ACTION MENU
-  ===================================================== */
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -234,18 +221,8 @@ const CustomerTable = ({
 
   return (
     <div className="relative w-full">
-      {/* IMPORTANT:
-          overflow-x-auto can clip absolute dropdowns.
-          Keep horizontal scrolling on a wrapper and
-          make the action menu fixed-position if needed.
-      */}
-
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1100px]">
-          {/* =================================================
-              TABLE HEADER
-          ================================================= */}
-
           <thead>
             <tr className="border-y border-slate-100 bg-[#fcfcfc]">
               <th className="w-8 px-3 py-2 text-center text-[12px] font-semibold text-[#666]">
@@ -286,10 +263,6 @@ const CustomerTable = ({
             </tr>
           </thead>
 
-          {/* =================================================
-              TABLE BODY
-          ================================================= */}
-
           <tbody>
             {loading ? (
               <tr>
@@ -318,11 +291,6 @@ const CustomerTable = ({
             ) : (
               data.map((customer, index) => {
                 const customerName = getCustomerName(customer);
-
-                /*
-                 * Check whether THIS customer's
-                 * action menu is open.
-                 */
                 const actionOpen = openActionId === customer._id;
 
                 return (
@@ -330,18 +298,9 @@ const CustomerTable = ({
                     key={customer._id}
                     className="border-b border-[#eeeeee] transition hover:bg-[#fffdf9]"
                   >
-                    {/* =================================================
-                        NUMBER
-                    ================================================= */}
-
                     <td className="px-3 py-2 text-center text-[10px] text-slate-500">
                       {index + 1}
                     </td>
-
-                    {/* =================================================
-                        CUSTOMER
-                    ================================================= */}
-
                     <td className="px-2 py-2">
                       <div className="flex items-center gap-2">
                         {customer.profileImage ? (
@@ -368,10 +327,6 @@ const CustomerTable = ({
                       </div>
                     </td>
 
-                    {/* =================================================
-                        CONTACT
-                    ================================================= */}
-
                     <td className="px-2 py-2">
                       <div>
                         <p className="text-[12px] text-slate-600">
@@ -383,10 +338,6 @@ const CustomerTable = ({
                         </p>
                       </div>
                     </td>
-
-                    {/* =================================================
-                        LOCATION
-                    ================================================= */}
 
                     <td className="px-2 py-2 text-left">
                       <div>
@@ -400,10 +351,6 @@ const CustomerTable = ({
                       </div>
                     </td>
 
-                    {/* =================================================
-                        ORDERS
-                    ================================================= */}
-
                     <td className="px-2 py-2">
                       <div>
                         <p className="text-[12px] font-semibold text-slate-700">
@@ -416,35 +363,19 @@ const CustomerTable = ({
                       </div>
                     </td>
 
-                    {/* =================================================
-                        TOTAL SPENT
-                    ================================================= */}
-
                     <td className="px-2 py-2 text-right">
                       <p className="text-[12px] font-bold text-slate-700">
                         {formatCurrency(customer.orders.totalAmount)}
                       </p>
                     </td>
 
-                    {/* =================================================
-                        TYPE
-                    ================================================= */}
-
                     <td className="px-2 py-2 text-center">
                       <CustomerTypeBadge type={customer.customerType} />
                     </td>
 
-                    {/* =================================================
-                        STATUS
-                    ================================================= */}
-
                     <td className="px-2 py-2 text-center">
                       <StatusBadge status={customer.status} />
                     </td>
-
-                    {/* =================================================
-                        ACTION
-                    ================================================= */}
 
                     <td className="relative px-3 py-2 text-center">
                       <button
@@ -463,10 +394,6 @@ const CustomerTable = ({
                       >
                         <FiMoreVertical className="text-[14px]" />
                       </button>
-
-                      {/* =================================================
-                          ACTION MENU
-                      ================================================= */}
 
                       {actionOpen && (
                         <div
@@ -589,9 +516,6 @@ const CustomerTable = ({
     </div>
   );
 };
-/* =========================================================
-   PAGINATION
-========================================================= */
 
 const Pagination = ({
   pagination,
@@ -639,9 +563,9 @@ const Pagination = ({
           type="button"
           disabled={!hasPreviousPage}
           onClick={() => onPageChange(page - 1)}
-          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-[12px] text-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex h-7 w-7 items-center justify-center rounded border border-slate-200 text-[12px] text-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <FiChevronLeft />
+          <FiChevronLeft size={16} />
         </button>
 
         {/* FIRST PAGE */}
@@ -651,7 +575,7 @@ const Pagination = ({
             <button
               type="button"
               onClick={() => onPageChange(1)}
-              className="flex h-6 w-6 items-center justify-center rounded text-[12px] text-slate-500 hover:bg-slate-50"
+              className="flex h-7 w-7 items-center justify-center rounded text-[12px] text-slate-500 hover:bg-slate-50"
             >
               1
             </button>
@@ -667,7 +591,7 @@ const Pagination = ({
             key={number}
             type="button"
             onClick={() => onPageChange(number)}
-            className={`flex h-6 w-6 items-center justify-center rounded text-[12px] ${
+            className={`flex h-7 w-7 items-center justify-center rounded text-[12px] ${
               page === number
                 ? "border border-[#d4a04b] bg-[#fffaf2] font-semibold text-[#b47a21]"
                 : "text-slate-500 hover:bg-slate-50"
@@ -686,7 +610,7 @@ const Pagination = ({
             <button
               type="button"
               onClick={() => onPageChange(totalPages)}
-              className="flex h-6 w-6 items-center justify-center rounded text-[12px] text-slate-500 hover:bg-slate-50"
+              className="flex h-7 w-7 items-center justify-center rounded text-[12px] text-slate-500 hover:bg-slate-50"
             >
               {totalPages}
             </button>
@@ -699,9 +623,9 @@ const Pagination = ({
           type="button"
           disabled={!hasNextPage}
           onClick={() => onPageChange(page + 1)}
-          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-[12px] text-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex h-7 w-7 items-center justify-center rounded border border-slate-200 text-[12px] text-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <FiChevronRight />
+          <FiChevronRight size={16} />
         </button>
 
         {/* LIMIT */}
@@ -709,7 +633,7 @@ const Pagination = ({
         <select
           value={limit}
           onChange={(e) => onLimitChange(Number(e.target.value))}
-          className="ml-1 h-6 rounded border border-slate-200 bg-white px-1 text-[11px] text-slate-500 outline-none"
+          className="ml-1 h-7 rounded border border-slate-200 bg-white px-1 text-[11px] text-slate-500 outline-none"
         >
           <option value={10}>10 / page</option>
           <option value={20}>20 / page</option>
@@ -721,16 +645,8 @@ const Pagination = ({
   );
 };
 
-/* =========================================================
-   MAIN PAGE
-========================================================= */
-
 const Customers = () => {
   const router = useRouter();
-
-  /* -----------------------------
-     STATE
-  ----------------------------- */
 
   const [customers, setCustomers] = useState<Customer[]>([]);
 
@@ -757,10 +673,6 @@ const Customers = () => {
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState("");
-
-  /* =========================================================
-     FETCH CUSTOMERS
-  ========================================================= */
 
   const fetchCustomers = useCallback(
     async (
@@ -817,27 +729,13 @@ const Customers = () => {
     [pagination.page, pagination.limit, search, filter],
   );
 
-  /* =========================================================
-     INITIAL LOAD
-  ========================================================= */
-
   useEffect(() => {
     fetchCustomers(1, 10, "", "All");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* =========================================================
-     SEARCH
-  ========================================================= */
-
   const handleSearch = (value: string) => {
     setSearch(value);
-
-    /*
-     * Search is sent to the API.
-     *
-     * Reset pagination whenever search changes.
-     */
 
     if (!value.trim()) {
       fetchCustomers(1, pagination.limit, "", filter);
@@ -848,19 +746,11 @@ const Customers = () => {
     fetchCustomers(1, pagination.limit, value, filter);
   };
 
-  /* =========================================================
-     FILTER
-  ========================================================= */
-
   const handleFilter = (newFilter: string) => {
     setFilter(newFilter);
 
     fetchCustomers(1, pagination.limit, search, newFilter);
   };
-
-  /* =========================================================
-     PAGE
-  ========================================================= */
 
   const handlePageChange = (newPage: number) => {
     if (newPage < 1) return;
@@ -872,17 +762,9 @@ const Customers = () => {
     fetchCustomers(newPage, pagination.limit, search, filter);
   };
 
-  /* =========================================================
-     LIMIT
-  ========================================================= */
-
   const handleLimitChange = (newLimit: number) => {
     fetchCustomers(1, newLimit, search, filter);
   };
-
-  /* =========================================================
-     CUSTOMER ACTION
-  ========================================================= */
 
   const handleCustomerAction = (customer: Customer) => {
     /*
@@ -897,10 +779,6 @@ const Customers = () => {
 
     console.log("Customer action:", customer);
   };
-
-  /* =========================================================
-     STATS
-  ========================================================= */
 
   const stats = [
     {

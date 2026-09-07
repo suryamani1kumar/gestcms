@@ -100,18 +100,18 @@ const LoginPage = () => {
               <IoDiamond size={70} color="#D99A36" />
 
               <h1 className="mt-0 font-serif text-[30px] tracking-[0.16em] text-[#d99a36]">
-                LUXORA
+                R.K JEWELLERS
               </h1>
 
               <p className="mt-0 text-[12px] font-medium tracking-[0.24em] text-[#e0a445]">
-                JEWELLERY CRM
+                JEWELLERS & GEMS CRM
               </p>
             </div>
 
             {/* Welcome */}
             <div className="mt-auto mb-[48%] flex flex-col items-center justify-center">
               <h2 className="font-serif text-[25px] leading-tight text-white">
-                Welcome to Luxora CRM
+                Welcome to R.K CRM
               </h2>
 
               <p className="mt-2 max-w-[330px] text-[14px] leading-6 text-white/75">
@@ -270,7 +270,7 @@ const LoginPage = () => {
               </span>
 
               <span>
-                © {new Date().getFullYear()} Luxora Jewellery CRM. All rights
+                © {new Date().getFullYear()} R.K JEWELLERS & GEMS CRM. All rights
                 reserved.
               </span>
             </div>

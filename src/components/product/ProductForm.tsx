@@ -152,6 +152,8 @@ export default function ProductForm({
     }));
   };
 
+  console.log("formData.status", formData.status);
+
   const calculatePrice = (
     unitPrice: number | undefined,
     weight: number | undefined,
@@ -279,7 +281,6 @@ export default function ProductForm({
         <Section title="SEO" className="xl:col-span-4">
           <div className="grid grid-cols-1 gap-3">
             {/* STATUS */}
-
             <Field label="Status">
               <Select
                 value={formData.status}

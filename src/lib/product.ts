@@ -16,7 +16,7 @@ export const generateSKU = (
 
   const categoryKey = category?.trim().slice(0, 3).toUpperCase();
 
-  const date = new Date().toISOString().slice(2, 10).replace(/-/g, "");
+  const date = Date.now().toString().slice(-6);
 
   const random = crypto
     .randomBytes(3)
