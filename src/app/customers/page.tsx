@@ -51,7 +51,6 @@ type Customer = {
 
   createdAt: string;
   updatedAt: string;
-  lastLogin?: string;
 
   orders: {
     count: number;
