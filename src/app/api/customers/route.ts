@@ -264,13 +264,9 @@ export async function GET(request: NextRequest) {
 
         emailVerified: customer.emailVerified,
 
-        provider: customer.provider,
-
         createdAt: customer.createdAt,
 
         updatedAt: customer.updatedAt,
-
-        lastLogin: customer.lastLogin,
 
         /* ==========================================
              ORDERS
