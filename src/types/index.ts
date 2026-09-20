@@ -35,11 +35,7 @@ export interface BookingStatusItem {
   color?: string;
 }
 
-export interface TopAirline {
-  name: string;
-  bookings: number;
-  color?: string;
-}
+
 
 export interface QuickStats {
   todaysBookings?: number | string;
