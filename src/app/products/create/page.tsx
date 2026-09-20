@@ -29,7 +29,6 @@ const initialFormData: ProductFormData = {
     treatment: "",
 
     weight: undefined,
-    weightUnit: "gram",
 
     dimension: "",
 

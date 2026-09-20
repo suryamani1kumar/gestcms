@@ -5,7 +5,6 @@ import type {
   ProductStatus,
   StockStatus,
   WeightUnit,
-  GemstoneWeightUnit,
   MakingChargesType,
   GalleryImage,
   GemstoneData,
@@ -37,9 +36,7 @@ export const STOCK_STATUSES: StockStatus[] = [
   "Low Stock",
 ];
 
-export const WEIGHT_UNITS: WeightUnit[] = ["gram", "kg"];
-
-export const GEMSTONE_WEIGHT_UNITS: GemstoneWeightUnit[] = ["carat", "gram"];
+export const WEIGHT_UNITS: WeightUnit[] = ["gram", "carat", "ratti"];
 
 export const MAKING_CHARGES_TYPES: MakingChargesType[] = [
   "fixed",
@@ -109,12 +106,6 @@ const GemstoneSchema = new Schema<GemstoneData>(
     weight: {
       type: Number,
       min: 0,
-    },
-
-    weightUnit: {
-      type: String,
-      enum: GEMSTONE_WEIGHT_UNITS,
-      default: "gram",
     },
 
     dimension: {
@@ -199,45 +190,9 @@ const RudrakshaSchema = new Schema<RudrakshaData>(
       trim: true,
     },
 
-    size: {
-      type: Number,
-      min: 0,
-    },
-
-    sizeUnit: {
+    dimensions: {
       type: String,
       trim: true,
-    },
-
-    color: {
-      type: String,
-      trim: true,
-    },
-
-    shape: {
-      type: String,
-      trim: true,
-    },
-
-    weight: {
-      type: Number,
-      min: 0,
-    },
-
-    weightUnit: {
-      type: String,
-      enum: WEIGHT_UNITS,
-      default: "gram",
-    },
-
-    quality: {
-      type: String,
-      trim: true,
-    },
-
-    energized: {
-      type: Boolean,
-      default: false,
     },
 
     labCertified: {
@@ -317,7 +272,7 @@ const JewellerySchema = new Schema<JewelleryData>(
 
     diamondWeightUnit: {
       type: String,
-      enum: GEMSTONE_WEIGHT_UNITS,
+      enum: WEIGHT_UNITS,
       default: "carat",
     },
 
@@ -363,7 +318,7 @@ const JewellerySchema = new Schema<JewelleryData>(
 
     gemstoneWeightUnit: {
       type: String,
-      enum: GEMSTONE_WEIGHT_UNITS,
+      enum: WEIGHT_UNITS,
       default: "carat",
     },
 
@@ -573,7 +528,7 @@ const PricingSchema = new Schema<PricingData>(
     WeightUnit: {
       type: String,
     },
-    
+
     salePrice: {
       type: Number,
       min: 0,

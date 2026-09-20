@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { IoDiamond } from "react-icons/io5";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { CiLock } from "react-icons/ci";
 import { GoShieldCheck } from "react-icons/go";
+import Image from "next/image";
 
 const EyeIcon = ({ open }: { open: boolean }) => (
   <svg
@@ -97,7 +97,13 @@ const LoginPage = () => {
 
           <div className="relative z-10 flex h-full flex-col px-8 py-8">
             <div className="flex flex-col items-center justify-center">
-              <IoDiamond size={70} color="#D99A36" />
+              <Image
+                src="/logoicon.png"
+                alt="logo"
+                width={80}
+                height={68}
+                className="h-[68px] w-[80px] rounded-full"
+              />
 
               <h1 className="mt-0 font-serif text-[30px] tracking-[0.16em] text-[#d99a36]">
                 R.K JEWELLERS
@@ -270,8 +276,8 @@ const LoginPage = () => {
               </span>
 
               <span>
-                © {new Date().getFullYear()} R.K JEWELLERS & GEMS CRM. All rights
-                reserved.
+                © {new Date().getFullYear()} R.K JEWELLERS & GEMS CRM. All
+                rights reserved.
               </span>
             </div>
           </div>

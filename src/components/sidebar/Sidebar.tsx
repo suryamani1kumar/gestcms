@@ -16,7 +16,6 @@ import {
   MdExpandMore,
   MdExpandLess,
   MdCardGiftcard,
-  MdDiamond,
   MdGroup,
   MdClose,
 } from "react-icons/md";
@@ -25,6 +24,7 @@ import { FaGem } from "react-icons/fa";
 import { HiUsers } from "react-icons/hi";
 
 import { useAuth } from "../AuthContext";
+import Image from "next/image";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -133,7 +133,13 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           <div className="flex items-center">
             {/* Logo */}
             <div className="relative flex h-[38px] w-[38px] shrink-0 items-center justify-center">
-              <FaGem className="text-[30px] text-[#d6a847]" />
+              <Image
+                src="/logoicon.png"
+                alt="logo"
+                width={38}
+                height={38}
+                className="h-[38px] w-[38px] rounded-full"
+              />
             </div>
 
             {/* Brand */}
@@ -153,7 +159,7 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                   text-[#d6a847]
                 "
               >
-                 R.K 
+                R.K
               </h1>
 
               <p

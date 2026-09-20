@@ -6,9 +6,7 @@ export type Gender = "Men" | "Women" | "Unisex";
 
 export type StockStatus = "In Stock" | "Out of Stock" | "Low Stock";
 
-export type WeightUnit = "gram" | "kg";
-
-export type GemstoneWeightUnit = "carat" | "gram";
+export type WeightUnit = "gram" | "carat" | "ratti";
 
 export type MakingChargesType = "fixed" | "percentage";
 
@@ -28,7 +26,6 @@ export interface GemstoneData {
   treatment?: string;
 
   weight?: number;
-  weightUnit?: WeightUnit;
 
   dimension?: string;
 
@@ -52,18 +49,8 @@ export interface RudrakshaData {
   beadType?: string;
   origin?: string;
 
-  size?: number;
-  sizeUnit?: string;
+  dimensions?: string;
 
-  color?: string;
-  shape?: string;
-
-  weight?: number;
-  weightUnit?: WeightUnit;
-
-  quality?: string;
-
-  energized?: boolean;
   labCertified?: boolean;
 }
 
@@ -84,7 +71,7 @@ export interface JewelleryData {
   diamondCount?: number;
 
   diamondWeight?: number;
-  diamondWeightUnit?: GemstoneWeightUnit;
+  diamondWeightUnit?: WeightUnit;
 
   diamondColor?: string;
   diamondClarity?: string;
@@ -96,7 +83,7 @@ export interface JewelleryData {
   gemstoneCount?: number;
 
   gemstoneWeight?: number;
-  gemstoneWeightUnit?: GemstoneWeightUnit;
+  gemstoneWeightUnit?: WeightUnit;
 
   grossWeight?: number;
   netWeight?: number;

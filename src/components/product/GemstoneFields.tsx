@@ -3,12 +3,9 @@
 import { ProductFormData } from "@/lib/type";
 import React from "react";
 import {
-  EmptyState,
   Field,
   Input,
   Section,
-  Select,
-  textareaClass,
 } from "./Form";
 
 interface GemstoneFieldsProps {
@@ -150,28 +147,9 @@ export default function GemstoneFields({
           />
         </Field>
 
-        <Field label="Weight Unit">
-          <Select
-            value={formData.gemstone?.weightUnit ?? ""}
-            onChange={(e) =>
-              updateNestedField("gemstone", "weightUnit", e.target.value)
-            }
-            options={[
-              {
-                label: "Carat",
-                value: "carat",
-              },
-              {
-                label: "Gram",
-                value: "gram",
-              },
-            ]}
-          />
-        </Field>
-
         <Field label="Dimension">
           <Input
-            placeholder="e.g. 80MM x 60MM"
+            placeholder="e.g. 80mm*60mm*100mm"
             value={formData.gemstone?.dimension ?? ""}
             onChange={(e) =>
               updateNestedField("gemstone", "dimension", e.target.value)

@@ -1,5 +1,6 @@
 "use client";
 
+import Invoice from "@/components/Invoice/Invoice";
 import PageHeader from "@/components/pageheader/PageHeader";
 import StatCard from "@/components/statcard/StatCard";
 import { useRouter } from "next/navigation";
@@ -248,6 +249,7 @@ const stats = [
 
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order>(orders[0]);
+  const [showInvoice, setShowInvoice] = useState<boolean>(false);
   const router = useRouter();
 
   return (
@@ -257,8 +259,12 @@ export default function OrdersPage() {
           title="Orders"
           description="View and manage all customer orders."
           buttonText="Add Order"
-          onButtonClick={() => router.push("/orders/create")}
+          onButtonClick={() => setShowInvoice(true)}
         />
+
+        {showInvoice && (
+          <Invoice showInvoice={showInvoice} setShowInvoice={setShowInvoice} />
+        )}
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
           {stats.map((stat) => (
@@ -534,7 +540,9 @@ function OrdersTable({
                     {order.amount}
                   </p>
 
-                  <p className="mt-0.5 text-[12px] text-[#777]">{order.items}</p>
+                  <p className="mt-0.5 text-[12px] text-[#777]">
+                    {order.items}
+                  </p>
                 </td>
 
                 {/* Payment */}
@@ -859,7 +867,9 @@ function OrderDetails({ order }: { order: Order }) {
 
             <p className="mt-1 text-[12px] text-[#777]">{order.phone}</p>
 
-            <p className="mt-1 text-[12px] text-[#777]">rahul.verma@email.com</p>
+            <p className="mt-1 text-[12px] text-[#777]">
+              rahul.verma@email.com
+            </p>
           </div>
         </div>
 

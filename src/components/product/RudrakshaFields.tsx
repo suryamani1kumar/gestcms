@@ -83,117 +83,18 @@ export default function RudrakashFields({
           />
         </Field>
 
-        <Field label="Color">
+        <Field label="Dimensions">
           <Input
-            placeholder="e.g. Brown"
-            value={formData.rudraksha?.color ?? ""}
+            placeholder="e.g. 120mm*110mm*100mm"
+            value={formData.rudraksha?.dimensions ?? ""}
             onChange={(e) =>
-              updateNestedField("rudraksha", "color", e.target.value)
-            }
-          />
-        </Field>
-
-        <Field label="Shape">
-          <Input
-            placeholder="e.g. Round"
-            value={formData.rudraksha?.shape ?? ""}
-            onChange={(e) =>
-              updateNestedField("rudraksha", "shape", e.target.value)
-            }
-          />
-        </Field>
-
-        <Field label="Size">
-          <Input
-            type="number"
-            placeholder="0"
-            value={formData.rudraksha?.size ?? ""}
-            onChange={(e) =>
-              updateNestedField(
-                "rudraksha",
-                "size",
-                numberValue(e.target.value),
-              )
-            }
-          />
-        </Field>
-
-        <Field label="Size Unit">
-          <Select
-            value={formData.rudraksha?.sizeUnit ?? ""}
-            onChange={(e) =>
-              updateNestedField("rudraksha", "sizeUnit", e.target.value)
-            }
-            options={[
-              {
-                label: "mm",
-                value: "mm",
-              },
-              {
-                label: "cm",
-                value: "cm",
-              },
-            ]}
-          />
-        </Field>
-
-        <Field label="Weight">
-          <Input
-            type="number"
-            placeholder="0"
-            value={formData.rudraksha?.weight ?? ""}
-            onChange={(e) =>
-              updateNestedField(
-                "rudraksha",
-                "weight",
-                numberValue(e.target.value),
-              )
-            }
-          />
-        </Field>
-
-        <Field label="Weight Unit">
-          <Select
-            value={formData.rudraksha?.weightUnit ?? ""}
-            onChange={(e) =>
-              updateNestedField("rudraksha", "weightUnit", e.target.value)
-            }
-            options={[
-              {
-                label: "Gram",
-                value: "gram",
-              },
-              {
-                label: "Kg",
-                value: "kg",
-              },
-            ]}
-          />
-        </Field>
-
-        <Field label="Quality">
-          <Input
-            placeholder="e.g. Premium"
-            value={formData.rudraksha?.quality ?? ""}
-            onChange={(e) =>
-              updateNestedField("rudraksha", "quality", e.target.value)
+              updateNestedField("rudraksha", "dimensions", e.target.value)
             }
           />
         </Field>
       </div>
 
       <div className="mt-4 flex gap-6">
-        <label className="flex items-center gap-2 text-[9px]">
-          <input
-            type="checkbox"
-            checked={formData.rudraksha?.energized ?? false}
-            onChange={(e) =>
-              updateNestedField("rudraksha", "energized", e.target.checked)
-            }
-          />
-          Energized
-        </label>
-
         <label className="flex items-center gap-2 text-[9px]">
           <input
             type="checkbox"
