@@ -5,20 +5,13 @@ import {
   FaRegCalendarAlt,
   FaRegFileAlt,
   FaShoppingBag,
-  FaUser,
   FaPhoneAlt,
   FaEnvelope,
   FaGlobe,
-  FaStore,
   FaCreditCard,
   FaClipboardList,
-  FaShieldAlt,
-  FaGem,
-  FaBoxOpen,
-  FaLock,
   FaTimes,
 } from "react-icons/fa";
-import { MdVerified } from "react-icons/md";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -218,8 +211,7 @@ export default function Invoice({
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
               <BillingCard
                 title="BILL FROM"
-                icon={<FaStore />}
-                name="LUXORA"
+                name="R.K. JEWELLERS & GEMS"
                 address={
                   <>
                     123, Diamond Square, M.I. Road,
@@ -239,7 +231,6 @@ export default function Invoice({
 
               <BillingCard
                 title="BILL TO (CUSTOMER)"
-                icon={<FaUser />}
                 name="Neha Sharma"
                 address={
                   <>
@@ -388,42 +379,6 @@ export default function Invoice({
               </ul>
             </div>
           </div>
-          {/* ================= FEATURES ================= */}
-          <div className="mx-8 border-t border-[#decba8] py-5">
-            <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
-              <Feature
-                icon={<FaGem />}
-                title="100%"
-                text="BIS Hallmarked Jewellery"
-              />
-
-              <Feature
-                icon={<MdVerified />}
-                title="Certified"
-                text="Gemstones"
-              />
-
-              <Feature icon={<FaShieldAlt />} title="Lifetime" text="Buyback" />
-
-              <Feature icon={<FaBoxOpen />} title="Secure" text="Packaging" />
-            </div>
-          </div>
-          {/* SIGNATURE */}
-          <div className="flex items-center justify-end border-t border-[#decba8] px-10 py-3">
-            <div className="text-right">
-              <p className="font-serif text-2xl italic">For LUXORA</p>
-            </div>
-          </div>
-          {/* ================= FOOTER ================= */}
-          <div className="bg-[#071a41] py-4 text-center text-white">
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-[#d69a32]">❧</span>
-              <p className="text-sm font-medium tracking-wide">
-                LUXORA – CRAFTING ELEGANCE, DELIVERING TRUST
-              </p>
-              <span className="text-[#d69a32]">❧</span>
-            </div>
-          </div>
         </div>
       </DialogContent>
       <DialogActions>
@@ -472,7 +427,6 @@ function InvoiceMeta({
 
 function BillingCard({
   title,
-  icon,
   name,
   address,
   phone,
@@ -481,7 +435,6 @@ function BillingCard({
   extra,
 }: {
   title: string;
-  icon: React.ReactNode;
   name: string;
   address: React.ReactNode;
   phone: string;
@@ -496,10 +449,6 @@ function BillingCard({
       </div>
 
       <div className="flex gap-5">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[#d8b982] text-2xl text-[#b87916]">
-          {icon}
-        </div>
-
         <div className="text-sm leading-7">
           <h3 className="text-xl font-bold">{name}</h3>
 
@@ -588,27 +537,6 @@ function TableCell({
       }`}
     >
       {children}
-    </div>
-  );
-}
-
-function Feature({
-  icon,
-  title,
-  text,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="flex items-center justify-center gap-3 border-r border-[#decba8] last:border-r-0">
-      <span className="text-3xl text-[#b87916]">{icon}</span>
-
-      <div className="text-sm">
-        <p className="font-semibold">{title}</p>
-        <p>{text}</p>
-      </div>
     </div>
   );
 }
